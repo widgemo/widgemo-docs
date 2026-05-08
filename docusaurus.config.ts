@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Widgemo Docs',
   tagline: 'Documentation hub for the Widgemo product family',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/widgemo_deco.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -40,6 +40,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          routeBasePath: 'core',
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -78,7 +79,9 @@ const config: Config = {
       title: 'Widgemo',
       logo: {
         alt: 'Widgemo',
-        src: 'img/logo.svg',
+        src: 'img/widgemo_deco.svg',
+        width: 34,
+        height: 20,
       },
       items: [
         {
@@ -96,7 +99,7 @@ const config: Config = {
           items: [
             {
               label: 'widgemo-core',
-              to: '/docs/intro',
+              to: '/core',
             },
           ],
         },

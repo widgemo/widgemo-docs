@@ -116,7 +116,7 @@ export default function Home(): React.ReactElement {
               icon="⚛️"
               title="widgemo-core"
               description="Zero-dependency React component library for configurable data components, tables, grids, and charts."
-              href="/docs/intro"
+              href="/core"
               status="published"
             />
           </div>
@@ -200,7 +200,7 @@ export default function Home(): React.ReactElement {
         }}>
           <h2 style={{ marginBottom: '1.5rem' }}>Quick Links</h2>
           <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/docs/intro" style={{ textDecoration: 'none', color: 'var(--ifm-color-primary)', fontWeight: 500 }}>
+            <Link href="/core" style={{ textDecoration: 'none', color: 'var(--ifm-color-primary)', fontWeight: 500 }}>
               widgemo-core Documentation →
             </Link>
             <a href="https://github.com/widgemo/widgemo-docs" style={{ textDecoration: 'none', color: 'var(--ifm-color-primary)', fontWeight: 500 }}>
