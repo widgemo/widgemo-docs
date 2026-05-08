@@ -1,0 +1,34 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Import Poppins font for Widgemo branding */
+@import '@fontsource/poppins';
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-font-family-base: 'Poppins', sans-serif;
+  --ifm-color-primary: #ff5722;
+  --ifm-color-primary-dark: #e64a19;
+  --ifm-color-primary-darker: #d43f0e;
+  --ifm-color-primary-darkest: #c23409;
+  --ifm-color-primary-light: #ff7043;
+  --ifm-color-primary-lighter: #ff8a65;
+  --ifm-color-primary-lightest: #ffb74d;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #ff7043;
+  --ifm-color-primary-dark: #ff5722;
+  --ifm-color-primary-darker: #e64a19;
+  --ifm-color-primary-darkest: #d43f0e;
+  --ifm-color-primary-light: #ff8a65;
+  --ifm-color-primary-lighter: #ffb74d;
+  --ifm-color-primary-lightest: #ffcc80;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}

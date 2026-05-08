@@ -1,0 +1,100 @@
+---
+sidebar_position: 2
+---
+
+# Widgemo Config
+
+`WidgemoConfig` is the central configuration object. It is zone-oriented and mode-driven.
+
+## Shape
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `id` | `string` | — | Optional identifier |
+| `zones.header` | `ZoneConfig` | — | Optional header zone |
+| `zones.content` | `ContentConfig` | **required** | Content zone (mode, fields, actions, etc.) |
+| `zones.footer` | `ZoneConfig` | — | Optional footer zone |
+| `interactions.onEvent` | `(ctx: InteractionContext) => void` | — | Global sink for all actions and gestures |
+| `collapse.initialState` | `'expanded' \| 'collapsed' \| 'fixed'` | `'expanded'` | Widget collapse behaviour |
+| `collapse.button` | `boolean` | `true` | Show/hide the collapse toggle |
+| `containerFrame` | `{ border?, shadow?, borderRadius?, borderColor?, borderWidth?, overflow? }` | — | Outer shell frame controls |
+| `style` | `CSSProperties` | — | Inline styles on the root element |
+| `theme` | `string` | — | Registered theme name |
+| `devMode` | `boolean \| DevModeConfig` | `false` | Dev inspector overlay |
+| `preRender` | `() => void` | — | Hook called before each render |
+| `containerTrim` | `'default' \| 'none'` | — | Optional shell trim |
+| `containerShadow` | `'default' \| 'none'` | — | Optional shell shadow |
+
+## Header and Footer Zones
+
+```tsx
+zones: {
+  header: {
+    title: 'Team Directory',
+    subtitle: 'All active employees',
+    icon: { name: 'users', size: 28, color: '#4f46e5' },
+    // Dynamic title driven by live data
+    titleRenderer:    (data) => `Team (${data.length} members)`,
+    subtitleRenderer: (data) => `Active: ${data.filter(d => d.status === 'active').length}`,
+    layout: {
+      titlePosition:    'center',    // 'left' (default) | 'center' | 'right'
+      iconPosition:     'above',     // 'left' (default) | 'above'
+      actionsPosition:  'below',     // 'right' (default) | 'below'
+      subtitlePosition: 'inline',    // 'below' (default) | 'inline'
+      orientation:      'vertical',  // 'horizontal' (default) | 'vertical'
+    },
+    actions: [ /* ActionConfig[] */ ],
+    themeOverrides: { /* ZoneTheme */ },
+    style: { background: 'linear-gradient(…)' },
+    collapse: { initialState: 'collapsed', button: true },
+    enabled: true,
+  },
+  footer: {
+    subtitle: 'Last synced just now',
+    layout: { titlePosition: 'center' },
+  },
+},
+```
+
+## Container Frame
+
+```tsx
+const config = {
+  containerFrame: {
+    border: 'none',
+    shadow: 'none',
+    borderRadius: 'square',
+  },
+  zones: { /* … */ },
+};
+```
+
+## Loading and Error States
+
+```tsx
+content: {
+  mode: 'table',
+  status: 'loading',
+  loadingState: {
+    enabled: true,
+    indicator: 'skeleton',
+    message: () => 'Loading records…',
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+```tsx
+content: {
+  mode: 'table',
+  status: 'error',
+  error: { message: 'Failed to load data' },
+  errorState: {
+    enabled: true,
+    message: (err) => `Error: ${err?.message ?? 'Something went wrong'}`,
+    retry: { label: 'Try Again', onRetry: () => refetch() },
+    severity: 'warning',  // 'info' | 'warning' | 'error'
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```

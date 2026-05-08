@@ -1,0 +1,338 @@
+---
+sidebar_position: 4
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Field Config
+
+`FieldConfig` defines how each field is rendered. All options work across every mode.
+
+<WidgemoShowcase
+  title="Live field renderer examples"
+  description="These examples demonstrate the built-in renderAs options described in the reference tables below."
+  data={[
+    {
+      name: 'Aurora Chen',
+      status: 'active',
+      salary: 134000,
+      progress: 82,
+      rating: 4.7,
+      profileUrl: 'https://example.com/team/aurora',
+      metadata: { team: 'Design', region: 'EMEA' },
+      delta: 0.18,
+      confidence: 92,
+    },
+    {
+      name: 'Mateo Silva',
+      status: 'pending',
+      salary: 98000,
+      progress: 54,
+      rating: 4.2,
+      profileUrl: 'https://example.com/team/mateo',
+      metadata: { team: 'Platform', region: 'NA' },
+      delta: -0.07,
+      confidence: 71,
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Renderer gallery',
+        subtitle: 'Badge, currency, progress, and more in one live example',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD', compact: true, colorize: true } },
+            { key: 'progress', label: 'Progress', renderAs: 'progress', renderAsOptions: { showPercentage: true } },
+            { key: 'rating', label: 'Rating', renderAs: 'rating' },
+            { key: 'profileUrl', label: 'Profile', renderAs: 'link', renderAsOptions: { text: 'Open profile', newTab: true, externalWarning: true } },
+            { key: 'metadata', label: 'Metadata', renderAs: 'jsonPreview', renderAsOptions: { defaultCollapsed: true } },
+            { key: 'delta', label: 'Delta', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true } },
+            { key: 'confidence', label: 'Confidence', renderAs: 'confidenceMeter', renderAsOptions: { density: 'compact' } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## FieldConfig Interface
+
+```ts
+interface FieldConfig {
+  key: string;                    // entity property key (required)
+  label?: string;                 // display label
+  type?: 'text' | 'number' | 'date' | 'boolean' | 'email' | 'image' | 'swatch' | string;
+  sortable?: boolean;
+  width?: number | string;        // table column width
+  align?: 'left' | 'center' | 'right';
+  showLabel?: boolean;            // show label next to value in card views
+  wrap?: boolean;                 // true = wrap, false = truncate + tooltip (default)
+  visible?: boolean;              // false = hide entirely
+  condition?: (entity) => boolean; // per-row hide condition
+  formatter?: (value, entity) => unknown; // transform raw value before rendering
+  span?: number;                  // grid column span
+  booleanTrueLabel?: string;
+  booleanFalseLabel?: string;
+  imageOptions?: { circular?, width?, height?, objectFit?, border?, shadow?,
+    backgroundColor?, borderRadius?, lightbox?, lazy?, alt? };
+  renderAs?: string;
+  renderAsOptions?: RenderAsOptions;
+}
+```
+
+## Built-in `renderAs` Options
+
+### `badge`
+
+```tsx
+{
+  key: 'status', label: 'Status', renderAs: 'badge',
+  renderAsOptions: {
+    colorMap: {
+      active:   { background: '#198754', text: '#fff' },
+      pending:  { background: '#ffc107', text: '#333' },
+      inactive: { background: '#6c757d', text: '#fff', icon: 'close', iconPosition: 'left' },
+    },
+    style: 'badge',  // 'badge' (default) | 'inline'
+    size: 'md',      // 'sm' | 'md' (default) | 'lg'
+  },
+}
+```
+
+`iconPosition`: `'left'`, `'right'`, or `'only'` (icon only, no text).
+
+### `currency`
+
+```tsx
+{
+  key: 'amount', label: 'Salary', renderAs: 'currency',
+  renderAsOptions: {
+    currency: 'USD',
+    locale: 'en-US',
+    compact: true,
+    compactThreshold: 1000,
+    colorize: true,
+    positiveColor: '#198754',
+    negativeColor: '#dc3545',
+    zeroColor: '#6c757d',
+    negativeFormat: 'parentheses',  // 'minus' (default) | 'parentheses'
+    decimalAlign: true,
+    minimumFractionDigits: 0,
+  },
+}
+```
+
+### `progress`
+
+```tsx
+{
+  key: 'progress', label: 'Progress', renderAs: 'progress',
+  renderAsOptions: {
+    color: (entity) => entity.progress >= 80 ? '#198754' : '#ffc107',
+    backgroundColor: '#e9ecef',
+    height: 10,
+    showPercentage: true,
+  },
+}
+```
+
+### `rating`
+
+```tsx
+{
+  key: 'rating', label: 'Rating', renderAs: 'rating',
+  renderAsOptions: {
+    max: 5,
+    color: '#ffd700',
+    emptyColor: '#dee2e6',
+    size: 18,
+    icon: 'star',  // 'star' | 'heart' | any registered icon name
+  },
+}
+```
+
+### `link`
+
+```tsx
+{
+  key: 'url', label: 'Profile', renderAs: 'link',
+  renderAsOptions: {
+    text: (entity) => `View ${entity.name}`,  // or static string
+    url:  (entity) => `/users/${entity.id}`,  // or omit to use field value
+    newTab: true,
+    externalWarning: true,
+  },
+}
+```
+
+### `jsonPreview`
+
+```tsx
+{
+  key: 'metadata', label: 'Metadata', renderAs: 'jsonPreview',
+  renderAsOptions: {
+    defaultCollapsed: true,
+    maxDepth: 3,
+  },
+}
+```
+
+Safely parses string or object input. Renders collapsible tree with depth limiting.
+
+### `deltaValue`
+
+```tsx
+{
+  key: 'delta', label: 'Delta', renderAs: 'deltaValue',
+  renderAsOptions: {
+    trendIndicator: true,
+    fractionDigits: 1,
+    suffixPercent: true,
+    palette: {
+      positive: '#198754',
+      negative: '#dc3545',
+      neutral: '#6c757d',
+    },
+  },
+}
+```
+
+### `amountPill`
+
+```tsx
+{
+  key: 'status', label: 'Status', renderAs: 'amountPill',
+  renderAsOptions: {
+    density: 'compact',
+    shape: 'pill',
+    toneMap: {
+      pending: { background: '#fff3cd', color: '#8a6d3b', label: 'Pending' },
+      posted:  { background: '#d1e7dd', color: '#0f5132', label: 'Posted' },
+    },
+  },
+}
+```
+
+### `sparkTrend`
+
+```tsx
+{
+  key: 'trend', label: 'Trend', renderAs: 'sparkTrend',
+  renderAsOptions: {
+    width: 108,
+    height: 34,
+    strokeWidth: 1.6,
+    positiveColor: '#35d4a1',
+    negativeColor: '#e67e7e',
+    showDeltaLabel: true,
+  },
+}
+```
+
+Accepts either a numeric delta or a numeric series array. Renders a deterministic fallback sparkline when no series is provided.
+
+### `healthMeter`
+
+```tsx
+{
+  key: 'healthScore', label: 'Health', renderAs: 'healthMeter',
+  renderAsOptions: {
+    showValue: true,
+    bands: [
+      { max: 35, label: 'Critical', color: '#dc3545', background: 'rgba(220, 53, 69, 0.16)' },
+      { max: 65, label: 'Watch',    color: '#fd7e14', background: 'rgba(253, 126, 20, 0.16)' },
+      { label: 'Healthy',           color: '#198754', background: 'rgba(25, 135, 84, 0.16)' },
+    ],
+  },
+}
+```
+
+Renders a bounded 0-100 score meter with configurable threshold bands.
+
+### `confidenceMeter`
+
+```tsx
+{
+  key: 'confidence', label: 'Confidence', renderAs: 'confidenceMeter',
+  renderAsOptions: {
+    density: 'compact',
+    bands: [
+      { min: 85, label: 'High',   color: '#0d6efd' },
+      { min: 70, label: 'Good',   color: '#198754' },
+      { min: 55, label: 'Medium', color: '#fd7e14' },
+      { label: 'Low',             color: '#dc3545' },
+    ],
+  },
+}
+```
+
+## Item Layout
+
+`ItemConfig.layout` controls how fields are arranged within each card or row.
+
+### Auto (default)
+
+```tsx
+item: { fields: […], layout: { type: 'auto' } }
+```
+
+### Flex
+
+```tsx
+item: {
+  fields: […],
+  layout: {
+    type: 'flex',
+    flex: { direction: 'row', wrap: false, justify: 'flex-start', align: 'center' },
+  },
+}
+```
+
+### CSS Grid with Template Areas
+
+```tsx
+item: {
+  fields: [
+    { key: 'src',   label: 'Photo', type: 'image', imageOptions: { circular: true, width: 48, height: 48 } },
+    { key: 'name',  label: 'Name',  showLabel: false },
+    { key: 'email', label: 'Email', type: 'email', showLabel: false },
+    { key: 'status', label: 'Status', renderAs: 'badge', showLabel: false },
+  ],
+  layout: {
+    type: 'grid',
+    grid: {
+      columns: '48px minmax(0,1fr) auto',
+      gap: '0.5rem 0.75rem',
+      areas: [
+        '"src name   name"',
+        '"src email  status"',
+      ],
+    },
+  },
+}
+```
+
+### Sections
+
+```tsx
+item: {
+  fields: [
+    { key: 'name', label: 'Name' }, { key: 'email', label: 'Email', type: 'email' },
+    { key: 'role', label: 'Role', renderAs: 'badge' }, { key: 'department', label: 'Department' },
+  ],
+  layout: {
+    type: 'sections',
+    sections: [
+      { title: 'Contact', fields: ['name', 'email'] },
+      { title: 'Role',    fields: ['role', 'department'] },
+    ],
+  },
+}
+```

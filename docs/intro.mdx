@@ -1,0 +1,100 @@
+---
+sidebar_position: 1
+---
+
+# widgemo-core Documentation
+
+Welcome to the **widgemo-core** documentation hub. Here you'll find everything you need to build, customize, and extend zero-dependency React components for configurable data display.
+
+## What is widgemo-core?
+
+**widgemo-core** is a zero-dependency React component library that makes it easy to build powerful, configurable data components. With minimal runtime dependencies (React and React-DOM are peers), it provides:
+
+- **Multiple rendering modes** — Table, Grid, Carousel, Board, and Chart modes
+- **Flexible configuration** — Define component behavior entirely through a JSON-like config object
+- **Built-in field renderers** — Currency, progress, links, ratings, and more, out of the box
+- **Automatic theming** — Light/dark mode support with customizable CSS variables
+- **Extension API** — Register custom renderers, modes, icons, and field types
+- **TypeScript-first** — Complete type safety from the ground up
+
+## Quick Links
+
+- **Installation** — Get widgemo-core into your project in seconds *(Coming soon)*
+- **Quick Start** — Your first `<Widgemo>` component *(Coming soon)*
+- **Concepts** — Understand modes, theming, and the extension API *(Coming soon)*
+- **API Reference** — Complete prop and config documentation *(Coming soon)*
+- **Migration Guide** — Upgrading between versions *(Coming soon)*
+
+## Getting Started (2 minutes)
+
+Install via npm:
+
+```bash
+npm install @widgemo/widgemo-core react react-dom
+```
+
+Render a table in your React app:
+
+```tsx
+import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+
+export function MyDataTable() {
+  const data = [
+    { id: 1, name: 'Alice', role: 'Engineer', salary: 125000 },
+    { id: 2, name: 'Bob', role: 'Designer', salary: 95000 },
+  ];
+
+  return (
+    <WidgemoThemeProvider>
+      <Widgemo
+        config={{
+          mode: 'table',
+          fields: [
+            { name: 'name', label: 'Name' },
+            { name: 'role', label: 'Role' },
+            { name: 'salary', label: 'Salary', renderAs: 'currency' },
+          ],
+          content: {
+            filtering: { enabled: true },
+            searching: { enabled: true },
+            sorting: { enabled: true },
+          },
+        }}
+        data={data}
+      />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+That's it! You now have a fully-featured data table with search, filter, and sort.
+
+## Documentation Structure
+
+- **Getting Started** — Installation, quick start, and migration guides
+- **Concepts** — Deep dives into modes, theming, extension APIs, and DevMode
+- **Reference** — Complete prop tables, config schemas, and API documentation
+- **Guides** — How-to articles for custom fields, custom modes, and adoption workflows
+
+## Peer Dependencies
+
+widgemo-core requires **React 16.8+** and **React-DOM 16.8+**. No other runtime dependencies.
+
+```json
+{
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}
+```
+
+## Resources
+
+- **[GitHub Repository](https://github.com/widgemo/widgemo-core)** — Source code, issues, and discussions
+- **[widgemo-demo](https://demo.widgemo.com)** — Live interactive examples and sandbox
+- **Changelog** — Version history and breaking changes *(Coming soon)*
+
+---
+
+**Ready to dive in?** Check out the [GitHub Repository](https://github.com/widgemo/widgemo-core) or explore the [widgemo-demo](https://demo.widgemo.com) for interactive examples.

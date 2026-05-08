@@ -1,0 +1,52 @@
+---
+sidebar_position: 4
+---
+
+# DevMode
+
+DevMode provides a diagnostic overlay for development workflows. Enable it with `config.devMode`.
+
+## Enabling DevMode
+
+```tsx
+// Simple toggle
+const config = {
+  devMode: true,
+  zones: { /* … */ },
+};
+
+// With options
+const config = {
+  devMode: {
+    overlay: {
+      showDocsLink: 'https://docs.widgemo.com',
+      showBranding: true,
+      showHeader: true,
+      excludeFields: [],
+    },
+  },
+  zones: { /* … */ },
+};
+```
+
+## Overlay Docs Link
+
+`devMode.overlay.showDocsLink` defaults to `https://docs.widgemo.com`.
+
+This default intentionally points to the docs hub, not a specific product segment. The value is fully configurable per component instance:
+
+```tsx
+devMode: {
+  overlay: {
+    showDocsLink: 'https://docs.widgemo.com/core',  // override to link to /core directly
+  },
+},
+```
+
+Set it to `false` to suppress the docs link entirely.
+
+## Z-Index
+
+The DevMode overlay uses a hardcoded `z-index: 10000001` — always on top of all other layers including Bootstrap navbar (1030) and custom modals.
+
+See [CSS Variables](../reference/css-variables) for the full z-index hierarchy.

@@ -1,0 +1,70 @@
+---
+sidebar_position: 6
+---
+
+# CSS Variables
+
+widgemo-core uses CSS custom properties (`--widgemo-*`) for all customizable style values.
+
+## Default Z-Index Values
+
+Designed to coexist with Bootstrap's z-index scale:
+
+```css
+/* Bootstrap defaults */
+--bs-dropdown-z-index: 1000;
+--bs-fixed-z-index: 1030;
+--bs-modal-z-index: 1050;
+
+/* Widgemo defaults */
+:root {
+  --widgemo-zone-header-z-index: 50;     /* Zone headers */
+  --widgemo-table-actions-z-index: 900;  /* Table row action buttons */
+  --widgemo-dropdown-z-index: 950;       /* All dropdown menus */
+  /* DevMode overlay is hardcoded: z-index: 10000001 */
+}
+```
+
+## Z-Index Hierarchy
+
+```
+DevMode Overlay:   10000001  (hardcoded, always on top)
+Bootstrap Navbar:  1030
+├── Bootstrap Dropdowns:  1000
+├── Zone/Table Dropdowns:  950 (!important)
+├── Table Actions:         900
+└── Zone Headers:          50
+    └── Table Headers: 10 (sticky)
+```
+
+## Customization
+
+Override in your global CSS:
+
+```css
+:root {
+  --widgemo-dropdown-z-index: 800;
+}
+```
+
+Scoped override for a specific component:
+
+```css
+.my-component {
+  --widgemo-dropdown-z-index: 1200;
+}
+```
+
+## Portal-Based Dropdowns
+
+In table contexts, dropdowns render at `document.body` level via React Portal with `position: fixed`. In non-table contexts, they use `position: absolute`. This ensures dropdowns work in containers with `overflow: hidden`.
+
+## Layout and Spacing Variables
+
+```css
+:root {
+  --widgemo-border-radius: 8px;
+  --widgemo-card-padding:  1rem;
+  --widgemo-font-size:     14px;
+}
+```

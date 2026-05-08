@@ -1,0 +1,115 @@
+---
+sidebar_position: 3
+---
+
+# Extension API
+
+widgemo-core is extended through the `widgemoRegistry` namespace. Register custom modes, renderers, icons, field types, and lifecycle hooks at module scope — before any render.
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+```
+
+## Custom `renderAs` Renderer
+
+```tsx
+import type { RenderAsRegistryEntry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoRenderAs({
+  name: 'json',
+  render: (value, _options, _entity) => (
+    <pre style={{ fontSize: '0.75rem', margin: 0 }}>{JSON.stringify(value, null, 2)}</pre>
+  ),
+  defaultOptions: {},
+});
+
+// Use in any field
+{ key: 'metadata', label: 'Metadata', renderAs: 'json' }
+```
+
+## Custom Mode
+
+```tsx
+import { TimelineMode } from './components/TimelineMode';
+
+widgemoRegistry.registerWidgemoMode({
+  name: 'timeline',
+  component: TimelineMode,
+  defaultConfig: {
+    dateField: 'date',
+    sortOrder: 'desc',
+    orientation: 'vertical',
+    showLines: true,
+    color: '#007bff',
+  },
+});
+
+// Use in config
+content: {
+  mode: 'timeline',
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+The `component` receives `{ data, config?, actions?, gestures?, onInteractionEvent? }` as props.
+
+:::tip
+Register modes at **module scope** or in a stable `useEffect`, not in a component render body. Rendering triggers re-registration.
+:::
+
+## Custom Icon
+
+```tsx
+widgemoRegistry.registerWidgemoIcon({
+  name: 'calendar',
+  component: ({ size = 16, className, color = 'currentColor' }) => (
+    <CalendarIcon width={size} height={size} className={className} style={{ color }} />
+  ),
+});
+```
+
+The registry falls back to the built-in SVG for any unregistered icon name.
+
+## Custom Field Type
+
+```tsx
+widgemoRegistry.registerWidgemoFieldType({
+  name: 'swatch',
+  render: (value, config) => (
+    <span style={{ display: 'inline-block', width: 18, height: 18, borderRadius: 3,
+      backgroundColor: String(value), border: '1px solid #ddd' }} />
+  ),
+  defaultConfig: { type: 'swatch' },
+});
+```
+
+## Lifecycle Hooks
+
+Hooks intercept internal Widgemo events and inject side effects or override return values.
+
+Built-in hook names: `preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`.
+
+```tsx
+import type { HookRegistryEntry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoHook({
+  name: 'preRender',
+  hook: (...args) => {
+    // args[0] = component name ('Widgemo' | 'BoardMode' | …)
+    // args[1] = props/config passed to that component
+    console.log('[preRender]', args[0]);
+    return args[1]; // truthy return value replaces the original argument
+  },
+});
+
+// Execute imperatively (advanced)
+widgemoRegistry.executeWidgemoHook('preRender', 'MyMode', myConfig);
+```
+
+:::note
+Registering a hook with an already-registered name **replaces** the previous implementation.
+:::
+
+## Full Registry Method Reference
+
+See [Widgemo Props → widgemoRegistry Methods](../reference/widgemo-props#widgemoregistry-methods) for the complete list.

@@ -1,0 +1,94 @@
+---
+sidebar_position: 7
+---
+
+# Theme API
+
+Theme-related exports from `@widgemo/widgemo-core`:
+
+## `WidgemoThemeProvider`
+
+Wrap your component tree to apply a theme:
+
+```tsx
+import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
+
+// Preset
+<WidgemoThemeProvider theme="dark">…</WidgemoThemeProvider>
+
+// System preference
+<WidgemoThemeProvider theme="auto">…</WidgemoThemeProvider>
+
+// Object
+<WidgemoThemeProvider theme={{ colors: { actionButtonBg: '#0f172a' } }}>…</WidgemoThemeProvider>
+```
+
+## `useWidgemoTheme`
+
+Access the resolved theme inside any component wrapped by `WidgemoThemeProvider`:
+
+```tsx
+import { useWidgemoTheme } from '@widgemo/widgemo-core';
+
+function MyHeader() {
+  const theme = useWidgemoTheme();
+  return <header style={{ background: theme.zone?.backgroundColor }} />;
+}
+```
+
+## `registerTheme` / `getTheme`
+
+Register named themes for reuse:
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+// (via widgemoRegistry) register a theme by name
+// then reference it in config:
+const config = {
+  theme: 'my-dark-theme',
+  zones: { /* … */ },
+};
+```
+
+## `mergeZoneTheme`
+
+Merge partial zone theme overrides safely:
+
+```tsx
+import { mergeZoneTheme } from '@widgemo/widgemo-core';
+
+const merged = mergeZoneTheme(baseTheme, overrides);
+```
+
+## `defaultWidgemoTheme`
+
+The library's built-in default theme object. Useful as a base for custom theme objects:
+
+```tsx
+import { defaultWidgemoTheme } from '@widgemo/widgemo-core';
+
+console.log(defaultWidgemoTheme);
+```
+
+## `WidgemoTheme` Interface
+
+```ts
+interface WidgemoTheme {
+  colors?: {
+    actionButtonBg?: string;
+    actionButtonColor?: string;
+    actionButtonBorder?: string;
+    actionButtonHoverBg?: string;
+    actionButtonHoverBorder?: string;
+    actionMenuBg?: string;
+    actionMenuColor?: string;
+    actionMenuItemHoverBg?: string;
+    actionMenuItemHoverColor?: string;
+    [key: string]: string | undefined;
+  };
+  spacing?: Record<string, string>;
+  zone?: ZoneTheme;
+  action?: ActionTheme;
+}
+```

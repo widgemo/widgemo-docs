@@ -1,0 +1,104 @@
+---
+sidebar_position: 3
+---
+
+# Migration Guide
+
+Current package: `@widgemo/widgemo-core` · Current version: `0.1.0`
+
+## API Surface (0.1.x)
+
+widgemo-core exposes two intentional API tiers:
+
+- **Stable root API** — `@widgemo/widgemo-core`
+- **Advanced API** — `advanced` export and `@widgemo/widgemo-core/advanced` subpath
+
+### Stable root exports
+
+Use these for all new integrations:
+
+- `Widgemo` component
+- `widgemoRegistry` namespace (`registerWidgemoIcon`, `registerWidgemoMode`, etc.)
+- `widgemoColors` utilities
+- `coreActions`, `createAction`, `createActions`
+- Theme: `WidgemoThemeProvider`, `useWidgemoTheme`, `defaultWidgemoTheme`, theme helpers
+- All public type exports
+
+### Advanced exports
+
+Lower stability — may change between minor versions. Grouped under `advanced`:
+
+- Core renderers: `ContainerRenderer`, `ActionsRenderer`, `ItemRenderer`, `FieldRenderer`, `ModalRenderer`
+- Mode components: `TableMode`, `GridMode`, `BoardMode`, `CarouselMode`
+- UI helpers: `ConfigIcon`, `PaginationControls`, `SearchBar`
+- Hooks/utilities: `usePagination`, `useFilter`, `applySearchFilter`, `applyStaticFilters`
+- State types: `AdvancedPaginationState`, `AdvancedFilterState`
+
+### Import pattern
+
+```ts
+import { Widgemo, widgemoRegistry } from '@widgemo/widgemo-core';
+import { advanced } from '@widgemo/widgemo-core/advanced';
+
+const { TableMode, usePagination } = advanced;
+```
+
+## Registry Extension Contract
+
+The extension API is entry-object based and preserved across `0.1.x`:
+
+**Register:**
+- `registerWidgemoIcon(entry)`
+- `registerWidgemoFieldType(entry)`
+- `registerWidgemoRenderAs(entry)`
+- `registerWidgemoHook(entry)`
+- `registerWidgemoMode(entry)`
+
+**Get / render:**
+- Icon: `getWidgemoIcon`, `renderWidgemoIcon`
+- Field type: `getWidgemoFieldType`, `renderWidgemoField`
+- RenderAs: `getWidgemoRenderAs`, `renderWidgemoRenderAs`
+- Hook: `getWidgemoHook`, `executeWidgemoHook`
+- Mode: `getWidgemoMode`, `getModeComponent`, `getRegisteredModes`
+
+Custom mode props shape (canonical):
+
+```ts
+{
+  data: Entity[];
+  config?: Record<string, unknown>;
+  actions?: ActionConfig<Entity>[];
+  gestures?: GestureConfig[];
+  onInteractionEvent?: InteractionEventHandler;
+}
+```
+
+## CSS Variable Migration
+
+CSS variables use the `--widgemo-*` prefix to avoid host-app collisions:
+
+```css
+:root {
+  --widgemo-text-color: #2c3e50;
+  --widgemo-bg-color: #ecf0f1;
+  --widgemo-primary-color: #3498db;
+  --widgemo-border-color: #bdc3c7;
+}
+```
+
+If your app still uses old non-prefixed variables, migrate to the `--widgemo-*` equivalents.
+
+## Deprecation Notes
+
+Still available but not recommended for new integrations:
+
+- `ModeLayout` (`ContentConfig.layout`) — legacy marker
+- `ItemConfig.actions` — use `ContentConfig.actions` instead
+- Table-mode duplicate fields (`actions`, `sort`, `pagination`, `grouping`, `gestures`, `item`) — use content-level equivalents
+- `ResolvedWidgemoProps` — internal type
+
+## Static Filter Operator Hardening
+
+Invalid filter operators now **throw an explicit error** instead of silently passing through.
+
+Valid operators: `eq`, `ne`, `contains`, `startswith`, `gt`, `lt`.

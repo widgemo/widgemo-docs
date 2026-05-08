@@ -1,0 +1,123 @@
+---
+sidebar_position: 1
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Widgemo Props
+
+`WidgemoProps` is the runtime prop contract for the main `<Widgemo>` component.
+
+<WidgemoShowcase
+  title="Live prop contract example"
+  description="A minimal Widgemo instance rendered directly inside the docs using the same runtime prop surface described below."
+  data={[
+    { name: 'Aurora Chen', role: 'Product Designer', status: 'active' },
+    { name: 'Mateo Silva', role: 'Engineer', status: 'pending' },
+    { name: 'Priya Nair', role: 'Operations', status: 'inactive' },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Rendered live from the docs site',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Props
+
+| Prop | Type | Required | Description |
+|---|---|---|---|
+| `data` | `Entity[]` | Yes | Input dataset for rendering |
+| `config` | `WidgemoConfig` | No | Layout and behaviour configuration |
+| `className` | `string` | No | Additional CSS class on the root element |
+| `id` | `string` | No | HTML `id` on the root element |
+| `loading` | `boolean` | No | External loading state (overrides `config.zones.content.status`) |
+| `error` | `any` | No | External error state |
+| `onRetry` | `() => void` | No | Retry callback when in error state |
+
+## `widgemoRegistry` Methods
+
+| Method | Signature | Description |
+|---|---|---|
+| `registerWidgemoRenderAs` | `(entry: RenderAsRegistryEntry) => void` | Register a custom field renderer |
+| `getWidgemoRenderAs` | `(name: string) => RenderAsRegistryEntry \| null` | Look up a renderer |
+| `renderWidgemoRenderAs` | `(value, renderAs, options, entity) => ReactNode` | Render via registry |
+| `registerWidgemoMode` | `(entry: ModeRegistryEntry) => void` | Register a custom view mode |
+| `getWidgemoMode` | `(name: string) => ModeRegistryEntry \| null` | Look up a mode |
+| `getModeComponent` | `(name: string) => ComponentType \| null` | Get mode component |
+| `getRegisteredModes` | `() => string[]` | List all registered mode names |
+| `registerWidgemoHook` | `(entry: HookRegistryEntry) => void` | Register a lifecycle hook |
+| `getWidgemoHook` | `(name: string) => HookRegistryEntry \| null` | Look up a hook |
+| `executeWidgemoHook` | `(name: string, ...args) => unknown` | Execute a hook by name |
+| `registerWidgemoIcon` | `(entry: IconRegistryEntry) => void` | Register a custom icon |
+| `getWidgemoIcon` | `(name: string) => IconRegistryEntry \| null` | Look up an icon |
+| `renderWidgemoIcon` | `(props: { name, size?, className?, color? }) => ReactNode` | Render icon via registry |
+| `registerWidgemoFieldType` | `(entry: FieldTypeRegistryEntry) => void` | Register a custom field type |
+| `getWidgemoFieldType` | `(name: string) => FieldTypeRegistryEntry \| null` | Look up a field type |
+| `renderWidgemoField` | `(value, config, entity) => ReactNode` | Render field via registry |
+
+## `InteractionContext` Shape
+
+```ts
+interface InteractionContext {
+  kind:             InteractionKind;  // 'zone-action' | 'item-action' | 'item-click' | 'item-drop' | …
+  interactionId:    string;
+  interactionLabel: string;
+  entity?:          Entity;           // set for item-level interactions
+  data:             Entity[];         // full data array in the active render scope
+  zone:             string;
+  nativeEvent?:     React.MouseEvent | React.DragEvent;
+  from?:            InteractionBoardLocation;  // board drag source
+  to?:              InteractionBoardLocation;  // board drag destination
+}
+```
+
+## Exported Types
+
+```ts
+// Config types
+WidgemoConfig, WidgemoProps
+ZoneConfig, ZoneLayout, ContentConfig
+ItemConfig, ItemLayout, SectionConfig
+FieldConfig
+ActionConfig, GestureConfig, GroupingConfig, SortConfig
+ModeConfig, TableModeConfig, BoardModeConfig, BoardColumnsConfig, BoardColumnConfig
+BoardSwimlaneConfig, BoardSwimlanesConfig
+IconConfig, DevModeConfig
+
+// renderAs option types
+RenderAsOptions, BaseRenderAsOptions
+LinkRenderAsOptions, ProgressRenderAsOptions, RatingRenderAsOptions
+CurrencyRenderAsOptions, BadgeRenderAsOptions
+
+// Interaction types
+InteractionContext, InteractionScope, InteractionEventHandler
+InteractionKind, InteractionBoardLocation
+
+// Registry entry types
+RenderAsRegistryEntry, ModeRegistryEntry, IconRegistryEntry
+FieldTypeRegistryEntry, HookRegistryEntry
+
+// Theme types
+WidgemoTheme, ZoneTheme, ActionTheme
+
+// Utility types
+Entity, RenderIcon, SortDirection, SortConfig
+
+// Advanced (lower stability)
+AdvancedPaginationState, AdvancedFilterState
+```

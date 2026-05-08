@@ -1,0 +1,114 @@
+---
+sidebar_position: 2
+---
+
+# Custom Modes Guide
+
+Custom modes let you build an entirely new layout and rendering strategy for your dataset, then ship it as a named value in `content.mode`.
+
+## 1. Build the Mode Component
+
+A mode component receives a standard props contract:
+
+```tsx
+// src/modes/TimelineMode.tsx
+import React from 'react';
+import type { Entity } from '@widgemo/widgemo-core';
+
+interface TimelineModeProps {
+	data: Entity[];
+	config?: Record<string, unknown>;
+	actions?: unknown[];
+	onInteractionEvent?: (ctx: unknown) => void;
+}
+
+export function TimelineMode({ data, config = {} }: TimelineModeProps) {
+	const { dateField = 'date', sortOrder = 'desc' } = config as {
+		dateField?: string;
+		sortOrder?: 'asc' | 'desc';
+	};
+
+	const sorted = [...data].sort((a, b) => {
+		const d =
+			new Date(String(a[dateField])).getTime() -
+			new Date(String(b[dateField])).getTime();
+		return sortOrder === 'asc' ? d : -d;
+	});
+
+	return (
+		<ol
+			style={{
+				listStyle: 'none',
+				padding: 0,
+				margin: 0,
+				display: 'flex',
+				flexDirection: 'column',
+				gap: '0.75rem',
+			}}
+		>
+			{sorted.map((entity, i) => (
+				<li
+					key={i}
+					style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}
+				>
+					<time style={{ minWidth: 90, color: '#6b7280', fontSize: '0.8rem' }}>
+						{String(entity[dateField])}
+					</time>
+					<span style={{ fontWeight: 500 }}>
+						{String(entity.title ?? entity.name ?? '—')}
+					</span>
+				</li>
+			))}
+		</ol>
+	);
+}
+```
+
+## 2. Register at App Boot
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+import { TimelineMode } from './modes/TimelineMode';
+
+widgemoRegistry.registerWidgemoMode({
+	name: 'timeline',
+	component: TimelineMode,
+	defaultConfig: {
+		dateField: 'date',
+		sortOrder: 'desc',
+		orientation: 'vertical',
+		showLines: true,
+		color: '#007bff',
+	},
+});
+```
+
+## 3. Use in Config
+
+```tsx
+const config = {
+	zones: {
+		header: { title: 'Project Timeline' },
+		content: {
+			mode: 'timeline',
+			modeConfig: {
+				timeline: {
+					dateField: 'created_at',
+					sortOrder: 'asc',
+				},
+			},
+			item: { fields: […], layout: { type: 'auto' } },
+		},
+	},
+};
+```
+
+## Mode Props Contract
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `data` | `Entity[]` | Filtered, sorted, paginated dataset |
+| `config` | `Record<string, unknown>` | Mode-specific config from `modeConfig.<name>` |
+| `actions` | `ActionConfig[]` | Forwarded item actions |
+| `gestures` | `GestureConfig[]` | Forwarded gestures |
+| `onInteractionEvent` | `(ctx) => void` | Event emitter for interaction context |

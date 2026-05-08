@@ -1,0 +1,85 @@
+---
+sidebar_position: 2
+---
+
+# Quick Start
+
+Pass `data` as a top-level prop and describe the layout in `config`. Mode-specific settings live under `modeConfig.<mode>`.
+
+```tsx
+import { WidgemoThemeProvider, Widgemo } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/style.css';
+
+const data = [
+  { id: 1, name: 'Alice', email: 'alice@example.com', status: 'active' },
+  { id: 2, name: 'Bob',   email: 'bob@example.com',   status: 'pending' },
+];
+
+const config = {
+  zones: {
+    header: { title: 'Team Directory', subtitle: 'All employees' },
+    content: {
+      mode: 'table',
+      modeConfig: { table: { type: 'traditional' } },
+      item: {
+        fields: [
+          { key: 'name',  label: 'Name',  type: 'text',  sortable: true },
+          { key: 'email', label: 'Email', type: 'email' },
+          { key: 'status', label: 'Status', renderAs: 'badge',
+            renderAsOptions: { colorMap: { active: '#198754', pending: '#ffc107' } } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+function App() {
+  return (
+    <WidgemoThemeProvider theme="light">
+      <Widgemo data={data} config={config} />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+## With a custom theme
+
+Pass a `WidgemoTheme` object to override tokens or zone styles:
+
+```tsx
+<WidgemoThemeProvider theme={{
+  colors: {
+    actionButtonBg: '#0f172a',
+    actionButtonColor: '#f8fafc',
+  },
+  zone: {
+    backgroundColor: '#1e293b',
+    titleColor: '#f8fafc',
+  },
+}}>
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
+```
+
+## Zero-config table
+
+Fields are inferred from data keys — the minimum viable config:
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: Object.keys(data[0] ?? {}).map(key => ({ key, label: key })),
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Next step
+
+Explore [Modes Overview](../concepts/modes-overview) or jump into [Field Config](../reference/field-config) to control how each column renders.

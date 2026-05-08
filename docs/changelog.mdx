@@ -1,0 +1,50 @@
+---
+sidebar_position: 99
+---
+
+# Changelog
+
+All notable changes to widgemo-core.
+
+Full changelog:
+
+- [CHANGELOG.md](https://github.com/widgemo/widgemo-core/blob/main/CHANGELOG.md)
+
+---
+
+## [Unreleased]
+
+### Added
+
+- Docs alignment improvements for the docs.widgemo.com rollout
+- Type-surface cleanup across exported interfaces
+
+### Fixed
+
+- Static filter operator hardening: invalid operator values now throw a descriptive runtime error
+
+---
+
+## [0.1.0] - 2026-04-22
+
+Initial public release.
+
+### Core Features
+
+- `<Widgemo>` component with full TypeScript support
+- Five display modes: `table`, `grid`, `carousel`, `board` (with swimlanes), and responsive switching
+- Zone-based layout: `zones.header`, `zones.content`, `zones.footer`
+- `WidgemoConfig` with `interactions.onEvent` global event bus
+- Per-item and zone-level `ActionConfig` with `placement: 'pinned' | 'onHover' | 'menu'`
+- `ActionOverflowConfig` with responsive `maxInline` per breakpoint
+- Board mode drag-and-drop with swimlane matrix support
+- `ContentConfig` search, sorting, filtering, grouping, and pagination
+- Eleven built-in `renderAs` renderers: `badge`, `currency`, `progress`, `rating`, `link`, `jsonPreview`, `deltaValue`, `amountPill`, `sparkTrend`, `healthMeter`, `confidenceMeter`
+- `WidgemoThemeProvider` with `'light' | 'dark' | 'auto' | WidgemoTheme`
+- CSS variable overrides via `--widgemo-*`
+- `widgemoRegistry` extension APIs for renderers, modes, hooks, icons, and field types
+- `devMode` inspector overlay with configurable docs link
+- `InteractionContext` with board drag context (`from` and `to`)
+- Card layout types: `auto`, `flex`, `grid` template areas, `sections`
+- Loading and error states with skeleton indicator and retry support
+- Responsive mode switching with breakpoint-scoped config overrides

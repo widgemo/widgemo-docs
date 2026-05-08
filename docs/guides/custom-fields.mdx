@@ -1,0 +1,83 @@
+---
+sidebar_position: 1
+---
+
+# Custom Fields Guide
+
+This guide walks through two common extension patterns: adding a custom `renderAs` renderer and registering a custom field type.
+
+## Custom `renderAs` Renderer
+
+A `renderAs` renderer is the lightest extension point. It controls how a value is rendered inside an existing field column or card field.
+
+### 1. Create the renderer
+
+```tsx
+// src/renderers/JsonRenderer.tsx
+import React from 'react';
+import type { RenderAsRegistryEntry } from '@widgemo/widgemo-core';
+
+export const jsonRenderer: RenderAsRegistryEntry = {
+	name: 'json',
+	render: (value, _options, _entity) => (
+		<pre style={{ fontSize: '0.75rem', margin: 0, overflowX: 'auto' }}>
+			{JSON.stringify(value, null, 2)}
+		</pre>
+	),
+	defaultOptions: {},
+};
+```
+
+### 2. Register at app boot
+
+```tsx
+// src/main.tsx (or wherever you initialize your app)
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+import { jsonRenderer } from './renderers/JsonRenderer';
+
+widgemoRegistry.registerWidgemoRenderAs(jsonRenderer);
+```
+
+### 3. Use in any field
+
+```tsx
+const fields: FieldConfig[] = [
+	{ key: 'id', label: 'ID' },
+	{ key: 'name', label: 'Name' },
+	{ key: 'metadata', label: 'Metadata', renderAs: 'json' },
+];
+```
+
+## Custom Field Type
+
+A custom field type is a heavier extension. It registers a new value for the `type` property and replaces the entire render pipeline for that type.
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoFieldType({
+	name: 'swatch',
+	render: (value, config) => (
+		<span
+			title={String(value)}
+			style={{
+				display: 'inline-block',
+				width: 18,
+				height: 18,
+				borderRadius: 3,
+				backgroundColor: String(value),
+				border: '1px solid #dee2e6',
+				verticalAlign: 'middle',
+			}}
+		/>
+	),
+	defaultConfig: { type: 'swatch' },
+});
+
+// Use in fields:
+{ key: 'brandColor', label: 'Color', type: 'swatch' }
+```
+
+:::tip Registration order
+Register custom types and renderers before any Widgemo component renders. A safe place is module scope in your app entry file.
+:::

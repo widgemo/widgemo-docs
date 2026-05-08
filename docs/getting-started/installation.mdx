@@ -1,0 +1,50 @@
+---
+sidebar_position: 1
+---
+
+# Installation
+
+## Install
+
+```bash
+npm install @widgemo/widgemo-core
+```
+
+## Peer Dependencies
+
+widgemo-core requires React and React-DOM as peer dependencies. If they are not already in your project:
+
+```bash
+npm install react react-dom
+```
+
+Peer dependency version range:
+
+```json
+{
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
+```
+
+## TypeScript
+
+widgemo-core ships with built-in `.d.ts` type definitions. No separate `@types/` package is needed.
+
+## Framework compatibility
+
+Works with any React setup — Next.js, Vite, Create React App, or custom bundlers. No special adapter is required.
+
+## Stylesheet
+
+Import the default stylesheet once at your app root (or layout):
+
+```tsx
+import '@widgemo/widgemo-core/style.css';
+```
+
+## Next step
+
+Continue with [Quick Start](./quick-start).

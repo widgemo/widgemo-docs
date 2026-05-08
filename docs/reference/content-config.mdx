@@ -1,0 +1,122 @@
+---
+sidebar_position: 3
+---
+
+# Content Config
+
+`ContentConfig` is the canonical content contract inside `zones.content`.
+
+## Shape
+
+| Field | Type | Description |
+|---|---|---|
+| `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| string` | Display mode |
+| `item` | `ItemConfig` | Field definitions and card layout |
+| `modeConfig` | `ModeConfig` | Mode-specific config (`table`, `grid`, `carousel`, `board`) |
+| `actions` | `ActionConfig[]` | Per-item actions |
+| `actionOverflow` | `ActionOverflowConfig` | Overflow menu behaviour for item actions |
+| `pagination` | `{ pageSize, initialPage?, onPageChange? }` | Pagination settings |
+| `search` | `{ enabled?, placeholder?, fields?, debounceMs? }` | Search bar |
+| `groupings` | `GroupingConfig[]` | Row/card groupings |
+| `sorting` | `SortConfig[]` | Initial sort |
+| `filtering` | `StaticFilterRule[]` | Static filters (valid operators: `eq`, `ne`, `contains`, `startswith`, `gt`, `lt`) |
+| `gestures` | `GestureConfig[]` | Click and drop gestures |
+| `responsive` | `{ breakpoints: Record<string, { mode?, modeConfig? }> }` | Per-breakpoint overrides |
+| `sizing` | `{ mode?: 'auto' \| 'fixed' \| 'fill'; height?: number \| string }` | Content sizing |
+| `status` | `'idle' \| 'loading' \| 'success' \| 'error'` | Content state |
+| `loadingState` | `LoadingStateConfig` | Loading UI options |
+| `errorState` | `ErrorStateConfig` | Error UI options |
+| `themeOverrides` | `Partial<ZoneTheme>` | Zone-scoped theme overrides |
+| `style` | `CSSProperties` | Inline styles on the content zone |
+
+## Actions and Interactions
+
+All action and gesture callbacks route through `interactions.onEvent`:
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      console.log(ctx.kind, ctx.interactionId, ctx.entity);
+    },
+  },
+  zones: {
+    content: {
+      mode: 'table',
+      actions: [
+        { id: 'edit',   label: 'Edit',   icon: 'edit',   placement: 'pinned', variant: 'secondary' },
+        { id: 'delete', label: 'Delete', icon: 'delete', placement: 'menu',   variant: 'danger',
+          visibleIf: (entity) => entity.status === 'inactive' },
+      ],
+      item: { fields: […], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+`onAction` on individual `ActionConfig` objects is also supported as a local override — it takes precedence over `interactions.onEvent` for that action.
+
+## Pagination and Search
+
+```tsx
+content: {
+  mode: 'table',
+  pagination: { pageSize: 5, initialPage: 1 },
+  search: { placeholder: 'Search…', fields: ['name', 'department'] },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+Search filters the full dataset first; pagination slices the filtered results. Page resets to 1 on each new query.
+
+## Row Click Gesture
+
+```tsx
+content: {
+  mode: 'table',
+  gestures: [
+    { type: 'item-click', enabled: true, interactionId: 'row-click', interactionLabel: 'Row Click' },
+  ],
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+Fires through `interactions.onEvent` with `ctx.kind === 'item-click'` and `ctx.entity` set to the clicked row.
+
+## Static Filtering and Sorting
+
+```tsx
+content: {
+  mode: 'table',
+  filtering: [{ fieldKey: 'status', operator: 'eq', value: 'active' }],
+  sorting:   [{ fieldKey: 'name',   direction: 'asc' }],
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Grouping
+
+```tsx
+content: {
+  mode: 'table',
+  groupings: [
+    {
+      fieldKey: 'department',
+      initiallyCollapsed: false,
+      renderer: (groupValue, count, isCollapsed) =>
+        `${groupValue} — ${count} members ${isCollapsed ? '▶' : '▼'}`,
+    },
+  ],
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Action Overflow
+
+```tsx
+actionOverflow: {
+  maxInline: { mobile: 1, tablet: 2, desktop: 3 },  // or scalar number
+  menuLabel: 'More',
+  indicator: 'pulse',  // 'pulse' | 'scale' | 'color-shift' | 'none'
+},
+```

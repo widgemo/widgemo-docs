@@ -1,0 +1,81 @@
+---
+sidebar_position: 3
+---
+
+# Custom Icons Guide
+
+widgemo-core uses a named icon registry. Any built-in icon name can be overridden, and new names can be added.
+
+## Register a Custom Icon
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+import { CalendarIcon } from '@heroicons/react/24/outline';
+
+widgemoRegistry.registerWidgemoIcon({
+	name: 'calendar',
+	component: ({ size = 16, className, color = 'currentColor' }) => (
+		<CalendarIcon
+			width={size}
+			height={size}
+			className={className}
+			style={{ color }}
+		/>
+	),
+});
+```
+
+The icon component receives `{ size?, className?, color? }`. Returning `null` falls back to the built-in SVG.
+
+## Built-in Icon Names
+
+### Action icons
+
+`plus`, `add`, `edit`, `delete`, `trash`, `view`, `copy`, `refresh`, `archive`, `share`, `export`, `download`, `upload`
+
+### Navigation icons
+
+`chevron-down`, `chevron-up`, `chevron-left`, `chevron-right`, `arrow-up`, `arrow-down`, `search`, `filter`, `sort`
+
+### View icons
+
+`table`, `grid`, `board`, `carousel`, `calendar`
+
+### UI icons
+
+`settings`, `close`, `check`, `warning`, `message`, `clock`, `star`, `heart`, `users`, `user`, `chart`
+
+### System icons
+
+`ellipsis-vertical`, `external-link`, `book`
+
+## Override a Built-in Icon
+
+Register under the same name to replace it globally:
+
+```tsx
+widgemoRegistry.registerWidgemoIcon({
+	name: 'edit',
+	component: ({ size = 16, color = 'currentColor' }) => (
+		<MyCustomEditIcon width={size} style={{ color }} />
+	),
+});
+```
+
+## Using Icons in Config
+
+Anywhere `icon` accepts a string, provide the registered name:
+
+```tsx
+actions: [
+	{ id: 'schedule', label: 'Schedule', icon: 'calendar', placement: 'pinned' },
+]
+```
+
+```tsx
+zones: {
+	header: {
+		icon: { name: 'calendar', size: 24, color: '#4f46e5' },
+	},
+}
+```

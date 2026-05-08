@@ -1,0 +1,136 @@
+---
+sidebar_position: 2
+---
+
+# Theming
+
+widgemo-core uses CSS custom properties (`--widgemo-*` prefix) for theming. Set them via `WidgemoThemeProvider` or by overriding variables directly in your own stylesheet.
+
+## Theme Provider
+
+```tsx
+import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
+```
+
+Accepts `theme?: 'light' | 'dark' | 'auto' | WidgemoTheme`. Defaults to `'light'`.
+
+```tsx
+// Preset
+<WidgemoThemeProvider theme="dark">…</WidgemoThemeProvider>
+
+// System preference
+<WidgemoThemeProvider theme="auto">…</WidgemoThemeProvider>
+
+// Object — override only what you need
+<WidgemoThemeProvider theme={{
+  colors: {
+    actionButtonBg: '#0f172a',
+    actionButtonColor: '#f8fafc',
+    actionButtonHoverBg: '#1e293b',
+  },
+  spacing: {
+    'border-radius': '10px',
+    'card-padding': '1.25rem',
+  },
+  zone: {
+    backgroundColor: '#1e293b',
+    titleColor: '#f8fafc',
+    subtitleColor: '#94a3b8',
+    padding: '1rem 1.5rem',
+  },
+}}>
+  …
+</WidgemoThemeProvider>
+```
+
+## WidgemoTheme shape
+
+```ts
+interface WidgemoTheme {
+  /** Injected as --widgemo-color-* CSS vars */
+  colors?: {
+    actionButtonBg?: string;
+    actionButtonColor?: string;
+    actionButtonBorder?: string;
+    actionButtonHoverBg?: string;
+    actionButtonHoverBorder?: string;
+    actionMenuBg?: string;
+    actionMenuColor?: string;
+    actionMenuItemHoverBg?: string;
+    actionMenuItemHoverColor?: string;
+    [key: string]: string | undefined;
+  };
+  /** Injected as --widgemo-* CSS vars (border-radius, spacing, font-size, etc.) */
+  spacing?: Record<string, string>;
+  /** Zone inline-style overrides (header/footer) */
+  zone?: ZoneTheme;
+  /** Action button inline-style overrides */
+  action?: ActionTheme;
+}
+```
+
+## Per-Zone Theme Overrides
+
+Override zone appearance inline without creating a full theme:
+
+```tsx
+const config = {
+  zones: {
+    header: {
+      title: 'Styled Header',
+      themeOverrides: {
+        backgroundColor: '#1e293b',
+        titleColor:      '#f8fafc',
+        subtitleColor:   '#94a3b8',
+        padding:         '1rem 1.5rem',
+        borderColor:     '#334155',
+        borderWidth:     '1px',
+        borderStyle:     'solid',
+        borderRadius:    '8px 8px 0 0',
+        iconColor:       '#f8fafc',
+        iconSize:        22,
+        titleFontSize:   '1.25rem',
+      },
+    },
+    footer: {
+      subtitle: 'Last synced just now',
+      themeOverrides: {
+        backgroundColor: '#f1f5f9',
+        subtitleColor:   '#475569',
+        padding:         '0.75rem 1.5rem',
+      },
+    },
+  },
+};
+```
+
+`ZoneTheme` properties: `titleFontSize`, `titleColor`, `subtitleColor`, `backgroundColor`, `borderColor`, `borderWidth`, `borderStyle`, `borderRadius`, `padding`, `iconColor`, `iconSize`.
+
+## CSS Variable Overrides
+
+Override `--widgemo-*` variables directly in your stylesheet:
+
+```css
+:root {
+  --widgemo-border-radius: 12px;
+  --widgemo-card-padding:  1.25rem;
+  --widgemo-font-size:     14px;
+}
+```
+
+## Theme Hook
+
+Access the resolved theme from any component inside `WidgemoThemeProvider`:
+
+```tsx
+import { useWidgemoTheme } from '@widgemo/widgemo-core';
+
+function MyModeHeader() {
+  const theme = useWidgemoTheme();
+  return <header style={{ background: theme.zone?.backgroundColor }}>…</header>;
+}
+```
+
+## Theme API Reference
+
+See [Theme API](../reference/theme-api) for the full list of exported theme utilities.

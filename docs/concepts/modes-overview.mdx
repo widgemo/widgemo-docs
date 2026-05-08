@@ -1,0 +1,145 @@
+---
+sidebar_position: 1
+---
+
+# Modes Overview
+
+widgemo-core supports five rendering modes for different UX contexts. Choose the mode via `config.zones.content.mode`. Customize per-mode behavior under `modeConfig.<mode>`.
+
+## Table Mode
+
+Best for operational data, admin workflows, and sortable/filterable data.
+
+```tsx
+content: {
+  mode: 'table',
+  modeConfig: {
+    table: {
+      type: 'traditional',  // 'traditional' | 'rich-cells'
+      striped: true,
+      hover: true,
+      showHeader: true,
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Grid Mode
+
+Best for card-based displays, product listings, and dashboards.
+
+```tsx
+content: {
+  mode: 'grid',
+  modeConfig: {
+    grid: {
+      minItemWidth: '240px',
+      maxColumns: 4,
+      gap: '1rem',
+      autoFlow: 'row',
+      justifyItems: 'stretch',
+      alignItems: 'start',
+      breakpoints: { mobile: '480px', tablet: '768px', desktop: '1200px' },
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Carousel Mode
+
+Best for featured content, media galleries, and horizontal browsing.
+
+```tsx
+content: {
+  mode: 'carousel',
+  modeConfig: {
+    carousel: {
+      itemWidth: 280,
+      itemHeight: 200,   // omit for 'auto'
+      gap: 16,
+      showArrows: true,
+      showIndicators: true,
+      infinite: true,
+      revolving: true,   // true = revolving wrap (default), false = rewind-style
+      autoPlay: true,
+      autoPlayInterval: 4000,
+      dragThreshold: 50,
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Board (Kanban) Mode
+
+Best for workflow status tracking and drag-and-drop pipelines.
+
+Columns are defined under `modeConfig.board.columns`. Per-item actions go on `ContentConfig.actions`, not inside `BoardModeConfig`.
+
+```tsx
+content: {
+  mode: 'board',
+  modeConfig: {
+    board: {
+      columns: {
+        field: 'status',  // entity field that routes items into columns
+        items: [
+          { id: 'active',   label: 'Active',   color: '#10b981', wipLimit: 8 },
+          { id: 'pending',  label: 'Pending',  color: '#f59e0b', wipLimit: 5 },
+          { id: 'inactive', label: 'Inactive', color: '#6b7280' },
+        ],
+      },
+      dragEnabled: true,
+    },
+  },
+  actions: [
+    { id: 'open-card', label: 'Open', icon: 'view', placement: 'pinned', variant: 'secondary' },
+  ],
+  gestures: [
+    { type: 'item-drop', enabled: true, interactionId: 'board-drop', interactionLabel: 'Board Drop' },
+  ],
+  item: { fields: [{ key: 'name', label: 'Name' }], layout: { type: 'auto' } },
+},
+```
+
+### Board Swimlanes
+
+```tsx
+modeConfig: {
+  board: {
+    columns: {
+      field: 'status',
+      items: [ /* … */ ],
+    },
+    swimlanes: {
+      field: 'department',
+      items: [
+        { id: 'engineering', label: 'Engineering', value: 'Engineering' },
+        { id: 'design',      label: 'Design',      value: 'Design' },
+      ],
+      layout: { type: 'matrix' },     // 'collapsible' (default) | 'matrix'
+      repeatingHeaders: false,
+    },
+    dragEnabled: true,
+  },
+},
+```
+
+## Responsive Mode Switching
+
+Switch modes based on viewport breakpoints:
+
+```tsx
+content: {
+  mode: 'table',
+  responsive: {
+    breakpoints: {
+      tablet: { mode: 'grid' },
+      mobile: { mode: 'carousel' },
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
