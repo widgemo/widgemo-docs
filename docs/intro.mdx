@@ -56,7 +56,7 @@ export function MyDataTable() {
             { name: 'salary', label: 'Salary', renderAs: 'currency' },
           ],
           content: {
-            filtering: { enabled: true },
+            filtering: [{ fieldKey: 'role', operator: 'eq', value: 'Engineer' }],
             searching: { enabled: true },
             sorting: { enabled: true },
           },
