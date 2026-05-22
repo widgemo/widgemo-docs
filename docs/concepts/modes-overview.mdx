@@ -92,7 +92,16 @@ content: {
 
 Best for workflow status tracking and drag-and-drop pipelines.
 
-Columns are defined under `modeConfig.board.columns`. Per-item actions go on `ContentConfig.actions`, not inside `BoardModeConfig`.
+Board columns are configured under `modeConfig.board.columns`.
+
+- `modeConfig.board.columns.field` and `modeConfig.board.columns.items` are required to render board columns.
+- `columns.items` defines the rendered columns and their order.
+- Each column requires `id` and `label`.
+- `value` optionally overrides the match value for that column; when omitted, `id` is used.
+- `filter` optionally provides custom function-based predicate routing for that column.
+- `width`, `color`, and `wipLimit` are optional display and constraint controls.
+
+Per-item actions are configured through `content.actions`.
 
 ```tsx
 content: {
@@ -102,8 +111,8 @@ content: {
       columns: {
         field: 'status',  // entity field that routes items into columns
         items: [
-          { id: 'active',   label: 'Active',   color: '#10b981', wipLimit: 8 },
-          { id: 'pending',  label: 'Pending',  color: '#f59e0b', wipLimit: 5 },
+          { id: 'active',   label: 'Active',   value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
+          { id: 'pending',  label: 'Pending',  filter: (entity) => entity.status === 'pending', color: '#f59e0b', wipLimit: 5 },
           { id: 'inactive', label: 'Inactive', color: '#6b7280' },
         ],
       },
