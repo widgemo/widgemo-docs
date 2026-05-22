@@ -59,6 +59,14 @@ Defaults are recommended for most card grids. Use these controls when you need s
 
 Best for featured content, media galleries, and horizontal browsing.
 
+Looping controls:
+
+- `infinite` enables looping at carousel boundaries.
+- `revolving` controls loop style when `infinite` is `true`.
+- `revolving: true` uses continuous wrap behavior.
+- `revolving: false` uses rewind-style loop behavior.
+- `revolving` has no practical effect when `infinite` is `false`.
+
 ```tsx
 content: {
   mode: 'carousel',
@@ -70,7 +78,7 @@ content: {
       showArrows: true,
       showIndicators: true,
       infinite: true,
-      revolving: true,   // true = revolving wrap (default), false = rewind-style
+      revolving: true,
       autoPlay: true,
       autoPlayInterval: 4000,
       dragThreshold: 50,
