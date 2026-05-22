@@ -6,6 +6,10 @@ sidebar_position: 2
 
 widgemo-core uses CSS custom properties (`--widgemo-*` prefix) for theming. Set them via `WidgemoThemeProvider` or by overriding variables directly in your own stylesheet.
 
+## First-Release Guarantee
+
+Full widget dark/light theming is guaranteed through `WidgemoThemeProvider`.
+
 ## Theme Provider
 
 ```tsx
@@ -13,6 +17,14 @@ import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
 ```
 
 Accepts `theme?: 'light' | 'dark' | 'auto' | WidgemoTheme`. Defaults to `'light'`.
+
+`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')`. It does not subscribe to live OS preference changes.
+
+Provider-scoped CSS variable tokens (`theme.colors`, `theme.spacing`) drive full-surface theming across widget styles.
+
+## Recommended Pattern
+
+Wrap `Widgemo` in `WidgemoThemeProvider` for predictable theme parity with the host app.
 
 ```tsx
 // Preset
@@ -62,12 +74,25 @@ interface WidgemoTheme {
   };
   /** Injected as --widgemo-* CSS vars (border-radius, spacing, font-size, etc.) */
   spacing?: Record<string, string>;
-  /** Zone inline-style overrides (header/footer) */
+  /** Zone inline-style overrides (header/footer/content theme layers) */
   zone?: ZoneTheme;
-  /** Action button inline-style overrides */
+  /** Action theme shape (typed API surface) */
   action?: ActionTheme;
 }
 ```
+
+Action visuals currently follow CSS variable tokens (for example `--widgemo-color-actionButtonBg`, `--widgemo-color-actionButtonColor`, `--widgemo-color-actionMenuBg`).
+
+## Runtime Theme Precedence
+
+Applied from highest to lowest priority:
+
+1. Zone/content inline style and `themeOverrides` (`config.style`, `zones.*.themeOverrides`, `zones.*.style`).
+2. Merged runtime zone theme (`registry theme` + provider `theme.zone`).
+3. Provider-scoped CSS variables from `WidgemoThemeProvider` (`theme.colors`, `theme.spacing`).
+4. Root fallback CSS variables from `src/widgemo-theme.css`.
+
+`config.theme` participates in runtime zone/action theme layering. Use `WidgemoThemeProvider` when you need full-surface dark/light theming.
 
 ## Per-Zone Theme Overrides
 
@@ -120,7 +145,7 @@ Override `--widgemo-*` variables directly in your stylesheet:
 
 ## Theme Hook
 
-Access the resolved theme from any component inside `WidgemoThemeProvider`:
+Access the resolved theme from any component:
 
 ```tsx
 import { useWidgemoTheme } from '@widgemo/widgemo-core';
@@ -130,6 +155,8 @@ function MyModeHeader() {
   return <header style={{ background: theme.zone?.backgroundColor }}>…</header>;
 }
 ```
+
+When no provider is present, `useWidgemoTheme()` resolves to the default context theme object (light preset).
 
 ## Theme API Reference
 

@@ -23,9 +23,13 @@ import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
 <WidgemoThemeProvider theme={{ colors: { actionButtonBg: '#0f172a' } }}>…</WidgemoThemeProvider>
 ```
 
+`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')` and does not subscribe to live OS preference changes.
+
+Full widget dark/light theming is guaranteed through `WidgemoThemeProvider`.
+
 ## `useWidgemoTheme`
 
-Access the resolved theme inside any component wrapped by `WidgemoThemeProvider`:
+Access the resolved theme inside any component:
 
 ```tsx
 import { useWidgemoTheme } from '@widgemo/widgemo-core';
@@ -35,6 +39,8 @@ function MyHeader() {
   return <header style={{ background: theme.zone?.backgroundColor }} />;
 }
 ```
+
+Without a provider, `useWidgemoTheme()` resolves to the default context theme object (light preset).
 
 ## `registerTheme` / `getTheme`
 
@@ -51,6 +57,8 @@ const config = {
 };
 ```
 
+`config.theme` contributes to runtime zone/action theme layering. Use `WidgemoThemeProvider` for full-surface dark/light theming.
+
 ## `mergeZoneTheme`
 
 Merge partial zone theme overrides safely:
@@ -63,7 +71,7 @@ const merged = mergeZoneTheme(baseTheme, overrides);
 
 ## `defaultWidgemoTheme`
 
-The library's built-in default theme object. Useful as a base for custom theme objects:
+Provider light preset alias (`defaultLightTheme`) exported from the public API. Useful as a base for custom theme objects:
 
 ```tsx
 import { defaultWidgemoTheme } from '@widgemo/widgemo-core';
