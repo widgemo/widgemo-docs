@@ -161,17 +161,56 @@ modeConfig: {
 
 ## Responsive Mode Switching
 
-Switch modes based on viewport breakpoints:
+Responsive mode switching uses `content.mode` as the base mode and applies overrides from `content.responsive.breakpoints`.
+
+Required setup:
+
+- A base `content.mode` (used as the desktop default).
+- A valid `content.item` config with real `fields` and `layout`.
+- One or more `content.responsive.breakpoints` entries (`tablet`, `mobile`).
+
+Runtime breakpoint buckets:
+
+- `mobile`: width `< 768`
+- `tablet`: width `768-1023`
+- `desktop`: width `>= 1024`
+
+Working example:
 
 ```tsx
 content: {
-  mode: 'table',
-  responsive: {
-    breakpoints: {
-      tablet: { mode: 'grid' },
-      mobile: { mode: 'carousel' },
+  mode: 'table', // desktop base mode
+  item: {
+    fields: [
+      { key: 'name', label: 'Name' },
+      { key: 'department', label: 'Department' },
+      { key: 'status', label: 'Status', renderAs: 'badge' },
+    ],
+    layout: { type: 'auto' },
+  },
+  modeConfig: {
+    table: {
+      showHeader: true,
+      hover: true,
     },
   },
-  item: { fields: […], layout: { type: 'auto' } },
+  responsive: {
+    breakpoints: {
+      tablet: {
+        mode: 'grid',
+        modeConfig: {
+          grid: { minItemWidth: '260px', gap: '0.75rem' },
+        },
+      },
+      mobile: {
+        mode: 'carousel',
+        modeConfig: {
+          carousel: { itemWidth: 260, showIndicators: true },
+        },
+      },
+    },
+  },
 },
 ```
+
+Per-breakpoint `modeConfig` overrides can be provided when a breakpoint needs mode-specific tuning.
