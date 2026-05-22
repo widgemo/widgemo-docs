@@ -30,7 +30,6 @@ const sidebars: SidebarsConfig = {
       items: [
         'concepts/modes-overview',
         'concepts/theming',
-        'concepts/extension-api',
         'concepts/devmode',
       ],
     },
@@ -39,6 +38,7 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         'reference/widgemo-props',
+        'reference/extension-api',
         'reference/widgemo-config',
         'reference/content-config',
         'reference/field-config',

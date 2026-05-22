@@ -43,35 +43,11 @@ import { advanced } from '@widgemo/widgemo-core/advanced';
 const { TableMode, usePagination } = advanced;
 ```
 
-## Registry Extension Contract
+## Extension API
 
-The supported extension API is entry-object based:
+For the supported registry extension surface and helper methods, see:
 
-**Register:**
-- `registerWidgemoIcon(entry)`
-- `registerWidgemoFieldType(entry)`
-- `registerWidgemoRenderAs(entry)`
-- `registerWidgemoHook(entry)`
-- `registerWidgemoMode(entry)`
-
-**Get / render:**
-- Icon: `getWidgemoIcon`, `renderWidgemoIcon`
-- Field type: `getWidgemoFieldType`, `renderWidgemoField`
-- RenderAs: `getWidgemoRenderAs`, `renderWidgemoRenderAs`
-- Hook: `getWidgemoHook`, `executeWidgemoHook`
-- Mode: `getWidgemoMode`, `getModeComponent`, `getRegisteredModes`
-
-Custom mode props shape (canonical):
-
-```ts
-{
-  data: Entity[];
-  config?: Record<string, unknown>;
-  actions?: ActionConfig<Entity>[];
-  gestures?: GestureConfig[];
-  onInteractionEvent?: InteractionEventHandler;
-}
-```
+- [Extension API](/core/reference/extension-api)
 
 ## CSS Variable Migration
 
@@ -88,8 +64,8 @@ CSS variables use the `--widgemo-*` prefix to avoid host-app collisions:
 
 Use the `--widgemo-*` variables in current integrations.
 
-## Static Filter Operator Hardening
+## Static Filter Contract
 
-Invalid filter operators now **throw an explicit error** instead of silently passing through.
+Valid operators are `eq`, `ne`, `contains`, `startswith`, `gt`, and `lt`.
 
-Valid operators: `eq`, `ne`, `contains`, `startswith`, `gt`, `lt`.
+Invalid operators throw an explicit error.

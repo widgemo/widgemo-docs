@@ -1,0 +1,89 @@
+---
+sidebar_position: 8
+---
+
+# Extension API
+
+`widgemoRegistry` is the supported extension surface for registering and resolving custom icons, field types, renderers, hooks, and modes.
+
+## Register Methods
+
+| Method | Signature | Purpose |
+|---|---|---|
+| `registerWidgemoIcon` | `(entry: IconRegistryEntry) => void` | Register a custom icon entry |
+| `registerWidgemoFieldType` | `(entry: FieldTypeRegistryEntry) => void` | Register a custom field-type renderer |
+| `registerWidgemoRenderAs` | `(entry: RenderAsRegistryEntry) => void` | Register a custom `renderAs` renderer |
+| `registerWidgemoHook` | `(entry: HookRegistryEntry) => void` | Register a named lifecycle hook |
+| `registerWidgemoMode` | `(entry: ModeRegistryEntry) => void` | Register a custom content mode |
+
+## Resolve and Execute Helpers
+
+| Registry Type | Lookup/Render Helpers |
+|---|---|
+| Icons | `getWidgemoIcon`, `renderWidgemoIcon` |
+| Field types | `getWidgemoFieldType`, `renderWidgemoField` |
+| `renderAs` renderers | `getWidgemoRenderAs`, `renderWidgemoRenderAs` |
+| Hooks | `getWidgemoHook`, `executeWidgemoHook` |
+| Modes | `getWidgemoMode`, `getModeComponent`, `getRegisteredModes` |
+
+## Canonical Example
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoIcon({
+  name: 'sparkle',
+  component: ({ size = 16 }) => <span style={{ fontSize: size }}>✦</span>,
+});
+
+widgemoRegistry.registerWidgemoFieldType({
+  name: 'swatch',
+  render: (value) => (
+    <span
+      style={{
+        display: 'inline-block',
+        width: 14,
+        height: 14,
+        borderRadius: 3,
+        border: '1px solid #ddd',
+        backgroundColor: String(value),
+      }}
+    />
+  ),
+  defaultConfig: { type: 'swatch' },
+});
+
+widgemoRegistry.registerWidgemoRenderAs({
+  name: 'uppercase',
+  render: (value) => String(value).toUpperCase(),
+});
+
+widgemoRegistry.registerWidgemoHook({
+  name: 'preRender',
+  hook: (...args) => args[1],
+});
+
+widgemoRegistry.registerWidgemoMode({
+  name: 'simple-list',
+  component: ({ data = [] }) => (
+    <ul>
+      {data.map((row, index) => (
+        <li key={index}>{String(row.name ?? row.id ?? index)}</li>
+      ))}
+    </ul>
+  ),
+});
+
+const iconEntry = widgemoRegistry.getWidgemoIcon('sparkle');
+const modeNames = widgemoRegistry.getRegisteredModes();
+const preRenderHook = widgemoRegistry.getWidgemoHook('preRender');
+
+void iconEntry;
+void modeNames;
+void preRenderHook;
+```
+
+## Related
+
+- [Widgemo Props](/core/reference/widgemo-props)
+- [Migration Guide](/core/getting-started/migration)
