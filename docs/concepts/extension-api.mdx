@@ -85,7 +85,7 @@ widgemoRegistry.registerWidgemoFieldType({
 
 ## Lifecycle Hooks
 
-Hooks intercept internal Widgemo events and inject side effects or override return values.
+Hooks intercept supported Widgemo lifecycle events and can inject side effects or override return values.
 
 Built-in hook names: `preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`.
 
@@ -102,7 +102,7 @@ widgemoRegistry.registerWidgemoHook({
   },
 });
 
-// Execute imperatively (advanced)
+// Execute via the registry
 widgemoRegistry.executeWidgemoHook('preRender', 'MyMode', myConfig);
 ```
 

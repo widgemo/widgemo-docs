@@ -26,7 +26,7 @@ Use these for all new integrations:
 
 ### Advanced exports
 
-Lower stability — may change between minor versions. Grouped under `advanced`:
+Supported advanced exports grouped under `advanced`:
 
 - Core renderers: `ContainerRenderer`, `ActionsRenderer`, `ItemRenderer`, `FieldRenderer`, `ModalRenderer`
 - Mode components: `TableMode`, `GridMode`, `BoardMode`, `CarouselMode`
@@ -45,7 +45,7 @@ const { TableMode, usePagination } = advanced;
 
 ## Registry Extension Contract
 
-The extension API is entry-object based and preserved across `0.1.x`:
+The supported extension API is entry-object based:
 
 **Register:**
 - `registerWidgemoIcon(entry)`
@@ -86,16 +86,7 @@ CSS variables use the `--widgemo-*` prefix to avoid host-app collisions:
 }
 ```
 
-If your app still uses old non-prefixed variables, migrate to the `--widgemo-*` equivalents.
-
-## Deprecation Notes
-
-Still available but not recommended for new integrations:
-
-- `ModeLayout` (`ContentConfig.layout`) — legacy marker
-- `ItemConfig.actions` — use `ContentConfig.actions` instead
-- Table-mode duplicate fields (`actions`, `sort`, `pagination`, `grouping`, `gestures`, `item`) — use content-level equivalents
-- `ResolvedWidgemoProps` — internal type
+Use the `--widgemo-*` variables in current integrations.
 
 ## Static Filter Operator Hardening
 
