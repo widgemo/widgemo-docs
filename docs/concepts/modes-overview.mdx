@@ -131,6 +131,13 @@ content: {
 
 ### Board Swimlanes
 
+`board.swimlanes.items` supports these item fields:
+
+- `id`: identifies the swimlane.
+- `label`: display text for the swimlane header.
+- `value`: maps field values to the swimlane.
+- `filter`: custom function-based routing for the swimlane.
+
 ```tsx
 modeConfig: {
   board: {
@@ -142,7 +149,7 @@ modeConfig: {
       field: 'department',
       items: [
         { id: 'engineering', label: 'Engineering', value: 'Engineering' },
-        { id: 'design',      label: 'Design',      value: 'Design' },
+        { id: 'design',      label: 'Design',      filter: (entity) => entity.department === 'Design' },
       ],
       layout: { type: 'matrix' },     // 'collapsible' (default) | 'matrix'
       repeatingHeaders: false,
