@@ -40,16 +40,24 @@ function MyHeader() {
 }
 ```
 
-Without a provider, `useWidgemoTheme()` resolves to the default context theme object (light preset).
+Without a provider, `useWidgemoTheme()` returns an empty theme object (`{}`).
 
 ## `registerTheme` / `getTheme`
 
 Register named themes for reuse:
 
 ```tsx
-import { widgemoRegistry } from '@widgemo/widgemo-core';
+import { registerTheme, getTheme } from '@widgemo/widgemo-core';
 
-// (via widgemoRegistry) register a theme by name
+registerTheme('my-dark-theme', {
+  colors: {
+    actionButtonBg: '#0f172a',
+    actionButtonColor: '#f8fafc',
+  },
+});
+
+const theme = getTheme('my-dark-theme');
+
 // then reference it in config:
 const config = {
   theme: 'my-dark-theme',
