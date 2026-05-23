@@ -77,6 +77,8 @@ import { mergeZoneTheme } from '@widgemo/widgemo-core';
 const merged = mergeZoneTheme(baseTheme, overrides);
 ```
 
+`mergeZoneTheme` performs a safe shallow merge for zone theme objects: override keys win, unchanged base keys are preserved, and an undefined base is handled safely.
+
 ## `defaultWidgemoTheme`
 
 Provider light preset alias (`defaultLightTheme`) exported from the public API. Useful as a base for custom theme objects:
