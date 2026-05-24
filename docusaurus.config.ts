@@ -69,6 +69,8 @@ const config: Config = {
     ],
   ],
 
+  plugins: ['@cmfcmf/docusaurus-search-local'],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
@@ -84,6 +86,10 @@ const config: Config = {
         height: 20,
       },
       items: [
+        {
+          type: 'search',
+          position: 'right',
+        },
         {
           href: 'https://github.com/widgemo/widgemo-docs',
           label: 'GitHub',
