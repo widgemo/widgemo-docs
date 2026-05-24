@@ -38,23 +38,33 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         'reference/widgemo-props',
-        'reference/extension-api',
         'reference/widgemo-config',
         'reference/content-config',
         'reference/field-config',
         'reference/action-config',
         'reference/css-variables',
         'reference/theme-api',
+        {
+          type: 'category',
+          label: 'Extensions',
+          items: ['reference/extension-api'],
+        },
       ],
     },
     {
       type: 'category',
       label: 'Guides',
       items: [
-        'guides/custom-fields',
-        'guides/custom-modes',
-        'guides/custom-icons',
         'guides/adopting-widgemo',
+        {
+          type: 'category',
+          label: 'Extensions',
+          items: [
+            'guides/custom-fields',
+            'guides/custom-modes',
+            'guides/custom-icons',
+          ],
+        },
       ],
     },
     'changelog',
