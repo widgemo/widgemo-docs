@@ -112,3 +112,13 @@ const config = {
 | `actions` | `ActionConfig[]` | Forwarded item actions |
 | `gestures` | `GestureConfig[]` | Forwarded gestures |
 | `onInteractionEvent` | `(ctx) => void` | Event emitter for interaction context |
+
+## Collision Behavior
+
+Mode registration is silent last-write-wins: registering the same mode name again replaces the previous entry with no warning, error, or rejection.
+
+Overriding built-in modes and third-party mode registrations is supported by design.
+
+Use namespaced names (for example, `acme.timeline`) to reduce accidental collisions.
+
+See the canonical collision policy: [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).

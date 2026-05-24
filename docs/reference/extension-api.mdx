@@ -26,6 +26,19 @@ sidebar_position: 8
 | Hooks | `getWidgemoHook`, `executeWidgemoHook` |
 | Modes | `getWidgemoMode`, `getModeComponent`, `getRegisteredModes` |
 
+## Registration Collisions
+
+When a registration name already exists, core applies silent last-write-wins behavior.
+
+- Duplicate registration replaces the previous entry for the same name.
+- No warning, error, or rejection is performed by core.
+- This behavior applies uniformly to icon, field type, `renderAs` renderer, hook, and mode registrations.
+- Overriding built-in entries and third-party entries is supported by design.
+
+### Best Practice
+
+Use namespaced extension names (for example, `acme.calendar`, `myteam.status-pill`) to reduce accidental collisions across teams and dependencies.
+
 ## Canonical Example
 
 ```tsx
