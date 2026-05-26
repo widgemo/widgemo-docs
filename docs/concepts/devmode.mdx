@@ -44,6 +44,14 @@ const config = {
 - The modal shows your active config in an expandable JSON tree.
 - DevMode behavior remains development-only.
 
+### Inspector Button Placement
+
+By default, the **Widgemo Inspector** button placement follows this order:
+
+1. If a header zone is present, the Inspector button appears as the **rightmost button in the header zone**.
+2. If no header zone is present, but a footer zone is present, it appears as the **rightmost button in the footer zone**.
+3. If neither header nor footer is present, the Inspector button **floats at the top-right above the content zone**.
+
 ## Inspector Modal Walkthrough
 
 1. Enable `devMode: true` in your config.
