@@ -21,9 +21,18 @@ sidebar_position: 2
 | `style` | `CSSProperties` | — | Inline styles on the root element |
 | `theme` | `string` | — | Registered theme name |
 | `devMode` | `boolean \| DevModeConfig` | `false` | Dev inspector overlay |
-| `preRender` | `() => void` | — | Hook called before each render |
+| `preRender` | `() => void` | — | Config-level callback invoked by `Widgemo` before render |
 | `containerTrim` | `'default' \| 'none'` | — | Optional shell trim |
 | `containerShadow` | `'default' \| 'none'` | — | Optional shell shadow |
+
+## Lifecycle Hook Entry Points
+
+`WidgemoConfig.preRender` is a config callback entry point.
+
+- It is called as `() => void` by `Widgemo` before render.
+- It is separate from registry lifecycle hooks (`registerWidgemoHook`).
+
+For the canonical lifecycle hook contract (`preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`), see [Extension API](/core/reference/extension-api#lifecycle-hooks).
 
 ## Header and Footer Zones
 

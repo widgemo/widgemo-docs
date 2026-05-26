@@ -26,6 +26,43 @@ sidebar_position: 8
 | Hooks | `getWidgemoHook`, `executeWidgemoHook` |
 | Modes | `getWidgemoMode`, `getModeComponent`, `getRegisteredModes` |
 
+## Lifecycle Hooks
+
+Lifecycle hooks are registry hooks resolved by name via `widgemoRegistry`.
+
+All five lifecycle hook names are registered by default in core:
+
+- `preRender`
+- `postRender`
+- `onItemClick`
+- `onModeChange`
+- `onDragDrop`
+
+### Hook Contract Matrix
+
+| Hook | Where It Runs | Receives | Returns | Built-In Default Registration |
+|---|---|---|---|---|
+| `preRender` | Called by runtime before render in `Widgemo`, `BoardMode`, and `CarouselMode` | Positional args. Current runtime calls include `('Widgemo', { data, config, className, id })`, `('BoardMode', config)`, and `('CarouselMode', config)` | Optional value. Default built-in returns payload passthrough (`args[1]`) | Yes. Built-in `preRender` is registered by default |
+| `postRender` | Called after render composition for `Widgemo` root and each `CarouselItem` | Positional args: `(componentName, renderedElement)` | May return a transformed/wrapped element. Runtime falls back to original element when hook returns nothing/falsy | Yes. Built-in `postRender` is registered by default |
+| `onItemClick` | Emitted from board card click and carousel item interactions (card click and indicator click) | Positional args: `(item, index, metadata)` where metadata includes mode/source details (for example board column context or carousel source) | Return value is ignored by runtime | Yes. Built-in `onItemClick` is registered by default as a no-op |
+| `onModeChange` | Emitted when resolved effective mode changes in content rendering | Single payload object with `previousMode`, `nextMode`, `requestedMode`, `breakpoint`, `reason` | Return value is ignored by runtime | Yes. Built-in `onModeChange` is registered by default as a no-op |
+| `onDragDrop` | Emitted from board drag/drop paths | Single payload object with movement context: `item`, `from`, `to`, `fromLocation`, `toLocation` | Return value is ignored by runtime | Yes. Built-in `onDragDrop` is registered by default as a no-op |
+
+### `preRender`: Config Callback vs Registry Hook
+
+`preRender` exists in two distinct places:
+
+- Config callback: `config.preRender` in `WidgemoConfig` is called as `() => void` from `Widgemo`.
+- Registry hook: `registerWidgemoHook({ name: 'preRender', ... })` is executed via `executeWidgemoHook` with positional runtime payloads.
+
+They are separate mechanisms and should not be treated as the same API surface.
+
+### Runtime Trigger Notes
+
+- `onModeChange` does not fire on initial mount; it fires only when the resolved effective mode changes.
+- `onDragDrop` is currently emitted from board drag/drop paths.
+- `onItemClick` is currently emitted from board and carousel interaction paths.
+
 ## Registration Collisions
 
 When a registration name already exists, core applies silent last-write-wins behavior.
