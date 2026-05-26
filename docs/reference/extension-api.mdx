@@ -30,6 +30,22 @@ sidebar_position: 8
 
 Lifecycle hooks are registry hooks resolved by name via `widgemoRegistry`.
 
+Widgemo exposes two complementary extension surfaces: registry-based lifecycle hooks (this page) and config-based interaction handling via [gestures](/core/reference/widgemo-config#gestures-and-interaction-handling) and [interactions.onEvent](/core/reference/widgemo-config#interactionsonevent).
+
+## When to Use Which
+
+| Use Case | Prefer | Why |
+|---|---|---|
+| Per-widget interaction behavior (click, drag start, drop) | Gestures (`zones.content.gestures`) | Gestures are config-driven interaction handlers intended for app/business behavior |
+| Global interaction fallback handling | `interactions.onEvent` | Receives interaction contexts when no local gesture/action handler is provided |
+| Runtime interception of render/mode/interaction lifecycle events | Lifecycle hooks (`registerWidgemoHook`) | Hooks run at explicit core lifecycle trigger points |
+
+Practical recommendation:
+
+- For most integrators, use gestures for per-widget interaction behavior.
+- Use lifecycle hooks when you need runtime interception behavior.
+- Lifecycle customization usually means overriding built-in lifecycle names.
+
 All five lifecycle hook names are registered by default in core:
 
 - `preRender`
@@ -37,6 +53,13 @@ All five lifecycle hook names are registered by default in core:
 - `onItemClick`
 - `onModeChange`
 - `onDragDrop`
+
+### Auto-Invoked Names vs Custom-Named Hooks
+
+- Built-in lifecycle hook names are the only lifecycle hooks auto-fired by current core runtime.
+- Registering a new custom hook name alone does not create a new core lifecycle trigger.
+- A custom-named hook runs only where code explicitly calls `executeWidgemoHook('<name>', ...)`.
+- Adding new automatic lifecycle trigger points requires core/runtime code changes.
 
 ### Hook Contract Matrix
 
@@ -62,6 +85,68 @@ They are separate mechanisms and should not be treated as the same API surface.
 - `onModeChange` does not fire on initial mount; it fires only when the resolved effective mode changes.
 - `onDragDrop` is currently emitted from board drag/drop paths.
 - `onItemClick` is currently emitted from board and carousel interaction paths.
+
+### Minimal Usage Examples
+
+1. Gesture use case: per-widget click business logic
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      gestures: [
+        {
+          type: 'item-click',
+          onTrigger: (ctx) => {
+            auditLog(ctx.entity?.id);
+          },
+        },
+      ],
+      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+2. Lifecycle use case: wrap rendered output
+
+```tsx
+widgemoRegistry.registerWidgemoHook({
+  name: 'postRender',
+  hook: (componentName, element) => {
+    if (componentName !== 'Widgemo') return element;
+    return <div className="widget-shell">{element}</div>;
+  },
+});
+```
+
+3. Built-in override example: mode transition side effect
+
+```tsx
+widgemoRegistry.registerWidgemoHook({
+  name: 'onModeChange',
+  hook: (payload) => {
+    analytics.track('widgemo.mode.changed', payload);
+  },
+});
+```
+
+4. Custom-named manual invocation example
+
+```tsx
+import { executeWidgemoHook, widgemoRegistry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoHook({
+  name: 'afterExport',
+  hook: (payload) => {
+    console.info('afterExport', payload);
+  },
+});
+
+// This runs only because application/extension code explicitly invokes it.
+executeWidgemoHook('afterExport', { format: 'csv', rows: 120 });
+```
 
 ## Registration Collisions
 
