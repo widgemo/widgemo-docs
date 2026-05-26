@@ -113,6 +113,81 @@ const config = {
 | `gestures` | `GestureConfig[]` | Forwarded gestures |
 | `onInteractionEvent` | `(ctx) => void` | Event emitter for interaction context |
 
+## Interactions in Custom Modes
+
+Built-in gesture types available through config:
+
+- `item-click`
+- `item-drag-start`
+- `item-drop`
+
+Gesture handler flow:
+
+- If the matching gesture defines `onTrigger`, Widgemo calls `onTrigger`.
+- If `onTrigger` is omitted, Widgemo falls back to `interactions.onEvent`.
+
+For gesture configuration details, see [Widgemo Config: Gestures](/core/reference/widgemo-config#gestures).
+
+```tsx
+const config = {
+	interactions: {
+		onEvent: (ctx) => {
+			console.log('fallback interaction', ctx.kind, ctx.entity?.id);
+		},
+	},
+	zones: {
+		content: {
+			mode: 'timeline',
+			gestures: [
+				{
+					type: 'item-click',
+					onTrigger: (ctx) => {
+						openEntity(ctx.entity?.id);
+					},
+				},
+				{ type: 'item-drag-start' },
+				{ type: 'item-drop' },
+			],
+			item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+		},
+	},
+};
+```
+
+### Mode-Local Interactions
+
+You can implement additional mode-specific UI interactions directly in your custom mode component (for example hover effects, drag-over highlights, and scroll-driven behaviors).
+
+Use built-in gestures for standardized interaction handling. Use mode-local event handlers for mode-specific interactions.
+
+```tsx
+export function TimelineMode({ data = [], onInteractionEvent }: TimelineModeProps) {
+	return (
+		<ol>
+			{data.map((entity, index) => (
+				<li
+					key={String(entity.id ?? index)}
+					onMouseEnter={() => highlightRow(entity.id)}
+					onWheel={(event) => syncTimelineScroll(event.deltaY)}
+					onDoubleClick={() => onInteractionEvent?.({
+						kind: 'item-click',
+						zone: 'content',
+						entity,
+						data,
+						interactionId: 'timeline-double-click',
+						interactionLabel: 'Timeline Double Click',
+					})}
+				>
+					{String(entity.name ?? entity.title ?? index)}
+				</li>
+			))}
+		</ol>
+	);
+}
+```
+
+For lifecycle interception guidance, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
+
 ## Collision Behavior
 
 Collision semantics are defined in [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).
