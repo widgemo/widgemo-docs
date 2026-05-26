@@ -25,15 +25,73 @@ sidebar_position: 2
 | `containerTrim` | `'default' \| 'none'` | — | Optional shell trim |
 | `containerShadow` | `'default' \| 'none'` | — | Optional shell shadow |
 
-## Gestures and Interaction Handling
+## Gestures
 
-`zones.content.gestures` defines config-driven user interaction handlers on content interactions (for example `item-click`, `item-drag-start`, `item-drop`).
+`zones.content.gestures` defines config-driven user interaction handlers.
+
+Supported gesture types:
+
+- `item-click`
+- `item-drag-start`
+- `item-drop`
+
+### Gesture Types
+
+| Type | Typical Source Surface | Payload Intent | Where Handler Goes |
+|---|---|---|---|
+| `item-click` | Table rows, cards, and other selectable content items | User selection or activation of an item | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
+| `item-drag-start` | Board cards that can be moved | Drag initiation details for a move operation | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
+| `item-drop` | Board drop targets | Drop/completion details for a move operation | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
+
+### Handler Flow
+
+- If a matching gesture entry defines `onTrigger`, Widgemo calls that handler first.
+- If `onTrigger` is not provided, Widgemo falls back to `interactions.onEvent`.
+- If neither is provided, Widgemo does not run an app-level gesture handler.
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      console.log(ctx.kind, ctx.entity?.id);
+    },
+  },
+  zones: {
+    content: {
+      mode: 'board',
+      gestures: [
+        {
+          type: 'item-click',
+          interactionId: 'open-item',
+          interactionLabel: 'Open item',
+          onTrigger: (ctx) => {
+            openItem(ctx.entity?.id);
+          },
+        },
+        {
+          type: 'item-drag-start',
+          interactionId: 'move-start',
+          interactionLabel: 'Start move',
+        },
+        {
+          type: 'item-drop',
+          interactionId: 'move-drop',
+          interactionLabel: 'Finish move',
+        },
+      ],
+      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+For a quick decision guide on gestures/interactions vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
 
 ### `interactions.onEvent`
 
 `interactions.onEvent` is the global interaction sink for actions and gestures when no local handler is provided.
 
-For a quick decision guide on gestures/interactions vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
+For the canonical lifecycle hook contract, see [Extension API](/core/reference/extension-api#lifecycle-hooks).
 
 ## Lifecycle Hook Entry Points
 
