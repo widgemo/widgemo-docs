@@ -25,6 +25,16 @@ sidebar_position: 2
 | `containerTrim` | `'default' \| 'none'` | — | Optional shell trim |
 | `containerShadow` | `'default' \| 'none'` | — | Optional shell shadow |
 
+## Gestures and Interaction Handling
+
+`zones.content.gestures` defines config-driven user interaction handlers on content interactions (for example `item-click`, `item-drag-start`, `item-drop`).
+
+### `interactions.onEvent`
+
+`interactions.onEvent` is the global interaction sink for actions and gestures when no local handler is provided.
+
+For a quick decision guide on gestures/interactions vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
+
 ## Lifecycle Hook Entry Points
 
 `WidgemoConfig.preRender` is a config callback entry point.
@@ -32,7 +42,11 @@ sidebar_position: 2
 - It is called as `() => void` by `Widgemo` before render.
 - It is separate from registry lifecycle hooks (`registerWidgemoHook`).
 
+`zones.content.gestures` and `interactions.onEvent` are interaction handlers, not lifecycle hooks.
+
 For the canonical lifecycle hook contract (`preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`), see [Extension API](/core/reference/extension-api#lifecycle-hooks).
+
+For a quick decision guide on gestures vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
 
 ## Header and Footer Zones
 
