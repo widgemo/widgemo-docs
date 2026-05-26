@@ -36,7 +36,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
       {title && <h3 className="widgemo-showcase__title">{title}</h3>}
       {description && <p className="widgemo-showcase__description">{description}</p>}
       <WidgemoThemeProvider>
-        <div className="widgemo-showcase__widget">
+        <div className="widgemo-showcase__widget widgemo-showcase__widget--table-density">
           <Widgemo config={config} data={data} />
         </div>
       </WidgemoThemeProvider>
