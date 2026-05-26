@@ -2,8 +2,7 @@ import React, { ReactNode } from 'react';
 import { 
   Widgemo, 
   WidgemoThemeProvider, 
-  WidgemoConfig,
-  ContentConfig 
+  WidgemoConfig
 } from '@widgemo/widgemo-core';
 
 export interface WidgemoShowcaseProps {
@@ -12,6 +11,7 @@ export interface WidgemoShowcaseProps {
   title?: string;
   description?: string;
   children?: ReactNode;
+  className?: string;
 }
 
 /**
@@ -27,18 +27,16 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   title,
   description,
   children,
+  className,
 }) => {
+  const rootClassName = ['widgemo-showcase', className].filter(Boolean).join(' ');
+
   return (
-    <div style={{ marginBlock: '2rem' }}>
-      {title && <h3 style={{ marginBottom: '0.5rem' }}>{title}</h3>}
-      {description && <p style={{ marginBottom: '1rem', color: 'var(--ifm-color-emphasis-700)' }}>{description}</p>}
+    <div className={rootClassName}>
+      {title && <h3 className="widgemo-showcase__title">{title}</h3>}
+      {description && <p className="widgemo-showcase__description">{description}</p>}
       <WidgemoThemeProvider>
-        <div style={{ 
-          border: '1px solid var(--ifm-color-emphasis-200)',
-          borderRadius: '0.5rem',
-          padding: '1rem',
-          backgroundColor: 'var(--ifm-color-emphasis-0)',
-        }}>
+        <div className="widgemo-showcase__widget">
           <Widgemo config={config} data={data} />
         </div>
       </WidgemoThemeProvider>
