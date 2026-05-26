@@ -85,14 +85,19 @@
 
   /* Neutralize Infima markdown table styling inside live Widgemo renders. */
   --ifm-table-border-width: 0;
-  --ifm-table-cell-padding: 0;
   --ifm-table-background: transparent;
   --ifm-table-stripe-background: transparent;
   --ifm-table-head-background: transparent;
+  --ifm-table-cell-padding: 0.5rem;
 }
 
 .widgemo-showcase__widget .widgemo-table {
   margin-bottom: 0;
+}
+
+/* Keep showcase tables compact and closer to demo/Bootstrap density. */
+.widgemo-showcase__widget--table-density .widgemo-table > :not(caption) > * > * {
+  padding: 0.5rem;
 }
 
 /* Keep badge shape and spacing aligned with core/Bootstrap defaults in docs context. */
