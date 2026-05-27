@@ -29,16 +29,14 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   children,
   className,
 }) => {
-  const rootClassName = ['widgemo-showcase', className].filter(Boolean).join(' ');
+  const rootClassName = className?.trim() || undefined;
 
   return (
     <div className={rootClassName}>
-      {title && <h3 className="widgemo-showcase__title">{title}</h3>}
-      {description && <p className="widgemo-showcase__description">{description}</p>}
+      {title && <h3>{title}</h3>}
+      {description && <p>{description}</p>}
       <WidgemoThemeProvider>
-        <div className="widgemo-showcase__widget widgemo-showcase__widget--table-density">
-          <Widgemo config={config} data={data} />
-        </div>
+        <Widgemo config={config} data={data} />
       </WidgemoThemeProvider>
       {children}
     </div>
