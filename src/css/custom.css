@@ -64,3 +64,12 @@
   border-color: var(--ifm-border-color);
 }
 
+/* Keep Infima markdown table chrome from leaking into live Widgemo showcases. */
+.widgemo-showcase__widget {
+  --ifm-table-border-width: 0;
+  --ifm-table-border-color: transparent;
+  --ifm-table-background: transparent;
+  --ifm-table-stripe-background: transparent;
+  --ifm-table-head-background: transparent;
+}
+
