@@ -69,8 +69,15 @@
 .widgemo-showcase__widget {
   --ifm-table-border-width: 0;
   --ifm-table-border-color: transparent;
+  --ifm-table-cell-padding: 0;
   --ifm-table-background: transparent;
   --ifm-table-stripe-background: transparent;
   --ifm-table-head-background: transparent;
+}
+
+.widgemo-showcase__widget .widgemo-table {
+  display: table;
+  overflow: visible;
+  margin-bottom: 0;
 }
 
