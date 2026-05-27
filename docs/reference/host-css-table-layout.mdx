@@ -14,7 +14,11 @@ Expected baseline:
 
 - Table borders, stripe behavior, and header treatment come from widgemo-core and mode config.
 - Cell spacing and row density follow core defaults plus any responsive mode behavior.
-- Column sizing follows browser table layout rules unless field widths are provided.
+- Table mode layout is mode-driven:
+  - `traditional` uses fixed table layout.
+  - `rich-cells` uses auto table layout.
+- Runtime table sizing uses `width: max-content` with `min-width: 100%`.
+- Horizontal overflow is handled by the internal scroll region (`.widgemo-table-scroll-region`).
 
 ## What host global table CSS can change
 
@@ -29,12 +33,12 @@ table th, table td { padding: 12px; }
 
 These selectors can change Widgemo semantics by introducing unexpected markdown-style borders, striping, and spacing.
 
-## Recommended defensive scoped resets
+## Docusaurus and Infima hosts only
 
-Prefer scoped resets that target your host wrapper, not global document table styles.
+If your host stack is Docusaurus with Infima, scoped variable resets can neutralize markdown table chrome leakage inside Widgemo showcases.
 
 ```css
-/* Example host wrapper reset for Widgemo content only */
+/* Docusaurus/Infima-only example */
 .my-app-widgemo-scope {
   --ifm-table-border-width: 0;
   --ifm-table-border-color: transparent;
@@ -44,11 +48,31 @@ Prefer scoped resets that target your host wrapper, not global document table st
 }
 ```
 
+## Framework-agnostic scoped mitigation
+
+For non-Infima hosts, avoid global `table`, `th`, and `td` overrides and restore Widgemo table semantics only inside a local scope.
+
+```css
+/* Example for any host framework */
+.my-app-widgemo-scope .widgemo-table {
+  display: table;
+  margin-bottom: 0;
+}
+
+.my-app-widgemo-scope .widgemo-table-scroll-region {
+  overflow-x: auto;
+}
+
+.my-app-widgemo-scope .widgemo-table > :not(caption) > * > * {
+  border: 0;
+}
+```
+
 Notes:
 
-- Keep resets scoped to a Widgemo wrapper class.
-- Avoid global selectors that target every table in the app.
-- Avoid density tuning unless you intentionally want a non-default look.
+- Keep mitigations scoped to a Widgemo wrapper class.
+- Do not apply these mitigations as global table rules.
+- Do not add density tuning unless you intentionally want a non-default look.
 
 ## Deterministic column widths
 
