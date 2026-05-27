@@ -18,7 +18,21 @@ Expected baseline:
   - `traditional` uses fixed table layout.
   - `rich-cells` uses auto table layout.
 - Runtime table sizing uses `width: max-content` with `min-width: 100%`.
-- Horizontal overflow is handled by the internal scroll region (`.widgemo-table-scroll-region`).
+- Fixed/fill container sizing with overflow constraints is handled by the internal scroll region (`.widgemo-table-scroll-region`).
+
+## Constrained overflow contract
+
+When a Widgemo table is rendered in a fixed-size or fill container with constrained space, scrolling remains internal to the table scroll region.
+
+- Horizontal overflow (`overflow-x`) and vertical overflow (`overflow-y`) are independent axes and can appear independently based on content and container size.
+- In dual-overflow cases, both axes should remain functionally discoverable with usable controls.
+- Pagination changes visible rows, but does not change scrollbar discoverability semantics for constrained regions.
+
+### Overlay scrollbar caveat
+
+On some operating systems, native scrollbar rails auto-hide based on platform preferences. Treat visual rail persistence as platform-dependent presentation.
+
+The behavior contract is functional discoverability and usable scrolling controls, even when rails are transient.
 
 ## Row striping
 
@@ -26,7 +40,7 @@ Expected baseline:
 
 Bootstrap-style hosts are supported, and with current widgemo-core behavior `alternatingRows` remains visible as the active striping contract.
 
-The caveat is aggressive host overrides that explicitly repaint rows or cells. For example, a host rule that applies cell-level paint (`box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)`), hard `background` values on `td`, or `tr:nth-child` repaint rules can visually override row-level striping. This is host influence, not a second Widgemo striping mechanism.
+Bootstrap host influence can restyle appearance, but should not break Widgemo overflow semantics. The caveat is aggressive host overrides that explicitly repaint rows or cells. For example, a host rule that applies cell-level paint (`box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)`), hard `background` values on `td`, or `tr:nth-child` repaint rules can visually override row-level striping. This is host influence, not a second Widgemo striping mechanism.
 
 If alternating rows appear reduced or inconsistent, audit host-level `table`/`tr`/`td` repaint rules first.
 
