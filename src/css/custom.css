@@ -64,7 +64,8 @@
   border-color: var(--ifm-border-color);
 }
 
-/* Keep Infima markdown table chrome from leaking into live Widgemo showcases. */
+/* Showcase-only isolation: prevent Infima markdown table chrome leakage. */
+/* Do not add spacing, density, typography, badge, or border restyling here. */
 .widgemo-showcase__widget {
   --ifm-table-border-width: 0;
   --ifm-table-border-color: transparent;

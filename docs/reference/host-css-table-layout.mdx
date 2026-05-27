@@ -1,0 +1,69 @@
+---
+sidebar_position: 7
+---
+
+# Host CSS and Table Layout
+
+This page explains how host application CSS can affect Widgemo table rendering and how to keep behavior predictable.
+
+## Baseline in plain apps
+
+When an app does not apply broad global table rules, Widgemo table rendering follows widgemo-core defaults.
+
+Expected baseline:
+
+- Table borders, stripe behavior, and header treatment come from widgemo-core and mode config.
+- Cell spacing and row density follow core defaults plus any responsive mode behavior.
+- Column sizing follows browser table layout rules unless field widths are provided.
+
+## What host global table CSS can change
+
+Many sites ship global selectors like these:
+
+```css
+/* Examples of host rules that can alter Widgemo table behavior */
+table, th, td { border: 1px solid var(--brand-border); }
+table tr:nth-child(even) { background: var(--striped-row); }
+table th, table td { padding: 12px; }
+```
+
+These selectors can change Widgemo semantics by introducing unexpected markdown-style borders, striping, and spacing.
+
+## Recommended defensive scoped resets
+
+Prefer scoped resets that target your host wrapper, not global document table styles.
+
+```css
+/* Example host wrapper reset for Widgemo content only */
+.my-app-widgemo-scope {
+  --ifm-table-border-width: 0;
+  --ifm-table-border-color: transparent;
+  --ifm-table-background: transparent;
+  --ifm-table-stripe-background: transparent;
+  --ifm-table-head-background: transparent;
+}
+```
+
+Notes:
+
+- Keep resets scoped to a Widgemo wrapper class.
+- Avoid global selectors that target every table in the app.
+- Avoid density tuning unless you intentionally want a non-default look.
+
+## Deterministic column widths
+
+If host CSS and content variability produce inconsistent column width distribution, define widths explicitly with `field.width`.
+
+```tsx
+fields: [
+  { key: 'name', label: 'Name', width: '220px' },
+  { key: 'status', label: 'Status', width: '140px' },
+  { key: 'owner', label: 'Owner' },
+]
+```
+
+Use `field.width` when:
+
+- Key columns must remain stable across pages and breakpoints.
+- Content length differences cause noticeable width drift.
+- You need deterministic alignment with external UI elements.

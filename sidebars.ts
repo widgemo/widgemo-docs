@@ -43,6 +43,7 @@ const sidebars: SidebarsConfig = {
         'reference/field-config',
         'reference/action-config',
         'reference/css-variables',
+        'reference/host-css-table-layout',
         'reference/theme-api',
         {
           type: 'category',
