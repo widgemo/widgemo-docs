@@ -24,9 +24,11 @@ Expected baseline:
 
 `alternatingRows` (defaults `true`) is the Widgemo-native control for row striping. It applies inline `backgroundColor` to every other row using the `--widgemo-row-alt-bg` token.
 
-Host CSS can visually mask this. In Bootstrap-style hosts, cell-level table paint (for example, `box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)`) is applied at the `td` level and renders on top of the row background. This is a host-paint layering effect, not a second Widgemo striping mechanism.
+Bootstrap-style hosts are supported, and with current widgemo-core behavior `alternatingRows` remains visible as the active striping contract.
 
-If alternating rows appear invisible or inconsistent, check whether the host is painting cell backgrounds that override the row-level color.
+The caveat is aggressive host overrides that explicitly repaint rows or cells. For example, a host rule that applies cell-level paint (`box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)`), hard `background` values on `td`, or `tr:nth-child` repaint rules can visually override row-level striping. This is host influence, not a second Widgemo striping mechanism.
+
+If alternating rows appear reduced or inconsistent, audit host-level `table`/`tr`/`td` repaint rules first.
 
 ## What host global table CSS can change
 
