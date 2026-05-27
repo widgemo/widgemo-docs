@@ -44,6 +44,14 @@ Bootstrap host influence can restyle appearance, but should not break Widgemo ov
 
 If alternating rows appear reduced or inconsistent, audit host-level `table`/`tr`/`td` repaint rules first.
 
+## Grouping chevron color contract
+
+In grouped table headers, collapse/expand chevrons inherit Widgemo icon color tokens (`--widgemo-group-chevron-color` -> `--widgemo-color-iconColor`) and should remain legible in default light/dark themes with accessible contrast.
+
+Host themes may restyle icon appearance, but should preserve control legibility and interaction affordance. Keep any host-specific overrides scoped and avoid broad global icon/color rules that reduce grouped-control contrast.
+
+Related references: [Content Config: Grouping](/core/reference/content-config#grouping) and [CSS Variables](/core/reference/css-variables).
+
 ## What host global table CSS can change
 
 Many sites ship global selectors like these:
