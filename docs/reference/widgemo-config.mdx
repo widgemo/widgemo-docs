@@ -17,7 +17,7 @@ sidebar_position: 2
 | `interactions.onEvent` | `(ctx: InteractionContext) => void` | — | Global sink for all actions and gestures |
 | `collapse.initialState` | `'expanded' \| 'collapsed' \| 'fixed'` | `'expanded'` | Widget collapse behaviour |
 | `collapse.button` | `boolean` | `true` | Show/hide the collapse toggle |
-| `containerFrame` | `{ border?, shadow?, borderRadius?, borderColor?, borderWidth?, overflow? }` | — | Outer shell frame controls |
+| `containerFrame` | `{ shell?, border?, shadow?, borderRadius?, borderColor?, borderWidth?, overflow? }` | — | Outer shell frame controls |
 | `style` | `CSSProperties` | — | Inline styles on the root element |
 | `theme` | `string` | — | Registered theme name |
 | `devMode` | `boolean \| DevModeConfig` | `false` | Dev inspector overlay |
@@ -139,19 +139,17 @@ zones: {
 
 `containerFrame` is the canonical first-release shell control.
 
-`containerFrame.border` and `containerFrame.shadow` control shell chrome only.
-Setting `border: 'none'` removes the outer border; it does not remove default header/footer zone spacing.
-
 Supported fields:
 
-- `border`: `'none' | 'on'` (shell border chrome)
-- `shadow`: `'none' | 'on'` (shell shadow chrome)
+- `shell`: `'on' | 'none'` — **new** — controls whether the outer container surface renders at all (see [Shellless mode](#shellless-mode-shell-none) below)
+- `border`: `'none' | 'on'` — shell border line
+- `shadow`: `'none' | 'on'` — shell drop shadow
 - `borderRadius`: `'square' | 'rounded' | number | string`
 - `borderColor`: `string`
 - `borderWidth`: `string | number`
 - `overflow`: any valid CSS `overflow` value
 
-Use `'none'` to disable border/shadow chrome. Use `'on'` (or omit the field) to keep shell defaults enabled.
+Default for all fields: `undefined` (core defaults apply — bordered, with shadow, with background).
 
 ```tsx
 const config = {
@@ -167,9 +165,53 @@ const config = {
 };
 ```
 
+### Shellless mode (`shell: 'none'`)
+
+When `shell: 'none'`, the outer shell surface is disabled while zone internals continue to render normally:
+
+- Outer background is transparent
+- Border and shadow are removed
+- Header and footer default to transparent backgrounds
+- Outer radius defaults to `0` unless explicitly configured
+- Outer overflow defaults to `visible` unless explicitly configured
+- `zones.content` spacing remains mode-owned
+
+Shellless affects the outer container only; mode-level and zone-level spacing behavior is unchanged.
+
+```tsx
+const config = {
+  // The widget has no visible card surface.
+  // It floats inside the host surface with normal zone spacing.
+  containerFrame: { shell: 'none' },
+  zones: {
+    header: { title: 'Approvals', subtitle: 'Inline queue' },
+    content: { mode: 'table', item: { fields: […], layout: { type: 'auto' } } },
+  },
+};
+```
+
+### Borderless vs shellless — when to use which
+
+| | Borderless (`border: 'none', shadow: 'none'`) | Shellless (`shell: 'none'`) |
+|---|---|---|
+| **Outer card background** | Present (uses theme background) | Transparent |
+| **Border line** | Removed | Removed |
+| **Drop shadow** | Removed (when `shadow: 'none'`) | Removed |
+| **Header/footer default background** | Present (theme/card surfaces) | Transparent by default |
+| **Outer radius default** | Theme/card default radius | `0` (unless explicitly configured) |
+| **Outer overflow default** | Theme/container default behavior | `visible` (unless explicitly configured) |
+| **Zone padding** | Normal | Normal |
+| **Visual effect** | Card-like block, chrome stripped | Blends into host surface |
+| **Use when** | You want a flat card that fits inside a panel but keeps its own background | You want the widget to read as part of the page, with no card boundary at all |
+
+**Key rule:** if you can still see the widget's white/dark card rectangle after removing the border and shadow, you have borderless. If that rectangle is gone and the widget content floats on the host surface, you have shellless.
+
 ### Validation Checklist
 
 - In borderless shells (`containerFrame.border: 'none'`), confirm header/footer spacing remains consistent with bordered shells unless you explicitly override zone padding.
+- In shellless widgets (`containerFrame.shell: 'none'`), confirm host background shows through the widget area.
+- In shellless widgets, confirm header/footer do not leave behind card-like background surfaces by default.
+- In shellless widgets, confirm no rounded outer card boundary remains unless radius is explicitly configured.
 
 ## Loading and Error States
 
