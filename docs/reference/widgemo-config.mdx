@@ -22,8 +22,6 @@ sidebar_position: 2
 | `theme` | `string` | — | Registered theme name |
 | `devMode` | `boolean \| DevModeConfig` | `false` | Dev inspector overlay |
 | `preRender` | `() => void` | — | Config-level callback invoked by `Widgemo` before render |
-| `containerTrim` | `'default' \| 'none'` | — | Optional shell trim |
-| `containerShadow` | `'default' \| 'none'` | — | Optional shell shadow |
 
 ## Gestures
 
@@ -139,12 +137,28 @@ zones: {
 
 ## Container Frame
 
+`containerFrame` is the canonical first-release shell control.
+
+Supported fields:
+
+- `border`: `'none' | 'on'`
+- `shadow`: `'none' | 'on'`
+- `borderRadius`: `'square' | 'rounded' | number | string`
+- `borderColor`: `string`
+- `borderWidth`: `string | number`
+- `overflow`: any valid CSS `overflow` value
+
+Use `'none'` to disable border/shadow. Use `'on'` (or omit the field) to keep shell defaults enabled.
+
 ```tsx
 const config = {
   containerFrame: {
-    border: 'none',
+    border: 'on',
     shadow: 'none',
-    borderRadius: 'square',
+    borderRadius: 10,
+    borderColor: '#d0d7de',
+    borderWidth: 2,
+    overflow: 'hidden',
   },
   zones: { /* … */ },
 };
