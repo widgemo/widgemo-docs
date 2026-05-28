@@ -215,6 +215,17 @@ const config = {
 
 ## Loading and Error States
 
+Loading and error behavior is runtime-driven by `zones.content.status` plus the matching state object.
+
+### Loading indicators (built-in runtime behavior)
+
+- `spinner`: renders the built-in spinner indicator.
+- `skeleton`: renders the built-in skeleton placeholder bars.
+- `text`: renders the built-in text indicator (`Loading`).
+- `custom`: accepted for backward compatibility; currently renders like the built-in text indicator.
+
+Compatibility note: `indicator: 'custom'` is accepted for backward compatibility, but the preferred customization path is `loadingState.renderer`.
+
 ```tsx
 content: {
   mode: 'table',
@@ -231,17 +242,73 @@ content: {
 ```tsx
 content: {
   mode: 'table',
+  status: 'loading',
+  loadingState: {
+    enabled: true,
+    // Accepted for compatibility, but renderer is preferred for custom UI.
+    indicator: 'custom',
+    message: 'Loading records…',
+    renderer: ({ message, indicator, data }) => (
+      <div className="my-loading-shell">
+        <strong>{message}</strong>
+        <span>indicator={indicator}</span>
+        <span>rows={data?.length ?? 0}</span>
+      </div>
+    ),
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+### Error severity (built-in runtime behavior)
+
+- `info`: uses built-in info tone/styling.
+- `warning`: uses built-in warning tone/styling.
+- `error`: uses built-in error tone/styling (default).
+
+Severity affects built-in tone/styling only. It does not change retry wiring, error message resolution, or data flow.
+
+```tsx
+content: {
+  mode: 'table',
   status: 'error',
   error: { message: 'Failed to load data' },
   errorState: {
     enabled: true,
     message: (err) => `Error: ${err?.message ?? 'Something went wrong'}`,
     retry: { label: 'Try Again', onRetry: () => refetch() },
-    severity: 'warning',  // 'info' | 'warning' | 'error'
+    severity: 'warning',
   },
   item: { fields: […], layout: { type: 'auto' } },
 },
 ```
+
+```tsx
+content: {
+  mode: 'table',
+  status: 'error',
+  error: { message: 'Failed to load data' },
+  errorState: {
+    enabled: true,
+    severity: 'info',
+    retry: { label: 'Try Again', onRetry: () => refetch() },
+    renderer: ({ message, severity, showRetry, retryLabel, onRetry }) => (
+      <div className={`my-error my-error-${severity ?? 'error'}`}>
+        <p>{message}</p>
+        {showRetry ? <button onClick={onRetry}>{retryLabel}</button> : null}
+      </div>
+    ),
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+### Renderer override precedence
+
+- `loadingState.renderer` overrides built-in loading indicator UI (`spinner`, `skeleton`, `text`, `custom`).
+- `errorState.renderer` overrides built-in severity UI (`info`, `warning`, `error`).
+
+When a renderer override is provided, built-in visuals are bypassed and your renderer output is rendered instead.
 
 Retry callback note:
 
@@ -249,3 +316,9 @@ Retry callback note:
 - For externally managed error flow (`<Widgemo error={...} onRetry={...} />`), top-level `onRetry` is used as the retry callback for the content error action. If `zones.content.errorState.retry` is an object, existing fields such as `label` are retained while `retry.onRetry` is overridden.
 - Current external-flow nuance: if `zones.content.errorState.retry` is `false`, retry remains disabled even when top-level `onRetry` is provided with `error`.
 - Top-level `onRetry` also powers retry in the runtime boundary fallback UI.
+
+When `errorState.renderer` is used, it receives the resolved retry-related props from runtime:
+
+- `showRetry`: whether retry should be displayed.
+- `retryLabel`: resolved retry label.
+- `onRetry` and `retry`: callback aliases for backward compatibility.
