@@ -219,12 +219,32 @@ Loading and error behavior is runtime-driven by `zones.content.status` plus the 
 
 ### Loading indicators (built-in runtime behavior)
 
-- `spinner`: renders the built-in spinner indicator.
-- `skeleton`: renders the built-in skeleton placeholder bars.
+- `spinner`: renders the built-in spinner indicator (animated rotation).
+- `skeleton`: renders built-in skeleton placeholders.
 - `text`: renders the built-in text indicator (`Loading`).
 
 `loadingState.indicator` selects built-in loading presentation only.
 `loadingState.renderer` is the only custom-loading override path.
+
+### Skeleton options (`loadingState.indicator: 'skeleton'`)
+
+`loadingState.skeleton.variant` supports:
+
+- `text-bars`: stacked text-line placeholders (default variant).
+- `table-cells`: table-like row and cell placeholders.
+- `cards-grid`: card-grid placeholders.
+- `pie-chart`: pie and legend placeholders.
+
+`loadingState.skeleton.animation` supports:
+
+- `shimmer`: shimmer animation (default).
+- `morph`: subtle morph animation.
+- `none`: no skeleton animation.
+
+`loadingState.skeleton.gifUrl` behavior:
+
+- When `gifUrl` is provided and indicator is `skeleton`, core renders that GIF image as the skeleton visual.
+- In that case, variant/animation placeholders are not used for rendering.
 
 ```tsx
 content: {
@@ -233,6 +253,10 @@ content: {
   loadingState: {
     enabled: true,
     indicator: 'skeleton',
+    skeleton: {
+      variant: 'table-cells',
+      animation: 'shimmer',
+    },
     message: () => 'Loading records…',
   },
   item: { fields: […], layout: { type: 'auto' } },
@@ -241,19 +265,42 @@ content: {
 
 ```tsx
 content: {
-  mode: 'table',
+  mode: 'grid',
   status: 'loading',
   loadingState: {
     enabled: true,
-    indicator: 'spinner',
+    indicator: 'skeleton',
+    skeleton: {
+      variant: 'cards-grid',
+      animation: 'morph',
+    },
     message: 'Loading records…',
-    renderer: ({ message, indicator, data }) => (
+    renderer: ({ message, indicator, skeleton, data }) => (
       <div className="my-loading-shell">
         <strong>{message}</strong>
         <span>indicator={indicator}</span>
+        <span>variant={skeleton?.variant}</span>
+        <span>animation={skeleton?.animation}</span>
         <span>rows={data?.length ?? 0}</span>
       </div>
     ),
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+```tsx
+content: {
+  mode: 'chart',
+  status: 'loading',
+  loadingState: {
+    enabled: true,
+    indicator: 'skeleton',
+    skeleton: {
+      variant: 'pie-chart',
+      gifUrl: 'https://cdn.example.com/loading/pie-skeleton.gif',
+    },
+    message: 'Loading chart…',
   },
   item: { fields: […], layout: { type: 'auto' } },
 },
@@ -315,6 +362,12 @@ Retry callback note:
 - For externally managed error flow (`<Widgemo error={...} onRetry={...} />`), top-level `onRetry` is used as the retry callback for the content error action. If `zones.content.errorState.retry` is an object, existing fields such as `label` are retained while `retry.onRetry` is overridden.
 - Current external-flow nuance: if `zones.content.errorState.retry` is `false`, retry remains disabled even when top-level `onRetry` is provided with `error`.
 - Top-level `onRetry` also powers retry in the runtime boundary fallback UI.
+
+Default built-in error retry presentation:
+
+- The retry action renders below the error message.
+- It is centered and visually separated by the built-in vertical layout gap.
+- It uses core action styling via Widgemo button classes (not unstyled browser-default button presentation).
 
 When `errorState.renderer` is used, it receives the resolved retry-related props from runtime:
 
