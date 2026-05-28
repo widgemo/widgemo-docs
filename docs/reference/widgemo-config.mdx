@@ -179,3 +179,10 @@ content: {
   item: { fields: […], layout: { type: 'auto' } },
 },
 ```
+
+Retry callback note:
+
+- `zones.content.errorState.retry` controls content-level retry UI.
+- For externally managed error flow (`<Widgemo error={...} onRetry={...} />`), top-level `onRetry` is used as the retry callback for the content error action. If `zones.content.errorState.retry` is an object, existing fields such as `label` are retained while `retry.onRetry` is overridden.
+- Current external-flow nuance: if `zones.content.errorState.retry` is `false`, retry remains disabled even when top-level `onRetry` is provided with `error`.
+- Top-level `onRetry` also powers retry in the runtime boundary fallback UI.

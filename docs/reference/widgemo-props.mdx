@@ -51,6 +51,13 @@ For host-level table CSS interaction guidance, see [Host CSS and Table Layout](/
 | `error` | `any` | No | External error state |
 | `onRetry` | `() => void` | No | Retry callback when in error state |
 
+## `onRetry` Behavior and Precedence
+
+- Top-level `onRetry` supports externally managed error flow (`error` prop) and runtime boundary retry (fallback `WidgemoRuntimeBoundary` retry button).
+- Content-level retry is configured in `config.zones.content.errorState.retry`.
+- Precedence in external error flow: when `error` is provided and top-level `onRetry` is set, Widgemo wires that top-level callback into the content error retry action. If `errorState.retry` is an object, its existing fields such as `label` are retained while `errorState.retry.onRetry` is overridden.
+- Current external-flow nuance: if `config.zones.content.errorState.retry` is `false`, retry remains disabled even when top-level `onRetry` is provided with `error`.
+
 ## `widgemoRegistry` Methods
 
 | Method | Signature | Description |
