@@ -113,10 +113,28 @@ content: {
 
 ## Action Overflow
 
+Controls how item and zone actions behave when there are more actions than can fit inline.
+The overflow button (⋯) appears automatically when actions are tucked into a menu.
+When the overflow count *increases* (e.g. due to a container resize), the button plays
+an attention animation defined by `indicator`.
+
 ```tsx
 actionOverflow: {
   maxInline: { mobile: 1, tablet: 2, desktop: 3 },  // or scalar number
-  menuLabel: 'More',
-  indicator: 'pulse',  // 'pulse' | 'scale' | 'color-shift' | 'none'
+  menuLabel: 'More',           // label shown instead of ⋯ icon on desktop
+  menuTooltip: 'More actions', // tooltip on the overflow button
+  indicator: 'pulse',          // 'pulse' | 'scale' | 'color-shift' | 'none'
 },
 ```
+
+### `indicator` values
+
+| Value | Effect |
+|---|---|
+| `'pulse'` | Scale pop + blue radial ripple. **Default.** |
+| `'scale'` | Clean scale-only pop — no color change. Subtler than pulse. |
+| `'color-shift'` | Brief background and border tint flash toward the primary color — no movement. Suitable when reducing motion is preferred. |
+| `'none'` | Animation disabled entirely. |
+
+The animation fires only when the overflow count **increases**, not on initial mount.
+
