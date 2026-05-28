@@ -222,9 +222,9 @@ Loading and error behavior is runtime-driven by `zones.content.status` plus the 
 - `spinner`: renders the built-in spinner indicator.
 - `skeleton`: renders the built-in skeleton placeholder bars.
 - `text`: renders the built-in text indicator (`Loading`).
-- `custom`: accepted for backward compatibility; currently renders like the built-in text indicator.
 
-Compatibility note: `indicator: 'custom'` is accepted for backward compatibility, but the preferred customization path is `loadingState.renderer`.
+`loadingState.indicator` selects built-in loading presentation only.
+`loadingState.renderer` is the only custom-loading override path.
 
 ```tsx
 content: {
@@ -245,8 +245,7 @@ content: {
   status: 'loading',
   loadingState: {
     enabled: true,
-    // Accepted for compatibility, but renderer is preferred for custom UI.
-    indicator: 'custom',
+    indicator: 'spinner',
     message: 'Loading records…',
     renderer: ({ message, indicator, data }) => (
       <div className="my-loading-shell">
@@ -305,7 +304,7 @@ content: {
 
 ### Renderer override precedence
 
-- `loadingState.renderer` overrides built-in loading indicator UI (`spinner`, `skeleton`, `text`, `custom`).
+- `loadingState.renderer` overrides built-in loading indicator UI (`spinner`, `skeleton`, `text`).
 - `errorState.renderer` overrides built-in severity UI (`info`, `warning`, `error`).
 
 When a renderer override is provided, built-in visuals are bypassed and your renderer output is rendered instead.
