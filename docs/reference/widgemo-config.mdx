@@ -139,16 +139,19 @@ zones: {
 
 `containerFrame` is the canonical first-release shell control.
 
+`containerFrame.border` and `containerFrame.shadow` control shell chrome only.
+Setting `border: 'none'` removes the outer border; it does not remove default header/footer zone spacing.
+
 Supported fields:
 
-- `border`: `'none' | 'on'`
-- `shadow`: `'none' | 'on'`
+- `border`: `'none' | 'on'` (shell border chrome)
+- `shadow`: `'none' | 'on'` (shell shadow chrome)
 - `borderRadius`: `'square' | 'rounded' | number | string`
 - `borderColor`: `string`
 - `borderWidth`: `string | number`
 - `overflow`: any valid CSS `overflow` value
 
-Use `'none'` to disable border/shadow. Use `'on'` (or omit the field) to keep shell defaults enabled.
+Use `'none'` to disable border/shadow chrome. Use `'on'` (or omit the field) to keep shell defaults enabled.
 
 ```tsx
 const config = {
@@ -163,6 +166,10 @@ const config = {
   zones: { /* … */ },
 };
 ```
+
+### Validation Checklist
+
+- In borderless shells (`containerFrame.border: 'none'`), confirm header/footer spacing remains consistent with bordered shells unless you explicitly override zone padding.
 
 ## Loading and Error States
 
