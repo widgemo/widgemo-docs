@@ -2,13 +2,179 @@
 sidebar_position: 4
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
 # Field Config
 
-`FieldConfig` defines how each field is rendered. Most options are cross-mode, while some are mode-specific (for example, `sortable`/`width`/`align` in table mode and `span` in grid field layouts).
+`FieldConfig` defines how each field is rendered. Most options are cross-mode, while some are mode-specific, such as `sortable`, `width`, and `align` in table mode and `span` in grid layouts.
 
 For host-level table CSS interaction guidance, see [Host CSS and Table Layout](/core/reference/host-css-table-layout).
 
-The snippet below focuses on the public configuration contract.
+The gallery below shows the built-in `renderAs` outputs documented on this page.
+
+<WidgemoShowcase
+  title="Renderer Gallery"
+  description="A core-only visual reference for the built-in renderAs options on this page."
+  data={[
+    {
+      name: 'Aurora Chen',
+      salary: 184250,
+      progress: 86,
+      rating: 4.7,
+      profileUrl: 'https://example.com/team/aurora',
+      metadata: { team: 'Design', region: 'EMEA' },
+      delta: 12.4,
+      status: 'posted',
+      trend: [42, 45, 47, 50, 54],
+      healthScore: 92,
+      confidence: 96,
+    },
+    {
+      name: 'Mateo Silva',
+      salary: -5210,
+      progress: 38,
+      rating: 3.2,
+      profileUrl: 'https://example.com/team/mateo',
+      metadata: { team: 'Platform', region: 'NA' },
+      delta: -4.6,
+      status: 'pending',
+      trend: [18, 19, 17, 14, 12],
+      healthScore: 61,
+      confidence: 72,
+    },
+    {
+      name: 'Priya Nair',
+      salary: 89400,
+      progress: 69,
+      rating: 4.1,
+      profileUrl: 'https://example.com/team/priya',
+      metadata: { team: 'Operations', region: 'APAC' },
+      delta: 0,
+      status: 'watch',
+      trend: [22, 22, 23, 22, 24],
+      healthScore: 48,
+      confidence: 58,
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Renderer Gallery',
+        subtitle: 'Core renderAs options shown with live output',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            {
+              key: 'salary',
+              label: 'Currency',
+              renderAs: 'currency',
+              renderAsOptions: {
+                currency: 'USD',
+                compact: true,
+                colorize: true,
+                negativeFormat: 'parentheses',
+              },
+            },
+            {
+              key: 'progress',
+              label: 'Progress',
+              renderAs: 'progress',
+              renderAsOptions: {
+                height: 10,
+                showPercentage: true,
+              },
+            },
+            {
+              key: 'rating',
+              label: 'Rating',
+              renderAs: 'rating',
+              renderAsOptions: {
+                max: 5,
+                size: 18,
+              },
+            },
+            {
+              key: 'profileUrl',
+              label: 'Link',
+              renderAs: 'link',
+              renderAsOptions: {
+                text: 'Open profile',
+                newTab: true,
+                externalWarning: true,
+              },
+            },
+            {
+              key: 'metadata',
+              label: 'JSON',
+              renderAs: 'jsonPreview',
+              renderAsOptions: {
+                defaultCollapsed: true,
+                maxDepth: 2,
+              },
+            },
+            {
+              key: 'delta',
+              label: 'Delta',
+              renderAs: 'deltaValue',
+              renderAsOptions: {
+                suffixPercent: true,
+                trendIndicator: true,
+                fractionDigits: 1,
+              },
+            },
+            {
+              key: 'status',
+              label: 'Amount Pill',
+              renderAs: 'amountPill',
+              renderAsOptions: {
+                density: 'compact',
+                shape: 'pill',
+                toneMap: {
+                  posted: { background: '#d1e7dd', color: '#0f5132', label: 'Posted' },
+                  pending: { background: '#fff3cd', color: '#8a6d3b', label: 'Pending' },
+                  watch: { background: '#f8d7da', color: '#842029', label: 'Watch' },
+                },
+              },
+            },
+            {
+              key: 'trend',
+              label: 'Spark Trend',
+              renderAs: 'sparkTrend',
+              renderAsOptions: {
+                width: 108,
+                height: 34,
+                strokeWidth: 1.6,
+                showDeltaLabel: true,
+              },
+            },
+            {
+              key: 'healthScore',
+              label: 'Health Meter',
+              renderAs: 'healthMeter',
+              renderAsOptions: {
+                showValue: true,
+              },
+            },
+            {
+              key: 'confidence',
+              label: 'Confidence Meter',
+              renderAs: 'confidenceMeter',
+              renderAsOptions: {
+                density: 'compact',
+              },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+All built-in renderAs option objects also accept `className` from `BaseRenderAsOptions`.
 
 ## FieldConfig Interface
 
@@ -39,7 +205,7 @@ interface FieldConfig {
 
 - `renderAs` takes precedence over `type`.
 - `booleanTrueLabel` and `booleanFalseLabel` are applied only for `type: 'boolean'` fallback rendering.
-- `formatter` runs before type rendering. For domain-specific boolean wording/logic, prefer a formatter + `renderAs` (or `type: 'text'`) instead of relying on boolean labels.
+- `formatter` runs before type rendering. For domain-specific boolean wording or logic, prefer a formatter plus `renderAs` or `type: 'text'` instead of relying on boolean labels.
 - `visible` is currently enforced in table mode field filtering.
 - `span` applies to item layouts that use CSS grid field placement.
 
@@ -63,15 +229,14 @@ interface FieldConfig {
 }
 ```
 
-Use `style: 'badge'` for the filled pill treatment with background and border, or `style: 'inline'` for a lighter text-first treatment that keeps the icon/text on one line without the pill chrome.
+Use `style: 'badge'` for the filled pill treatment with background and border, or `style: 'inline'` for a lighter text-first treatment that keeps icon and text on one line without the pill chrome.
 
-`iconPosition`: `'left'`, `'right'`, or `'only'` (icon only, no text).
+`iconPosition` can be `'left'`, `'right'`, or `'only'`.
 
-Additional badge behavior that is implemented in core but easy to miss:
+Additional badge behavior implemented in core:
 
 - `colorMap` and `defaultColor` can be static values or functions of the current entity.
 - Badge color objects can use `background`, `text`, `color`, `textColor`, `icon`, `iconColor`, and `iconPosition`.
-- `className` is supported via the shared render-as base options and is applied to the rendered badge element, which makes it useful for app-specific CSS hooks.
 - Empty values render as a `-` placeholder badge.
 
 ### `currency`
@@ -82,18 +247,30 @@ Additional badge behavior that is implemented in core but easy to miss:
   renderAsOptions: {
     currency: 'USD',
     locale: 'en-US',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
     compact: true,
     compactThreshold: 1000,
+    showSymbol: true,
+    symbolPosition: 'prefix',
     colorize: true,
     positiveColor: '#198754',
     negativeColor: '#dc3545',
     zeroColor: '#6c757d',
-    negativeFormat: 'parentheses',  // 'minus' (default) | 'parentheses'
+    negativeFormat: 'parentheses',
     decimalAlign: true,
-    minimumFractionDigits: 0,
   },
 }
 ```
+
+- `currency` and `locale` drive the formatter.
+- `minimumFractionDigits` and `maximumFractionDigits` control decimal precision.
+- `compact` switches to compact notation once `compactThreshold` is reached.
+- `showSymbol` removes the currency symbol when false.
+- `symbolPosition` supports a best-effort prefix or suffix adjustment for common symbols.
+- `colorize` can tint positive, negative, and zero values with `positiveColor`, `negativeColor`, and `zeroColor`.
+- `negativeFormat: 'parentheses'` wraps negative values in parentheses.
+- `decimalAlign` keeps the decimal presentation consistent for table cells.
 
 ### `progress`
 
@@ -105,9 +282,16 @@ Additional badge behavior that is implemented in core but easy to miss:
     backgroundColor: '#e9ecef',
     height: 10,
     showPercentage: true,
+    textColor: '#111827',
   },
 }
 ```
+
+- `color` sets the fill color.
+- `backgroundColor` sets the track color.
+- `height` controls the bar height.
+- `showPercentage` toggles the centered percentage label.
+- `textColor` controls the percentage label color.
 
 ### `rating`
 
@@ -119,10 +303,16 @@ Additional badge behavior that is implemented in core but easy to miss:
     color: '#ffd700',
     emptyColor: '#dee2e6',
     size: 18,
-    icon: 'star',  // 'star' | 'heart' | any registered icon name
+    icon: 'star',
   },
 }
 ```
+
+- `max` sets the number of rating icons.
+- `size` controls the icon size.
+- `color` sets the filled icon color.
+- `emptyColor` sets the unfilled icon color.
+- `icon` chooses the registered icon name used for each step.
 
 ### `link`
 
@@ -130,13 +320,19 @@ Additional badge behavior that is implemented in core but easy to miss:
 {
   key: 'url', label: 'Profile', renderAs: 'link',
   renderAsOptions: {
-    text: (entity) => `View ${entity.name}`,  // or static string
-    url:  (entity) => `/users/${entity.id}`,  // or omit to use field value
+    text: (entity) => `View ${entity.name}`,
+    url:  (entity) => `/users/${entity.id}`,
     newTab: true,
     externalWarning: true,
   },
 }
 ```
+
+- `text` overrides the visible label; when omitted, the field value is used.
+- `url` overrides the destination; when omitted, the field value is used.
+- `newTab` opens the link in a new tab and adds `noopener noreferrer`.
+- `externalWarning` adds an external-link indicator when the URL is detected as external.
+- Email-like values without an explicit `url` are converted to `mailto:` links.
 
 ### `jsonPreview`
 
@@ -150,7 +346,11 @@ Additional badge behavior that is implemented in core but easy to miss:
 }
 ```
 
-Safely parses string or object input. Renders collapsible tree with depth limiting.
+- String values are parsed as JSON when possible.
+- Object and array values render as a collapsible tree.
+- `defaultCollapsed` starts nested nodes collapsed, while the root stays expanded.
+- `maxDepth` truncates deeper nesting.
+- Invalid JSON renders an error state instead of throwing.
 
 ### `deltaValue`
 
@@ -170,6 +370,11 @@ Safely parses string or object input. Renders collapsible tree with depth limiti
 }
 ```
 
+- `suffixPercent` appends a percent sign to the formatted value.
+- `trendIndicator` toggles the UP/DOWN/FLAT label prefix.
+- `fractionDigits` controls the decimal precision.
+- `palette` customizes the positive, negative, and neutral colors.
+
 ### `amountPill`
 
 ```tsx
@@ -185,6 +390,11 @@ Safely parses string or object input. Renders collapsible tree with depth limiti
   },
 }
 ```
+
+- The raw field value is normalized to a tone key.
+- `density` adjusts padding and font size.
+- `shape` switches between `pill` and `rounded` chrome.
+- `toneMap` overrides the background, text color, and label for specific values.
 
 ### `sparkTrend`
 
@@ -202,7 +412,11 @@ Safely parses string or object input. Renders collapsible tree with depth limiti
 }
 ```
 
-Accepts either a numeric delta or a numeric series array. Renders a deterministic fallback sparkline when no series is provided.
+- Accepts either a numeric delta or a numeric series array/object with a `series` property.
+- `width` and `height` set the SVG dimensions.
+- `strokeWidth` controls the sparkline stroke.
+- `positiveColor` and `negativeColor` choose the accent color by trend direction.
+- `showDeltaLabel` toggles the numeric label under the chart.
 
 ### `healthMeter`
 
@@ -220,7 +434,9 @@ Accepts either a numeric delta or a numeric series array. Renders a deterministi
 }
 ```
 
-Renders a bounded 0-100 score meter with configurable threshold bands.
+- Values are clamped to the 0-100 range.
+- `bands` maps score ranges to labels, colors, and backgrounds.
+- `showValue` toggles the numeric score display.
 
 ### `confidenceMeter`
 
@@ -238,6 +454,10 @@ Renders a bounded 0-100 score meter with configurable threshold bands.
   },
 }
 ```
+
+- Values are clamped to the 0-100 range.
+- `density` switches between regular and compact sizing.
+- `bands` maps score ranges to labels, colors, and backgrounds.
 
 ## Item Layout
 
