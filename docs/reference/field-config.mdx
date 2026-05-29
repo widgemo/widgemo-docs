@@ -2,67 +2,13 @@
 sidebar_position: 4
 ---
 
-import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
-
 # Field Config
 
 `FieldConfig` defines how each field is rendered. Most options are cross-mode, while some are mode-specific (for example, `sortable`/`width`/`align` in table mode and `span` in grid field layouts).
 
 For host-level table CSS interaction guidance, see [Host CSS and Table Layout](/core/reference/host-css-table-layout).
 
-<WidgemoShowcase
-  title="Live field renderer examples"
-  description="These examples demonstrate the built-in renderAs options described in the reference tables below."
-  data={[
-    {
-      name: 'Aurora Chen',
-      status: 'active',
-      salary: 134000,
-      progress: 82,
-      rating: 4.7,
-      profileUrl: 'https://example.com/team/aurora',
-      metadata: { team: 'Design', region: 'EMEA' },
-      delta: 0.18,
-      confidence: 92,
-    },
-    {
-      name: 'Mateo Silva',
-      status: 'pending',
-      salary: 98000,
-      progress: 54,
-      rating: 4.2,
-      profileUrl: 'https://example.com/team/mateo',
-      metadata: { team: 'Platform', region: 'NA' },
-      delta: -0.07,
-      confidence: 71,
-    },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Renderer gallery',
-        subtitle: 'Badge, currency, progress, and more in one live example',
-      },
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'name', label: 'Name' },
-            { key: 'status', label: 'Status', renderAs: 'badge' },
-            { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD', compact: true, colorize: true } },
-            { key: 'progress', label: 'Progress', renderAs: 'progress', renderAsOptions: { showPercentage: true } },
-            { key: 'rating', label: 'Rating', renderAs: 'rating' },
-            { key: 'profileUrl', label: 'Profile', renderAs: 'link', renderAsOptions: { text: 'Open profile', newTab: true, externalWarning: true } },
-            { key: 'metadata', label: 'Metadata', renderAs: 'jsonPreview', renderAsOptions: { defaultCollapsed: true } },
-            { key: 'delta', label: 'Delta', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true } },
-            { key: 'confidence', label: 'Confidence', renderAs: 'confidenceMeter', renderAsOptions: { density: 'compact' } },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
+The snippet below focuses on the public configuration contract.
 
 ## FieldConfig Interface
 
@@ -112,11 +58,21 @@ interface FieldConfig {
     },
     style: 'badge',  // 'badge' (default) | 'inline'
     size: 'md',      // 'sm' | 'md' (default) | 'lg'
+    className: 'status-badge',
   },
 }
 ```
 
+Use `style: 'badge'` for the filled pill treatment with background and border, or `style: 'inline'` for a lighter text-first treatment that keeps the icon/text on one line without the pill chrome.
+
 `iconPosition`: `'left'`, `'right'`, or `'only'` (icon only, no text).
+
+Additional badge behavior that is implemented in core but easy to miss:
+
+- `colorMap` and `defaultColor` can be static values or functions of the current entity.
+- Badge color objects can use `background`, `text`, `color`, `textColor`, `icon`, `iconColor`, and `iconPosition`.
+- `className` is supported via the shared render-as base options and is applied to the rendered badge element, which makes it useful for app-specific CSS hooks.
+- Empty values render as a `-` placeholder badge.
 
 ### `currency`
 
