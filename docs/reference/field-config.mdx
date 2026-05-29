@@ -127,15 +127,15 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
             },
             {
               key: 'status',
-              label: 'Amount Pill',
-              renderAs: 'amountPill',
+              label: 'Status',
+              renderAs: 'badge',
               renderAsOptions: {
-                density: 'compact',
-                shape: 'pill',
-                toneMap: {
-                  posted: { background: '#d1e7dd', color: '#0f5132', label: 'Posted' },
-                  pending: { background: '#fff3cd', color: '#8a6d3b', label: 'Pending' },
-                  watch: { background: '#f8d7da', color: '#842029', label: 'Watch' },
+                style: 'badge',
+                size: 'sm',
+                colorMap: {
+                  posted: { background: '#d1e7dd', text: '#0f5132' },
+                  pending: { background: '#fff3cd', text: '#8a6d3b' },
+                  watch: { background: '#f8d7da', text: '#842029' },
                 },
               },
             },
@@ -374,27 +374,6 @@ Additional badge behavior implemented in core:
 - `trendIndicator` toggles the UP/DOWN/FLAT label prefix.
 - `fractionDigits` controls the decimal precision.
 - `palette` customizes the positive, negative, and neutral colors.
-
-### `amountPill`
-
-```tsx
-{
-  key: 'status', label: 'Status', renderAs: 'amountPill',
-  renderAsOptions: {
-    density: 'compact',
-    shape: 'pill',
-    toneMap: {
-      pending: { background: '#fff3cd', color: '#8a6d3b', label: 'Pending' },
-      posted:  { background: '#d1e7dd', color: '#0f5132', label: 'Posted' },
-    },
-  },
-}
-```
-
-- The raw field value is normalized to a tone key.
-- `density` adjusts padding and font size.
-- `shape` switches between `pill` and `rounded` chrome.
-- `toneMap` overrides the background, text color, and label for specific values.
 
 ### `sparkTrend`
 
