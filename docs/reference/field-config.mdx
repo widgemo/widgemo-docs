@@ -6,7 +6,7 @@ import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Field Config
 
-`FieldConfig` defines how each field is rendered. All options work across every mode.
+`FieldConfig` defines how each field is rendered. Most options are cross-mode, while some are mode-specific (for example, `sortable`/`width`/`align` in table mode and `span` in grid field layouts).
 
 For host-level table CSS interaction guidance, see [Host CSS and Table Layout](/core/reference/host-css-table-layout).
 
@@ -70,7 +70,7 @@ For host-level table CSS interaction guidance, see [Host CSS and Table Layout](/
 interface FieldConfig {
   key: string;                    // entity property key (required)
   label?: string;                 // display label
-  type?: 'text' | 'number' | 'date' | 'boolean' | 'email' | 'image' | 'swatch' | string;
+  type?: 'text' | 'number' | 'date' | 'boolean' | 'select' | 'relation' | 'textarea' | 'email' | 'url' | 'image' | 'swatch';
   sortable?: boolean;
   width?: number | string;        // table column width
   align?: 'left' | 'center' | 'right';
@@ -88,6 +88,14 @@ interface FieldConfig {
   renderAsOptions?: RenderAsOptions;
 }
 ```
+
+### Implementation Notes
+
+- `renderAs` takes precedence over `type`.
+- `booleanTrueLabel` and `booleanFalseLabel` are applied only for `type: 'boolean'` fallback rendering.
+- `formatter` runs before type rendering. For domain-specific boolean wording/logic, prefer a formatter + `renderAs` (or `type: 'text'`) instead of relying on boolean labels.
+- `visible` is currently enforced in table mode field filtering.
+- `span` applies to item layouts that use CSS grid field placement.
 
 ## Built-in `renderAs` Options
 
