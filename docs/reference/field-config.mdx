@@ -386,15 +386,18 @@ Additional badge behavior implemented in core:
     strokeWidth: 1.6,
     positiveColor: '#35d4a1',
     negativeColor: '#e67e7e',
+    neutralColor: '#6c757d',
     showDeltaLabel: true,
   },
 }
 ```
 
 - Accepts either a numeric delta or a numeric series array/object with a `series` property.
+- A parsed series must contain at least two numeric points; otherwise sparkTrend falls back to a generated synthetic series.
+- The fallback series is deterministic per entity and is intended as a visual fallback, not as historical data.
 - `width` and `height` set the SVG dimensions.
 - `strokeWidth` controls the sparkline stroke.
-- `positiveColor` and `negativeColor` choose the accent color by trend direction.
+- `positiveColor`, `negativeColor`, and `neutralColor` choose the accent color by trend direction.
 - `showDeltaLabel` toggles the numeric label under the chart.
 
 ### `healthMeter`
