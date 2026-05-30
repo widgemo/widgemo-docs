@@ -152,18 +152,31 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
             },
             {
               key: 'healthScore',
-              label: 'Health Meter',
-              renderAs: 'healthMeter',
+              label: 'Health Score',
+              renderAs: 'scoreMeter',
               renderAsOptions: {
                 showValue: true,
+                valueAsPercent: false,
+                tagPosition: 'top',
+                tagAlign: 'left',
+                valueAlign: 'right',
+                bands: [
+                  { max: 35, label: 'Critical', color: '#dc3545', background: 'rgba(220, 53, 69, 0.16)' },
+                  { max: 65, label: 'Watch', color: '#fd7e14', background: 'rgba(253, 126, 20, 0.16)' },
+                  { label: 'Healthy', color: '#198754', background: 'rgba(25, 135, 84, 0.16)' },
+                ],
               },
             },
             {
               key: 'confidence',
-              label: 'Confidence Meter',
-              renderAs: 'confidenceMeter',
+              label: 'Confidence Score',
+              renderAs: 'scoreMeter',
               renderAsOptions: {
                 density: 'compact',
+                valueAsPercent: true,
+                tagPosition: 'bottom',
+                tagAlign: 'right',
+                valueAlign: 'left',
               },
             },
           ],
@@ -400,13 +413,19 @@ Additional badge behavior implemented in core:
 - `positiveColor`, `negativeColor`, and `neutralColor` choose the accent color by trend direction.
 - `showDeltaLabel` toggles the numeric label under the chart.
 
-### `healthMeter`
+### `scoreMeter`
 
 ```tsx
 {
-  key: 'healthScore', label: 'Health', renderAs: 'healthMeter',
+  key: 'healthScore', label: 'Health', renderAs: 'scoreMeter',
   renderAsOptions: {
+    density: 'regular',
     showValue: true,
+    valueAsPercent: false,
+    decimals: 0,
+    tagPosition: 'top',
+    tagAlign: 'left',
+    valueAlign: 'right',
     bands: [
       { max: 35, label: 'Critical', color: '#dc3545', background: 'rgba(220, 53, 69, 0.16)' },
       { max: 65, label: 'Watch',    color: '#fd7e14', background: 'rgba(253, 126, 20, 0.16)' },
@@ -417,16 +436,26 @@ Additional badge behavior implemented in core:
 ```
 
 - Values are clamped to the 0-100 range.
+- `density` switches between regular and compact sizing.
+- `showValue` toggles numeric score output.
+- `valueAsPercent` controls whether the value includes `%`.
+- `decimals` controls numeric precision.
+- `tagPosition` supports `top` and `bottom`.
+- `tagAlign` and `valueAlign` each support `left` or `right`.
 - `bands` maps score ranges to labels, colors, and backgrounds.
-- `showValue` toggles the numeric score display.
+- If `bands` is omitted, the default bands are `High` for `85-100`, `Good` for `70-84`, `Medium` for `55-69`, and `Low` below `55`.
 
-### `confidenceMeter`
+Alternative compact confidence-style usage:
 
 ```tsx
 {
-  key: 'confidence', label: 'Confidence', renderAs: 'confidenceMeter',
+  key: 'confidence', label: 'Confidence', renderAs: 'scoreMeter',
   renderAsOptions: {
     density: 'compact',
+    valueAsPercent: true,
+    tagPosition: 'bottom',
+    tagAlign: 'right',
+    valueAlign: 'left',
     bands: [
       { min: 85, label: 'High',   color: '#0d6efd' },
       { min: 70, label: 'Good',   color: '#198754' },
@@ -436,10 +465,6 @@ Additional badge behavior implemented in core:
   },
 }
 ```
-
-- Values are clamped to the 0-100 range.
-- `density` switches between regular and compact sizing.
-- `bands` maps score ranges to labels, colors, and backgrounds.
 
 ## Item Layout
 
