@@ -18,10 +18,14 @@ Full changelog:
 
 - Docs alignment improvements for the docs.widgemo.com rollout
 - Type-surface cleanup across exported interfaces
+- Temporal field contracts for `date`, `time`, `datetime`, `timestamp`, and `duration`
+- Five built-in temporal `renderAs` renderers: `date`, `time`, `datetime`, `timestamp`, `duration`
+- Temporal normalization helpers exported from core: `parseTemporalValue`, `parseDurationValue`, `isTemporalParseMode`
 
 ### Fixed
 
 - Static filter operator hardening: invalid operator values now throw a descriptive runtime error
+- Temporal rendering now requires explicit storage-format contracts (`parseMode` / `unit`) to avoid ambiguous host-data parsing
 
 ---
 
