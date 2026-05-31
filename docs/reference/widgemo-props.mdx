@@ -112,6 +112,9 @@ IconConfig, DevModeConfig
 RenderAsOptions, BaseRenderAsOptions
 LinkRenderAsOptions, ProgressRenderAsOptions, RatingRenderAsOptions
 CurrencyRenderAsOptions, BadgeRenderAsOptions
+TemporalRenderAsOptions, DateRenderAsOptions, TimeRenderAsOptions
+DatetimeRenderAsOptions, TimestampRenderAsOptions, DurationRenderAsOptions
+TemporalParseMode, TemporalTimeZone, DurationUnit, DurationHumanizedUnit
 
 // Interaction types
 InteractionContext, InteractionScope, InteractionEventHandler
@@ -124,8 +127,9 @@ FieldTypeRegistryEntry, HookRegistryEntry
 // Theme types
 WidgemoTheme, ZoneTheme, ActionTheme
 
-// Utility types
+// Utility types and helpers
 Entity, RenderIcon, SortDirection, SortConfig
+parseTemporalValue, parseDurationValue, isTemporalParseMode
 
 // Advanced exports
 AdvancedPaginationState, AdvancedFilterState

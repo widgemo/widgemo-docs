@@ -57,6 +57,7 @@ const sidebars: SidebarsConfig = {
       label: 'Guides',
       items: [
         'guides/adopting-widgemo',
+        'guides/temporal-fields',
         {
           type: 'category',
           label: 'Extensions',

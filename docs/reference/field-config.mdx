@@ -28,6 +28,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [42, 45, 47, 50, 54],
       healthScore: 92,
       confidence: 96,
+      settlementDate: '2026-05-31',
+      checkpointTime: '14:30:15',
+      postedAt: '2026-05-31T14:30:15Z',
+      updatedAtEpoch: 1717165815,
+      processingLatencySec: 3661,
     },
     {
       name: 'Mateo Silva',
@@ -41,6 +46,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [18, 19, 17, 14, 12],
       healthScore: 61,
       confidence: 72,
+      settlementDate: '2026-05-29',
+      checkpointTime: '08:05:04',
+      postedAt: '2026-05-29T08:05:04Z',
+      updatedAtEpoch: 1716998704,
+      processingLatencySec: 915,
     },
     {
       name: 'Priya Nair',
@@ -54,6 +64,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [22, 22, 23, 22, 24],
       healthScore: 48,
       confidence: 58,
+      settlementDate: '2026-05-27',
+      checkpointTime: '19:42:10',
+      postedAt: '2026-05-27T19:42:10Z',
+      updatedAtEpoch: 1716838930,
+      processingLatencySec: 172,
     },
   ]}
   config={{
@@ -179,6 +194,65 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
                 valueAlign: 'left',
               },
             },
+            {
+              key: 'settlementDate',
+              label: 'Date',
+              type: 'date',
+              renderAs: 'date',
+              renderAsOptions: {
+                parseMode: 'iso-date',
+                locale: 'en-US',
+                timezone: 'local',
+                formatPreset: 'short',
+              },
+            },
+            {
+              key: 'checkpointTime',
+              label: 'Time',
+              type: 'time',
+              renderAs: 'time',
+              renderAsOptions: {
+                parseMode: 'iso-time',
+                locale: 'en-US',
+                timezone: 'utc',
+                showSeconds: true,
+                hour12: false,
+              },
+            },
+            {
+              key: 'postedAt',
+              label: 'Datetime',
+              type: 'datetime',
+              renderAs: 'datetime',
+              renderAsOptions: {
+                parseMode: 'iso-datetime',
+                locale: 'en-US',
+                timezone: 'utc',
+                formatPreset: 'short',
+              },
+            },
+            {
+              key: 'updatedAtEpoch',
+              label: 'Timestamp',
+              type: 'timestamp',
+              renderAs: 'timestamp',
+              renderAsOptions: {
+                parseMode: 'epoch-sec',
+                locale: 'en-US',
+                timezone: 'utc',
+                formatPreset: 'short',
+              },
+            },
+            {
+              key: 'processingLatencySec',
+              label: 'Duration',
+              type: 'duration',
+              renderAs: 'duration',
+              renderAsOptions: {
+                unit: 'sec',
+                format: 'clock',
+              },
+            },
           ],
           layout: { type: 'auto' },
         },
@@ -195,7 +269,7 @@ All built-in renderAs option objects also accept `className` from `BaseRenderAsO
 interface FieldConfig {
   key: string;                    // entity property key (required)
   label?: string;                 // display label
-  type?: 'text' | 'number' | 'date' | 'boolean' | 'select' | 'relation' | 'textarea' | 'email' | 'url' | 'image' | 'swatch';
+  type?: 'text' | 'number' | 'date' | 'time' | 'datetime' | 'timestamp' | 'duration' | 'boolean' | 'select' | 'relation' | 'textarea' | 'email' | 'url' | 'image' | 'swatch';
   sortable?: boolean;
   width?: number | string;        // table column width
   align?: 'left' | 'center' | 'right';
@@ -217,6 +291,7 @@ interface FieldConfig {
 ### Implementation Notes
 
 - `renderAs` takes precedence over `type`.
+- Temporal contract: `date`, `time`, `datetime`, and `timestamp` require `renderAsOptions.parseMode`; `duration` requires `renderAsOptions.unit`.
 - `booleanTrueLabel` and `booleanFalseLabel` are applied only for `type: 'boolean'` fallback rendering.
 - `formatter` runs before type rendering. For domain-specific boolean wording or logic, prefer a formatter plus `renderAs` or `type: 'text'` instead of relying on boolean labels.
 - `visible` is currently enforced in table mode field filtering.
@@ -465,6 +540,77 @@ Alternative compact confidence-style usage:
   },
 }
 ```
+
+### `date` / `time` / `datetime` / `timestamp` / `duration`
+
+For full contract details, option guidance, and a live mixed example, see the [Temporal Fields Guide](/core/guides/temporal-fields).
+
+```tsx
+{
+  key: 'settlementDate', label: 'Settlement Date', type: 'date', renderAs: 'date',
+  renderAsOptions: {
+    parseMode: 'iso-date',
+    locale: 'en-US',
+    timezone: 'local',
+    formatPreset: 'medium',
+  },
+}
+
+{
+  key: 'checkpointTime', label: 'Checkpoint Time', type: 'time', renderAs: 'time',
+  renderAsOptions: {
+    parseMode: 'iso-time',
+    locale: 'en-US',
+    timezone: 'utc',
+    showSeconds: true,
+    hour12: false,
+  },
+}
+
+{
+  key: 'postedAt', label: 'Posted At', type: 'datetime', renderAs: 'datetime',
+  renderAsOptions: {
+    parseMode: 'iso-datetime',
+    locale: 'en-US',
+    timezone: 'utc',
+    formatPreset: 'short',
+    relativeTime: true,
+    relativeDisplay: 'both',
+  },
+}
+
+{
+  key: 'updatedAtEpoch', label: 'Updated', type: 'timestamp', renderAs: 'timestamp',
+  renderAsOptions: {
+    parseMode: 'epoch-sec',
+    locale: 'en-US',
+    timezone: 'utc',
+    formatPreset: 'short',
+  },
+}
+
+{
+  key: 'processingLatencySec', label: 'Latency', type: 'duration', renderAs: 'duration',
+  renderAsOptions: {
+    unit: 'sec',
+    format: 'humanized',
+    precision: 3,
+    humanizedUnits: ['day', 'hour', 'minute', 'second'],
+  },
+}
+```
+
+- Temporal renderers are explicit-contract only.
+- `parseMode` values: `epoch-ms`, `epoch-sec`, `iso-date`, `iso-datetime`, `iso-time`, `any`.
+- `duration.unit` values: `ms`, `sec`, `min`, `hour`, `day`.
+- Temporal option surface includes `locale`, `timezone`, `formatPreset`, `formatOptions`, `relativeTime`, `relativeDisplay`, `showSeconds`, `hour12`, and `fallbackText`.
+- Duration-specific options include `format`, `humanizedUnits`, `precision`, `showSign`, and `fallbackText`.
+- Humanized duration note:
+  - `year` and `month` use fixed approximations (`365` days/year, `30` days/month) for elapsed-time display.
+  - For calendar-accurate intervals, precompute at the domain layer and render the resulting value.
+- Relative-time display modes:
+  - `relativeDisplay: 'relative'` (default) shows only relative text.
+  - `relativeDisplay: 'both'` shows absolute timestamp with a smaller relative line below.
 
 ## Item Layout
 

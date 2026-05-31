@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { useColorMode } from '@docusaurus/theme-common';
 import { 
   Widgemo, 
   WidgemoThemeProvider, 
@@ -29,13 +30,15 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   children,
   className,
 }) => {
+  const { colorMode } = useColorMode();
   const rootClassName = className?.trim() || undefined;
+  const widgemoTheme = colorMode === 'dark' ? 'dark' : 'light';
 
   return (
     <div className={rootClassName}>
       {title && <h3>{title}</h3>}
       {description && <p>{description}</p>}
-      <WidgemoThemeProvider>
+      <WidgemoThemeProvider theme={widgemoTheme}>
         <div className="widgemo-showcase__widget">
           <Widgemo config={config} data={data} />
         </div>
