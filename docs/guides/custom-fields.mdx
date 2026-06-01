@@ -54,6 +54,8 @@ const fields: FieldConfig[] = [
 
 `compositionBar` is a built-in `renderAs` renderer for proportional segmented bars with an optional inline legend.
 
+Default rendering uses `style: 'segmented'` with per-segment corner rounding (`cornerScope: 'segment'`).
+
 Use it when you want one compact composition snapshot inside an existing field cell or card field, not a full chart surface.
 
 ### Runtime Contract
@@ -66,6 +68,30 @@ Use it when you want one compact composition snapshot inside an existing field c
 	- array of objects with `value`, `amount`, or `total`
 	- object segments may also provide `label`, `name`, or `key`, plus optional `color`
 - Non-positive or invalid segment values are ignored. If no valid positive segments remain, the renderer outputs `Invalid`.
+
+### Style and Corner Controls
+
+Use `style` and corner options to tune the bar shape:
+
+- `style: 'segmented'` renders visual separators between segments.
+- `style: 'continuous'` renders one uninterrupted band.
+- `segmentGap` controls separator width in segmented mode.
+- `cornerRadius` controls roundness.
+- `cornerScope` controls where roundness applies: `track`, `segment`, `both`, or `none`.
+
+```tsx
+{
+	key: 'mix',
+	label: 'Mix',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		style: 'continuous',
+		cornerScope: 'both',
+		cornerRadius: '10px',
+		legend: 'inline',
+	},
+}
+```
 
 ### Recipe: Compact segmented strip (screen-time style)
 
