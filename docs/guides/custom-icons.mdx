@@ -32,129 +32,190 @@ The icon component receives `{ size?, className?, color? }`. Returning `null` fa
 ## Built-in Icon Names
 
 The list below reflects all currently available built-in icon names in core.
+Within each category, icons are sorted alphabetically. `Other` is intentionally shown last.
 
-export const builtInIconGroups = [
-	{ icon: 'add', names: ['add', 'plus'] },
-	{ icon: 'edit', names: ['edit', 'pencil'] },
-	{ icon: 'delete', names: ['delete', 'trash'] },
-	{ icon: 'view', names: ['view', 'eye'] },
-	{ icon: 'view-slash', names: ['view-slash', 'eye-slash'] },
-	{ icon: 'refresh', names: ['refresh', 'reload'] },
-	{ icon: 'settings', names: ['settings', 'config', 'cog'] },
-	{ icon: 'close', names: ['close', 'x', 'cross'] },
-	{ icon: 'chevron-down', names: ['chevron-down'] },
-	{ icon: 'chevron-up', names: ['chevron-up'] },
-	{ icon: 'chevron-left', names: ['chevron-left'] },
-	{ icon: 'chevron-right', names: ['chevron-right'] },
-	{ icon: 'arrow-up', names: ['arrow-up'] },
-	{ icon: 'arrow-down', names: ['arrow-down'] },
-	{ icon: 'arrow-left', names: ['arrow-left'] },
-	{ icon: 'arrow-right', names: ['arrow-right'] },
-	{ icon: 'arrow-down-left', names: ['arrow-down-left'] },
-	{ icon: 'arrow-down-right', names: ['arrow-down-right'] },
-	{ icon: 'arrow-up-left', names: ['arrow-up-left'] },
-	{ icon: 'arrow-up-right', names: ['arrow-up-right'] },
-	{ icon: 'search', names: ['search'] },
-	{ icon: 'speedometer', names: ['speedometer'] },
-	{ icon: 'filter', names: ['filter'] },
-	{ icon: 'filter-off', names: ['filter-off'] },
-	{ icon: 'sort', names: ['sort'] },
-	{ icon: 'chart-bar', names: ['chart-bar'] },
-	{ icon: 'chart-line', names: ['chart-line'] },
-	{ icon: 'chart-pie', names: ['chart-pie'] },
-	{ icon: 'table', names: ['table'] },
-	{ icon: 'grid', names: ['grid'] },
-	{ icon: 'board', names: ['board'] },
-	{ icon: 'bug', names: ['bug', 'defect'] },
-	{ icon: 'document', names: ['document'] },
-	{ icon: 'credit-card', names: ['credit-card'] },
-	{ icon: 'map', names: ['map'] },
-	{ icon: 'calendar', names: ['calendar'] },
-	{ icon: 'goal', names: ['goal', 'target'] },
-	{ icon: 'warning', names: ['warning'] },
-	{ icon: 'bell', names: ['bell', 'alert', 'notification'] },
-	{ icon: 'sun', names: ['sun', 'light-mode'] },
-	{ icon: 'moon', names: ['moon', 'dark-mode'] },
-	{ icon: 'info', names: ['info'] },
-	{ icon: 'shield', names: ['shield'] },
-	{ icon: 'building', names: ['building'] },
-	{ icon: 'server', names: ['server'] },
-	{ icon: 'database', names: ['database'] },
-	{ icon: 'users', names: ['users'] },
-	{ icon: 'code', names: ['code', 'html'] },
-	{ icon: 'copy', names: ['copy'] },
-	{ icon: 'export', names: ['export', 'download'] },
-	{ icon: 'share', names: ['share'] },
-	{ icon: 'ellipsis-vertical', names: ['ellipsis-vertical'] },
-	{ icon: 'ellipsis-horizontal', names: ['ellipsis-horizontal'] },
-	{ icon: 'star', names: ['star'] },
-	{ icon: 'heart', names: ['heart'] },
-	{ icon: 'currency-dollar', names: ['currency-dollar'] },
-	{ icon: 'external-link', names: ['external-link', 'new-tab'] },
-	{ icon: 'group', names: ['group', 'grouping'] },
-	{ icon: 'group-available', names: ['group-available'] },
-	{ icon: 'square', names: ['square'] },
-	{ icon: 'check-square', names: ['check-square'] },
-	{ icon: 'x-square', names: ['x-square'] },
-	{ icon: 'align-center', names: ['align-center'] },
-	{ icon: 'dollar-sign', names: ['dollar-sign', 'dollar'] },
-	{ icon: 'cash', names: ['cash'] },
-	{ icon: 'asset', names: ['asset', 'mortgage'] },
-	{ icon: 'budget', names: ['budget'] },
-	{ icon: 'loan', names: ['loan'] },
-	{ icon: 'real-estate', names: ['real-estate', 'house'] },
-	{ icon: 'car', names: ['car'] },
-	{ icon: 'stock', names: ['stock'] },
-	{ icon: 'crypto', names: ['crypto'] },
-	{ icon: 'transfer', names: ['transfer'] },
-	{ icon: 'shopping-cart', names: ['shopping-cart'] },
-	{ icon: 'puzzle-piece', names: ['puzzle-piece'] },
-	{ icon: 'circle', names: ['circle'] },
-	{ icon: 'check-circle', names: ['check-circle'] },
-	{ icon: 'x-circle', names: ['x-circle'] },
-	{ icon: 'clock', names: ['clock'] },
-	{ icon: 'pause', names: ['pause'] },
+export const builtInIconCategories = [
+	{
+		category: 'Actions & Utilities',
+		icons: [
+			{ icon: 'add', names: ['add', 'plus'] },
+			{ icon: 'close', names: ['close', 'x', 'cross'] },
+			{ icon: 'copy', names: ['copy'] },
+			{ icon: 'delete', names: ['delete', 'trash'] },
+			{ icon: 'edit', names: ['edit', 'pencil'] },
+			{ icon: 'ellipsis-horizontal', names: ['ellipsis-horizontal'] },
+			{ icon: 'ellipsis-vertical', names: ['ellipsis-vertical'] },
+			{ icon: 'export', names: ['export', 'download'] },
+			{ icon: 'filter', names: ['filter'] },
+			{ icon: 'filter-off', names: ['filter-off'] },
+			{ icon: 'pin', names: ['pin'] },
+			{ icon: 'pin-slash', names: ['pin-slash'] },
+			{ icon: 'refresh', names: ['refresh', 'reload'] },
+			{ icon: 'search', names: ['search'] },
+			{ icon: 'settings', names: ['settings', 'config', 'cog'] },
+			{ icon: 'share', names: ['share'] },
+			{ icon: 'sort', names: ['sort'] },
+			{ icon: 'view', names: ['view', 'eye'] },
+			{ icon: 'view-slash', names: ['view-slash', 'eye-slash'] },
+		],
+	},
+	{
+		category: 'Alignment & Layout',
+		icons: [
+			{ icon: 'align-center', names: ['align-center'] },
+			{ icon: 'align-left', names: ['align-left'] },
+			{ icon: 'align-right', names: ['align-right'] },
+			{ icon: 'group', names: ['group', 'grouping'] },
+			{ icon: 'group-available', names: ['group-available'] },
+		],
+	},
+	{
+		category: 'Arrows & Navigation',
+		icons: [
+			{ icon: 'arrow-down', names: ['arrow-down'] },
+			{ icon: 'arrow-down-left', names: ['arrow-down-left'] },
+			{ icon: 'arrow-down-right', names: ['arrow-down-right'] },
+			{ icon: 'arrow-left', names: ['arrow-left'] },
+			{ icon: 'arrow-right', names: ['arrow-right'] },
+			{ icon: 'arrow-up', names: ['arrow-up'] },
+			{ icon: 'arrow-up-left', names: ['arrow-up-left'] },
+			{ icon: 'arrow-up-right', names: ['arrow-up-right'] },
+			{ icon: 'chevron-down', names: ['chevron-down'] },
+			{ icon: 'chevron-left', names: ['chevron-left'] },
+			{ icon: 'chevron-right', names: ['chevron-right'] },
+			{ icon: 'chevron-up', names: ['chevron-up'] },
+			{ icon: 'external-link', names: ['external-link', 'new-tab'] },
+		],
+	},
+	{
+		category: 'Charts & Modes',
+		icons: [
+			{ icon: 'board', names: ['board'] },
+			{ icon: 'chart-bar', names: ['chart-bar'] },
+			{ icon: 'chart-line', names: ['chart-line'] },
+			{ icon: 'chart-pie', names: ['chart-pie'] },
+			{ icon: 'grid', names: ['grid'] },
+			{ icon: 'speedometer', names: ['speedometer'] },
+			{ icon: 'table', names: ['table'] },
+		],
+	},
+	{
+		category: 'Content & People',
+		icons: [
+			{ icon: 'book', names: ['book'] },
+			{ icon: 'calendar', names: ['calendar'] },
+			{ icon: 'code', names: ['code', 'html'] },
+			{ icon: 'document', names: ['document'] },
+			{ icon: 'glasses', names: ['glasses'] },
+			{ icon: 'location', names: ['location'] },
+			{ icon: 'map', names: ['map'] },
+			{ icon: 'puzzle-piece', names: ['puzzle-piece'] },
+			{ icon: 'relationship', names: ['relationship'] },
+			{ icon: 'user', names: ['user', 'profile'] },
+			{ icon: 'users', names: ['users', 'team'] },
+		],
+	},
+	{
+		category: 'Finance & Commerce',
+		icons: [
+			{ icon: 'asset', names: ['asset', 'mortgage'] },
+			{ icon: 'budget', names: ['budget'] },
+			{ icon: 'car', names: ['car'] },
+			{ icon: 'cash', names: ['cash'] },
+			{ icon: 'credit-card', names: ['credit-card'] },
+			{ icon: 'crypto', names: ['crypto'] },
+			{ icon: 'currency-dollar', names: ['currency-dollar', 'dollar-sign', 'dollar'] },
+			{ icon: 'loan', names: ['loan'] },
+			{ icon: 'real-estate', names: ['real-estate', 'house'] },
+			{ icon: 'shopping-cart', names: ['shopping-cart'] },
+			{ icon: 'stock', names: ['stock'] },
+			{ icon: 'transfer', names: ['transfer'] },
+		],
+	},
+	{
+		category: 'Infrastructure & Security',
+		icons: [
+			{ icon: 'bug', names: ['bug', 'defect'] },
+			{ icon: 'database', names: ['database'] },
+			{ icon: 'server', names: ['server'] },
+			{ icon: 'shield', names: ['shield'] },
+		],
+	},
+	{
+		category: 'Status & Feedback',
+		icons: [
+			{ icon: 'bell', names: ['bell', 'alert', 'notification'] },
+			{ icon: 'check-circle', names: ['check-circle'] },
+			{ icon: 'check-square', names: ['check-square'] },
+			{ icon: 'clock', names: ['clock'] },
+			{ icon: 'heart', names: ['heart'] },
+			{ icon: 'hourglass', names: ['hourglass'] },
+			{ icon: 'info', names: ['info'] },
+			{ icon: 'moon', names: ['moon', 'dark-mode'] },
+			{ icon: 'pause', names: ['pause'] },
+			{ icon: 'star', names: ['star'] },
+			{ icon: 'sun', names: ['sun', 'light-mode'] },
+			{ icon: 'warning', names: ['warning'] },
+			{ icon: 'x-circle', names: ['x-circle'] },
+			{ icon: 'x-square', names: ['x-square'] },
+		],
+	},
+	{
+		category: 'Other',
+		icons: [
+			{ icon: 'circle', names: ['circle'] },
+			{ icon: 'diamond', names: ['diamond'] },
+			{ icon: 'goal', names: ['goal', 'target'] },
+			{ icon: 'square', names: ['square'] },
+			{ icon: 'thread', names: ['thread'] },
+		],
+	},
 ];
 
-<div
-	style={{
-		display: 'grid',
-		gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-		gap: '0.75rem',
-		marginTop: '1rem',
-	}}
->
-	{builtInIconGroups.map((group) => (
+{builtInIconCategories.map((section) => (
+	<div key={section.category} style={{ marginTop: '1.25rem' }}>
+		<h3>{section.category}</h3>
 		<div
-			key={group.icon}
 			style={{
-				border: '1px solid var(--ifm-color-emphasis-300)',
-				borderRadius: '10px',
-				padding: '0.6rem 0.75rem',
-				display: 'flex',
-				alignItems: 'center',
-				gap: '0.6rem',
-				background: 'var(--ifm-background-surface-color)',
+				display: 'grid',
+				gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+				gap: '0.75rem',
+				marginTop: '0.5rem',
 			}}
 		>
-			<span
-				aria-hidden
-				style={{
-					display: 'inline-flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					width: '22px',
-					height: '22px',
-					color: 'var(--ifm-color-primary)',
-					flexShrink: 0,
-				}}
-			>
-				{defaultRenderWidgemoIcon({ name: group.icon, size: 18 })}
-			</span>
-			<code style={{ fontSize: '0.76rem', lineHeight: 1.2 }}>{group.names.join(', ')}</code>
+			{section.icons.map((group) => (
+				<div
+					key={group.icon}
+					style={{
+						border: '1px solid var(--ifm-color-emphasis-300)',
+						borderRadius: '10px',
+						padding: '0.6rem 0.75rem',
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0.6rem',
+						background: 'var(--ifm-background-surface-color)',
+					}}
+				>
+					<span
+						aria-hidden
+						style={{
+							display: 'inline-flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							width: '22px',
+							height: '22px',
+							color: 'var(--ifm-color-primary)',
+							flexShrink: 0,
+						}}
+					>
+						{defaultRenderWidgemoIcon({ name: group.icon, size: 18 })}
+					</span>
+					<code style={{ fontSize: '0.76rem', lineHeight: 1.2 }}>{group.names.join(', ')}</code>
+				</div>
+			))}
 		</div>
-	))}
-</div>
+	</div>
+))}
 
 ## Override a Built-in Icon
 
