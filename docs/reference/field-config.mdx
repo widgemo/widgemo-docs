@@ -572,45 +572,77 @@ Alternative compact confidence-style usage:
 {
   key: 'portfolioMix', label: 'Portfolio Mix', renderAs: 'compositionBar',
   renderAsOptions: {
-    style: 'segmented',     // default
-    legend: 'inline',        // 'inline' (default) | 'none'
-    percentages: true,       // true (default)
-    totals: false,           // false (default)
-    total: (entity) => entity.portfolioTotal,
-    barHeight: 12,           // 12px default
-    gap: '0.4rem',           // default
-    segmentGap: '2px',       // segmented mode default
-    cornerRadius: '999px',   // default
-    cornerScope: 'segment',  // default: segment | track | both | none
-    palette: ['#4d94ff', '#35d4a1', '#f6ad55'],
+    // Segment source (optional, overrides field value)
     segments: (entity) => [
       { label: 'Cash', value: entity.cash, color: '#35d4a1' },
       { label: 'Equities', value: entity.equities, color: '#4d94ff' },
       { label: 'Debt', value: entity.debt, color: '#f56565' },
     ],
+
+    // Visual style
+    style: 'segmented',     // default
+    segmentGap: '2px',      // default (segmented style)
+    cornerRadius: '999px',  // default
+    cornerScope: 'segment', // default: track | segment | both | none
+
+    // Legend/summary
+    legend: 'inline',       // default: inline | none
+    percentages: true,      // default (legend text only)
+    totals: false,          // default
+    total: (entity) => entity.portfolioTotal,
+
+    // Color palette
+    segmentColors: ['#4d94ff', '#35d4a1', '#f6ad55'], // alias of palette; takes precedence when both are set
+
+    // Layout sizing
+    barHeight: 12,          // default: 12px
+    gap: '0.4rem',          // default
   },
 }
 ```
 
-- `segments` is optional. When omitted, the renderer uses the field value as its segment source.
-- `segments` accepts either an explicit segment array or a function `(entity) => segmentArray`.
-- Accepted source shapes match core normalization:
-  - array of positive numbers or numeric strings
-  - array of objects with `value`, `amount`, or `total`
-  - object segments may also provide `label`, `name`, or `key`, plus optional `color`
-- `legend` defaults to `inline`. Set `legend: 'none'` for a compact bar-only presentation.
-- `style` defaults to `segmented`. Use `continuous` when you want one uninterrupted band.
-- `percentages` defaults to `true` and only affects inline legend output.
-- `totals` defaults to `false`. When enabled, core renders a `Total: ...` summary row below the legend.
-- `total` is optional. When omitted, percentages are calculated from the sum of valid segment values. If provided, core uses it only when it resolves to a positive number.
-- `palette` supplies segment colors by index. `segmentColors` is an alias and takes precedence over `palette` when both are present.
-- Default palette: `['#4d94ff', '#35d4a1', '#f6ad55', '#b794f4', '#f687b3', '#63b3ed']`.
-- `barHeight` defaults to `12px`.
-- `segmentGap` defaults to `2px` in segmented mode.
-- `cornerRadius` defaults to `999px`.
-- `cornerScope` defaults to `segment` and supports `track`, `segment`, `both`, and `none`.
-- `gap` defaults to `0.4rem`.
-- Segments with invalid, zero, or negative values are ignored. If no valid positive segments remain, the renderer outputs `Invalid`.
+#### Resolution Order
+
+**Segment source**
+
+1. `renderAsOptions.segments`
+2. `fieldValue.segments`
+3. `fieldValue`
+
+**Segment color**
+
+1. `segment.color`
+2. `segmentColors` (alias palette)
+3. `palette`
+4. default palette
+
+**Total for percentage math**
+
+1. explicit `total` when it resolves to a positive number
+2. derived sum of valid segment values
+
+#### Data-Derived Input Rules
+
+- Accepted field value shapes:
+  - numeric array: `[45, 35, 20]`
+  - object array with `value`, `amount`, or `total`
+  - object with nested `segments` array
+- Label fallback order: `label` -> `name` -> `key` -> `Segment N`
+- Invalid, zero, or negative segment values are ignored
+- If no valid positive segments remain, renderer outputs `Invalid`
+
+#### Config-Driven Display Rules
+
+- `style`: defaults to `segmented`; use `continuous` for uninterrupted band
+- `segmentGap`: defaults to `2px`; relevant for segmented style
+- `cornerScope`: defaults to `segment` (`track`, `segment`, `both`, `none`)
+- `legend`: defaults to `inline`; `none` hides legend rows
+- `percentages`: defaults to `true`; only affects legend text
+- `totals`: defaults to `false`; when true renders `Total: ...`
+- `barHeight`: defaults to `12px`
+- `gap`: defaults to `0.4rem`
+- `segmentColors` and `palette` are aliases; `segmentColors` takes precedence when both are set
+- Default palette: `['#4d94ff', '#35d4a1', '#f6ad55', '#b794f4', '#f687b3', '#63b3ed']`
 
 ### `date` / `time` / `datetime` / `timestamp` / `duration`
 
