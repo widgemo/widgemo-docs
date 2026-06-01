@@ -33,6 +33,13 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   const { colorMode } = useColorMode();
   const rootClassName = className?.trim() || undefined;
   const widgemoTheme = colorMode === 'dark' ? 'dark' : 'light';
+  const showcaseConfig: WidgemoConfig = {
+    ...config,
+    devMode: {
+      enabled: true,
+      allowInProduction: true,
+    },
+  };
 
   return (
     <div className={rootClassName}>
@@ -40,7 +47,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
       {description && <p>{description}</p>}
       <WidgemoThemeProvider theme={widgemoTheme}>
         <div className="widgemo-showcase__widget">
-          <Widgemo config={config} data={data} />
+          <Widgemo config={showcaseConfig} data={data} />
         </div>
       </WidgemoThemeProvider>
       {children}

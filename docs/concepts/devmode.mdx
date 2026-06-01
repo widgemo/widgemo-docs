@@ -10,7 +10,24 @@ DevMode is a development-time inspection feature in `widgemo-core`.
 
 When enabled, Widgemo exposes the **Widgemo Inspector** so you can inspect active config and interaction wiring while building your app.
 
-DevMode is only active when `NODE_ENV` is `development`.
+DevMode is active in development by default (`NODE_ENV === 'development'`).
+
+For controlled environments (like docs/sandbox hosts), you can opt in outside development with:
+
+```tsx
+const config = {
+  devMode: {
+    enabled: true,
+    allowInProduction: true,
+  },
+  zones: {
+    content: {
+      mode: 'table',
+      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+    },
+  },
+};
+```
 
 ## Enabling DevMode
 
@@ -42,7 +59,7 @@ const config = {
 - A **Widgemo Inspector** button appears on the widget.
 - Selecting it opens the Inspector modal.
 - The modal shows your active config in an expandable JSON tree.
-- DevMode behavior remains development-only.
+- DevMode behavior is development-only by default; use `allowInProduction: true` only in trusted environments.
 
 ### Inspector Button Placement
 
