@@ -28,6 +28,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [42, 45, 47, 50, 54],
       healthScore: 92,
       confidence: 96,
+      allocation: [
+        { label: 'Core', value: 52, color: '#4d94ff' },
+        { label: 'Growth', value: 31, color: '#35d4a1' },
+        { label: 'Risk', value: 17, color: '#f6ad55' },
+      ],
       settlementDate: '2026-05-31',
       checkpointTime: '14:30:15',
       postedAt: '2026-05-31T14:30:15Z',
@@ -46,6 +51,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [18, 19, 17, 14, 12],
       healthScore: 61,
       confidence: 72,
+      allocation: [
+        { label: 'Core', value: 41, color: '#4d94ff' },
+        { label: 'Growth', value: 24, color: '#35d4a1' },
+        { label: 'Risk', value: 35, color: '#f6ad55' },
+      ],
       settlementDate: '2026-05-29',
       checkpointTime: '08:05:04',
       postedAt: '2026-05-29T08:05:04Z',
@@ -64,6 +74,11 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
       trend: [22, 22, 23, 22, 24],
       healthScore: 48,
       confidence: 58,
+      allocation: [
+        { label: 'Core', value: 63, color: '#4d94ff' },
+        { label: 'Growth', value: 21, color: '#35d4a1' },
+        { label: 'Risk', value: 16, color: '#f6ad55' },
+      ],
       settlementDate: '2026-05-27',
       checkpointTime: '19:42:10',
       postedAt: '2026-05-27T19:42:10Z',
@@ -192,6 +207,16 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
                 tagPosition: 'bottom',
                 tagAlign: 'right',
                 valueAlign: 'left',
+              },
+            },
+            {
+              key: 'allocation',
+              label: 'Composition',
+              renderAs: 'compositionBar',
+              renderAsOptions: {
+                legend: 'none',
+                barHeight: 10,
+                gap: '0.25rem',
               },
             },
             {
@@ -540,6 +565,44 @@ Alternative compact confidence-style usage:
   },
 }
 ```
+
+### `compositionBar`
+
+```tsx
+{
+  key: 'portfolioMix', label: 'Portfolio Mix', renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',        // 'inline' (default) | 'none'
+    percentages: true,       // true (default)
+    totals: false,           // false (default)
+    total: (entity) => entity.portfolioTotal,
+    barHeight: 12,           // 12px default
+    gap: '0.4rem',           // default
+    palette: ['#4d94ff', '#35d4a1', '#f6ad55'],
+    segments: (entity) => [
+      { label: 'Cash', value: entity.cash, color: '#35d4a1' },
+      { label: 'Equities', value: entity.equities, color: '#4d94ff' },
+      { label: 'Debt', value: entity.debt, color: '#f56565' },
+    ],
+  },
+}
+```
+
+- `segments` is optional. When omitted, the renderer uses the field value as its segment source.
+- `segments` accepts either an explicit segment array or a function `(entity) => segmentArray`.
+- Accepted source shapes match core normalization:
+  - array of positive numbers or numeric strings
+  - array of objects with `value`, `amount`, or `total`
+  - object segments may also provide `label`, `name`, or `key`, plus optional `color`
+- `legend` defaults to `inline`. Set `legend: 'none'` for a compact bar-only presentation.
+- `percentages` defaults to `true` and only affects inline legend output.
+- `totals` defaults to `false`. When enabled, core renders a `Total: ...` summary row below the legend.
+- `total` is optional. When omitted, percentages are calculated from the sum of valid segment values. If provided, core uses it only when it resolves to a positive number.
+- `palette` supplies segment colors by index. `segmentColors` is an alias and takes precedence over `palette` when both are present.
+- Default palette: `['#4d94ff', '#35d4a1', '#f6ad55', '#b794f4', '#f687b3', '#63b3ed']`.
+- `barHeight` defaults to `12px`.
+- `gap` defaults to `0.4rem`.
+- Segments with invalid, zero, or negative values are ignored. If no valid positive segments remain, the renderer outputs `Invalid`.
 
 ### `date` / `time` / `datetime` / `timestamp` / `duration`
 
