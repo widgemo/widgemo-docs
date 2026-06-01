@@ -50,6 +50,103 @@ const fields: FieldConfig[] = [
 
 ## Custom Field Type
 
+## Built-in `compositionBar` Recipes
+
+`compositionBar` is a built-in `renderAs` renderer for proportional segmented bars with an optional inline legend.
+
+Use it when you want one compact composition snapshot inside an existing field cell or card field, not a full chart surface.
+
+### Runtime Contract
+
+- Set `renderAs: 'compositionBar'` on the field.
+- By default, the renderer reads its segments from the field value.
+- You can override the segment source with `renderAsOptions.segments`, including a function of the current entity.
+- Accepted segment input shapes match core normalization:
+	- array of positive numbers or numeric strings
+	- array of objects with `value`, `amount`, or `total`
+	- object segments may also provide `label`, `name`, or `key`, plus optional `color`
+- Non-positive or invalid segment values are ignored. If no valid positive segments remain, the renderer outputs `Invalid`.
+
+### Recipe: Compact segmented strip (screen-time style)
+
+Use `legend: 'none'` when the surrounding card or table already provides the labels.
+
+```tsx
+{
+	key: 'screenTimeBreakdown',
+	label: 'Usage',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'none',
+		barHeight: 8,
+		gap: '0.25rem',
+		segments: (entity) => [
+			{ label: 'Focus', value: entity.focusHours, color: '#4d94ff' },
+			{ label: 'Messages', value: entity.messageHours, color: '#35d4a1' },
+			{ label: 'Media', value: entity.mediaHours, color: '#f6ad55' },
+		],
+	},
+}
+```
+
+### Recipe: Summary card with legend rows (asset/liability style)
+
+Use the default inline legend when the renderer itself should explain the composition. `totals` adds a summary line below the legend.
+
+```tsx
+{
+	key: 'capitalMix',
+	label: 'Capital Mix',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'inline',
+		percentages: true,
+		totals: true,
+		segments: (entity) => [
+			{ label: 'Cash', value: entity.cash, color: '#35d4a1' },
+			{ label: 'Equities', value: entity.equities, color: '#4d94ff' },
+			{ label: 'Liabilities', value: entity.liabilities, color: '#f56565' },
+		],
+		total: (entity) => entity.cash + entity.equities + entity.liabilities,
+	},
+}
+```
+
+### Recipe: Host-controlled tabs or toggles
+
+Tabs, toggles, and view switches are host-level layout/state concerns, not `compositionBar` renderer features.
+
+The renderer shows one bar plus its optional inline legend for the current field render. If you want tabs such as `Assets | Liabilities | Net`, drive that from app state and swap the field value or `segments` function above the renderer.
+
+```tsx
+const activeComposition = view === 'assets'
+	? entity.assetSegments
+	: view === 'liabilities'
+		? entity.liabilitySegments
+		: entity.netSegments;
+
+{
+	key: 'activeComposition',
+	label: 'Composition',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'inline',
+		segments: () => activeComposition,
+	},
+}
+```
+
+Keep the toggle UI in your page, modal, or zone actions; let `compositionBar` render the currently selected composition.
+
+### When to Use `compositionBar` vs Chart Mode
+
+- Use `compositionBar` when you need a compact composition snapshot inside a field, table cell, or card.
+- Use `compositionBar` when the composition is part of a broader list/detail layout and does not need axes, tooltips, or chart framing.
+- Use chart mode when the visualization should own the content area as a chart, not live inline as a field renderer.
+- Use chart mode when you need richer chart semantics such as multiple chart series, chart-specific layout, or a dedicated analytic surface.
+
+A practical rule: if the visual should read like one field in an item layout, use `compositionBar`; if it should read like the main content visualization, use chart mode.
+
 A custom field type is a heavier extension. It registers a new value for the `type` property and replaces the entire render pipeline for that type.
 
 ```tsx
