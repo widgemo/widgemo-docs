@@ -1,0 +1,93 @@
+---
+sidebar_position: 2
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Custom renderAs
+
+A custom `renderAs` renderer is the lightest extension point in Widgemo.
+
+Use it when you want to change how a single value is displayed inside an otherwise normal field.
+
+<WidgemoShowcase
+  title="Custom renderAs Integration Workflow"
+  description="Use the code in this page to register a custom renderer at app boot, then reference it from field config."
+  data={[
+    { feature: 'alerts', renderer: 'uppercase-pill', state: 'ready' },
+    { feature: 'exports', renderer: 'uppercase-pill', state: 'beta' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'feature', label: 'Feature' },
+            { key: 'renderer', label: 'Renderer Name' },
+            { key: 'state', label: 'State', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## 1. Create the renderer
+
+```tsx
+// src/renderers/JsonRenderer.tsx
+import React from 'react';
+import type { RenderAsRegistryEntry } from '@widgemo/widgemo-core';
+
+export const jsonRenderer: RenderAsRegistryEntry = {
+  name: 'json',
+  render: (value, _options, _entity) => (
+    <pre style={{ fontSize: '0.75rem', margin: 0, overflowX: 'auto' }}>
+      {JSON.stringify(value, null, 2)}
+    </pre>
+  ),
+  defaultOptions: {},
+};
+```
+
+## 2. Register at app boot
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+import { jsonRenderer } from './renderers/JsonRenderer';
+
+widgemoRegistry.registerWidgemoRenderAs(jsonRenderer);
+```
+
+## 3. Use in any field
+
+```tsx
+const fields = [
+  { key: 'id', label: 'ID' },
+  { key: 'name', label: 'Name' },
+  { key: 'metadata', label: 'Metadata', renderAs: 'json' },
+];
+```
+
+## When to Choose Custom renderAs
+
+Use custom `renderAs` when:
+
+- the field is still conceptually a normal field
+- you only need a different visual treatment
+- you do not need a brand-new content mode
+- you do not need a new first-class field type contract
+
+## Related
+
+- [Extension API](/core/reference/extension-api)
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [CompositionBar Guide](/core/guides/composition-bar)
+- [Docs Map](/core/getting-started/docs-map)
+
+## Continue Reading
+
+- Previous: [CompositionBar Guide](/core/guides/composition-bar)
+- Next: [Custom Field Types](/core/extensions/custom-field-types)

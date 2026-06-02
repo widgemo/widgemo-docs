@@ -1,0 +1,90 @@
+---
+sidebar_position: 1
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Docs Map
+
+Use this page as the fast orientation map for the full widgemo-core docs.
+
+<WidgemoShowcase
+  title="Choose Your Path"
+  description="Pick the track that matches your current task, then follow the linked section sequence."
+  data={[
+    { track: 'First integration', firstStop: 'Installation', then: 'Quick Start' },
+    { track: 'Existing app adoption', firstStop: 'Integrate Into Existing App', then: 'Adopting Widgemo' },
+    { track: 'Extension work', firstStop: 'Extension Architecture', then: 'Extensions & Customizations' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'track', label: 'Track' },
+            { key: 'firstStop', label: 'Start Here' },
+            { key: 'then', label: 'Next' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Section Guide
+
+## Intro
+
+- [Overview](/core)
+
+## Getting Started
+
+- [Installation](/core/getting-started/installation)
+- [Quick Start](/core/getting-started/quick-start)
+- [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app)
+
+## Concepts
+
+- [Configuration Model](/core/concepts/configuration-model)
+- [Modes Overview](/core/concepts/modes-overview)
+- [Theming](/core/concepts/theming)
+- [DevMode](/core/concepts/devmode)
+- [Extension Architecture](/core/concepts/extension-architecture)
+
+## Guides
+
+- [Adopting Widgemo](/core/guides/adopting-widgemo)
+- [Temporal Fields](/core/guides/temporal-fields)
+- [CompositionBar Guide](/core/guides/composition-bar)
+
+## Reference
+
+- [Widgemo Props](/core/reference/widgemo-props)
+- [Widgemo Config](/core/reference/widgemo-config)
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [Action Config](/core/reference/action-config)
+- [CSS Variables](/core/reference/css-variables)
+- [Host CSS Table Layout](/core/reference/host-css-table-layout)
+- [Theme API](/core/reference/theme-api)
+
+## Extensions & Customizations
+
+- [Extension API](/core/reference/extension-api)
+- [Custom renderAs](/core/extensions/renderas-customization)
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [Custom Modes](/core/guides/custom-modes)
+- [Custom Icons](/core/guides/custom-icons)
+
+## Release Notes
+
+- [Changelog](/core/changelog)
+- [Migration and Compatibility](/core/release-notes/upgrading/migration-compatibility)
+
+## Continue Reading
+
+- Previous: [Overview](/core)
+- Next: [Configuration Model](/core/concepts/configuration-model)
+- Alternate Next: [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app)

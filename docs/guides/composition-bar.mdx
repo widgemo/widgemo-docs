@@ -1,0 +1,369 @@
+---
+sidebar_position: 3
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# CompositionBar Guide
+
+`compositionBar` is a built-in `renderAs` renderer for proportional segmented bars with an optional inline legend.
+
+Default rendering uses `style: 'segmented'` with per-segment corner rounding (`cornerScope: 'segment'`).
+
+Use it when you want one compact composition snapshot inside an existing field cell or card field, not a full chart surface.
+
+## Resolution Model (Data vs Config)
+
+Use this mental model:
+
+- Data decides what segments exist and their numeric values.
+- Config decides how those segments are displayed.
+
+Set `renderAs: 'compositionBar'` on the field, then apply this resolution order.
+
+### 1. Segment Source Resolution
+
+The renderer chooses segment input in this exact order:
+
+1. `renderAsOptions.segments` (if provided)
+2. `fieldValue.segments` (if field value is an object with `segments` array)
+3. `fieldValue` directly
+
+`renderAsOptions.segments` can be:
+
+- a static array
+- a function `(entity) => segmentArray`
+
+### 2. Segment Normalization
+
+Accepted segment shapes:
+
+- numeric array: `[45, 35, 20]`
+- object array with value fields: `value`, `amount`, or `total`
+- object labels from `label`, `name`, or `key`
+
+Normalization behavior:
+
+- label lookup order: `label` -> `name` -> `key` -> `Segment N`
+- value lookup order: `value` -> `amount` -> `total`
+- non-positive or invalid values are filtered out
+- if no valid segments remain, output is `Invalid`
+
+### 3. Color Resolution
+
+Per segment color is resolved in this order:
+
+1. explicit `segment.color`
+2. `segmentColors` palette
+3. `palette`
+4. built-in default palette
+
+When both `segmentColors` and `palette` are set, `segmentColors` wins.
+
+### 4. Total and Percentage Resolution
+
+Percent math uses:
+
+1. `renderAsOptions.total` when it resolves to a positive number
+2. otherwise, derived sum of valid segment values
+
+`percentages` only affects inline legend text. It does not change segment widths.
+
+### 5. Display Controls (Config-Driven)
+
+These are fully config-driven (not derived from data shape):
+
+- `legend`: `inline` (default) or `none`
+- `totals`: `false` (default) or `true`
+- `style`: `segmented` (default) or `continuous`
+- `segmentGap`: used by segmented style
+- `cornerRadius` and `cornerScope`
+- `barHeight` and layout `gap`
+
+## Decision Table: Which Pattern Should I Use?
+
+| Pattern | Where segment values come from | Where labels/colors come from | Best when | Recommended setup |
+|---|---|---|---|---|
+| Row-specific full segments | Each row/item contains full segment objects | Same row/item segment objects (`label`, `color`) | Every row has a distinct composition definition | Put segment objects in row data; omit `renderAsOptions.segments` |
+| Row-specific values with shared schema | Each row/item contains only numeric values | Config mapping function | All rows share the same segment schema, but values differ per row | Keep numeric arrays in data; use `renderAsOptions.segments: (entity) => ...` to map labels/colors |
+| Static reference composition | Config only (same for every row/item) | Config only | You want the same reference mix shown repeatedly as context | Use static `renderAsOptions.segments: [...]` |
+
+## Pattern 1 Example: Row Data Contains Full Segments
+
+<WidgemoShowcase
+  title="Pattern 1: Row Data Contains Full Segments"
+  description="Each row provides its own segment objects. Config only controls presentation."
+  data={[
+    {
+      portfolio: 'Operating Reserve',
+      mix: {
+        segments: [
+          { label: 'Cash', value: 52, color: '#22c55e' },
+          { label: 'Bonds', value: 33, color: '#3b82f6' },
+          { label: 'Other', value: 15, color: '#a855f7' },
+        ],
+      },
+    },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'portfolio', label: 'Portfolio' },
+            { key: 'mix', label: 'Composition', renderAs: 'compositionBar', renderAsOptions: { legend: 'inline', percentages: false } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+```tsx
+const data = [
+  {
+    portfolio: 'Operating Reserve',
+    mix: {
+      segments: [
+        { label: 'Cash', value: 52, color: '#22c55e' },
+        { label: 'Bonds', value: 33, color: '#3b82f6' },
+        { label: 'Other', value: 15, color: '#a855f7' },
+      ],
+    },
+  },
+];
+
+const field = {
+  key: 'mix',
+  label: 'Composition',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    percentages: false,
+  },
+};
+```
+
+## Pattern 2 Example: Row Data Has Values, Config Supplies Shared Schema
+
+<WidgemoShowcase
+  title="Pattern 2: Row Values + Config Mapping"
+  description="Each row stores only values. Config maps those values into shared labels and colors."
+  data={[
+    { team: 'North America', values: [48, 37, 15] },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'team', label: 'Team' },
+            {
+              key: 'values',
+              label: 'Composition',
+              renderAs: 'compositionBar',
+              renderAsOptions: {
+                legend: 'inline',
+                percentages: false,
+                segments: (entity) => {
+                  const values = Array.isArray(entity.values) ? entity.values : [];
+                  return [
+                    { label: 'Cash', value: Number(values[0] ?? 0), color: '#22c55e' },
+                    { label: 'Equity', value: Number(values[1] ?? 0), color: '#3b82f6' },
+                    { label: 'Debt', value: Number(values[2] ?? 0), color: '#ef4444' },
+                  ];
+                },
+              },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+```tsx
+const data = [
+  { team: 'North America', values: [48, 37, 15] },
+];
+
+const field = {
+  key: 'values',
+  label: 'Composition',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    segments: (entity) => {
+      const values = Array.isArray(entity.values) ? entity.values : [];
+      return [
+        { label: 'Cash', value: Number(values[0] ?? 0), color: '#22c55e' },
+        { label: 'Equity', value: Number(values[1] ?? 0), color: '#3b82f6' },
+        { label: 'Debt', value: Number(values[2] ?? 0), color: '#ef4444' },
+      ];
+    },
+  },
+};
+```
+
+## Pattern 3 Example: Static Reference Composition from Config
+
+<WidgemoShowcase
+  title="Pattern 3: Static Reference Composition"
+  description="Each row shows the same benchmark composition from config."
+  data={[
+    { account: 'Ops Budget', note: 'Target benchmark' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'account', label: 'Account' },
+            { key: 'note', label: 'Note' },
+            {
+              key: 'account',
+              label: 'Reference Mix',
+              renderAs: 'compositionBar',
+              renderAsOptions: {
+                legend: 'inline',
+                percentages: false,
+                segments: [
+                  { label: 'Target Cash', value: 40, color: '#22c55e' },
+                  { label: 'Target Equity', value: 45, color: '#3b82f6' },
+                  { label: 'Target Debt', value: 15, color: '#ef4444' },
+                ],
+              },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+```tsx
+const data = [
+  { account: 'Ops Budget', note: 'Target benchmark' },
+];
+
+const field = {
+  key: 'account',
+  label: 'Reference Mix',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    segments: [
+      { label: 'Target Cash', value: 40, color: '#22c55e' },
+      { label: 'Target Equity', value: 45, color: '#3b82f6' },
+      { label: 'Target Debt', value: 15, color: '#ef4444' },
+    ],
+  },
+};
+```
+
+## Why Static Config Segments Can Still Be Useful
+
+Static config segments are useful for reference or target visuals.
+
+- target mix baseline shown beside row metadata
+- policy or SLA required distribution
+- benchmark overlay in tabular views
+- placeholder composition while live row-level data is not ready
+
+If your goal is comparing row-level composition differences, prefer Pattern 1 or Pattern 2.
+
+## Style and Corner Controls
+
+- `style: 'segmented'` renders separators between segments
+- `style: 'continuous'` renders one uninterrupted band
+- `segmentGap` controls separator width in segmented mode
+- `cornerRadius` controls roundness
+- `cornerScope` controls whether rounding applies to `track`, `segment`, `both`, or `none`
+
+## Recipes
+
+### Compact segmented strip
+
+```tsx
+{
+  key: 'screenTimeBreakdown',
+  label: 'Usage',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'none',
+    barHeight: 8,
+    gap: '0.25rem',
+    segments: (entity) => [
+      { label: 'Focus', value: entity.focusHours, color: '#4d94ff' },
+      { label: 'Messages', value: entity.messageHours, color: '#35d4a1' },
+      { label: 'Media', value: entity.mediaHours, color: '#f6ad55' },
+    ],
+  },
+}
+```
+
+### Summary card with legend rows
+
+```tsx
+{
+  key: 'capitalMix',
+  label: 'Capital Mix',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    percentages: true,
+    totals: true,
+    segments: (entity) => [
+      { label: 'Cash', value: entity.cash, color: '#35d4a1' },
+      { label: 'Equities', value: entity.equities, color: '#4d94ff' },
+      { label: 'Liabilities', value: entity.liabilities, color: '#f56565' },
+    ],
+    total: (entity) => entity.cash + entity.equities + entity.liabilities,
+  },
+}
+```
+
+### Host-controlled tabs or toggles
+
+```tsx
+const activeComposition = view === 'assets'
+  ? entity.assetSegments
+  : view === 'liabilities'
+    ? entity.liabilitySegments
+    : entity.netSegments;
+
+{
+  key: 'activeComposition',
+  label: 'Composition',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    segments: () => activeComposition,
+  },
+}
+```
+
+Keep the toggle UI in your page, modal, or zone actions; let `compositionBar` render the currently selected composition.
+
+## When to Use `compositionBar` vs Chart Mode
+
+- Use `compositionBar` when you need a compact composition snapshot inside a field, table cell, or card.
+- Use `compositionBar` when the composition is part of a broader list/detail layout and does not need axes, tooltips, or chart framing.
+- Use chart mode when the visualization should own the content area as a chart, not live inline as a field renderer.
+
+## Related
+
+- [Field Config](/core/reference/field-config)
+- [Custom renderAs](/core/extensions/renderas-customization)
+- [Docs Map](/core/getting-started/docs-map)
+
+## Continue Reading
+
+- Previous: [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app)
+- Next: [Custom renderAs](/core/extensions/renderas-customization)

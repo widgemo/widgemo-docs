@@ -19,18 +19,30 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Getting Started',
       items: [
+        'getting-started/docs-map',
         'getting-started/installation',
         'getting-started/quick-start',
-        'getting-started/migration',
+        'guides/integrate-into-existing-app',
       ],
     },
     {
       type: 'category',
       label: 'Concepts',
       items: [
+        'concepts/configuration-model',
         'concepts/modes-overview',
         'concepts/theming',
         'concepts/devmode',
+        'concepts/extension-architecture',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Guides',
+      items: [
+        'guides/adopting-widgemo',
+        'guides/temporal-fields',
+        'guides/composition-bar',
       ],
     },
     {
@@ -45,31 +57,27 @@ const sidebars: SidebarsConfig = {
         'reference/css-variables',
         'reference/host-css-table-layout',
         'reference/theme-api',
-        {
-          type: 'category',
-          label: 'Extensions',
-          items: ['reference/extension-api'],
-        },
       ],
     },
     {
       type: 'category',
-      label: 'Guides',
+      label: 'Extensions & Customizations',
       items: [
-        'guides/adopting-widgemo',
-        'guides/temporal-fields',
-        {
-          type: 'category',
-          label: 'Extensions',
-          items: [
-            'guides/custom-fields',
-            'guides/custom-modes',
-            'guides/custom-icons',
-          ],
-        },
+        'reference/extension-api',
+        'extensions/renderas-customization',
+        'extensions/custom-field-types',
+        'guides/custom-modes',
+        'guides/custom-icons',
       ],
     },
-    'changelog',
+    {
+      type: 'category',
+      label: 'Release Notes',
+      items: [
+        'changelog',
+        'release-notes/upgrading/migration-compatibility',
+      ],
+    },
   ],
 };
 
