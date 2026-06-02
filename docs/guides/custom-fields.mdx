@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
 # Custom Fields Guide
 
 This guide walks through two common extension patterns: adding a custom `renderAs` renderer and registering a custom field type.
@@ -125,6 +127,266 @@ These are fully config-driven (not derived from data shape):
 - `segmentGap`: used by segmented style
 - `cornerRadius` and `cornerScope`
 - `barHeight` and layout `gap`
+
+### Decision Table: Which Pattern Should I Use?
+
+Use this table when choosing between data-shaped segments and config-shaped segments.
+
+| Pattern | Where segment values come from | Where labels/colors come from | Best when | Recommended setup |
+|---|---|---|---|---|
+| Row-specific full segments | Each row/item contains full segment objects | Same row/item segment objects (`label`, `color`) | Every row has a distinct composition definition | Put segment objects in row data; omit `renderAsOptions.segments` |
+| Row-specific values with shared schema | Each row/item contains only numeric values | Config mapping function | All rows share the same segment schema, but values differ per row | Keep numeric arrays in data; use `renderAsOptions.segments: (entity) => ...` to map labels/colors |
+| Static reference composition | Config only (same for every row/item) | Config only | You want the same reference mix shown repeatedly as context | Use static `renderAsOptions.segments: [...]` |
+
+### Pattern 1 Example: Row Data Contains Full Segments
+
+Use Pattern 1 when each row already knows its own labels, values, and colors.
+
+<WidgemoShowcase
+	title="Pattern 1: Row Data Contains Full Segments"
+	description="Each row provides its own segment objects. Config only controls presentation."
+	data={[
+		{
+			portfolio: 'Operating Reserve',
+			mix: {
+				segments: [
+					{ label: 'Cash', value: 52, color: '#22c55e' },
+					{ label: 'Bonds', value: 33, color: '#3b82f6' },
+					{ label: 'Other', value: 15, color: '#a855f7' },
+				],
+			},
+		},
+		{
+			portfolio: 'Growth Fund',
+			mix: {
+				segments: [
+					{ label: 'Equity', value: 64, color: '#2563eb' },
+					{ label: 'Cash', value: 14, color: '#22c55e' },
+					{ label: 'Hedges', value: 22, color: '#f59e0b' },
+				],
+			},
+		},
+	]}
+	config={{
+		zones: {
+			header: {
+				title: 'Pattern 1',
+				subtitle: 'Data carries full segment definitions',
+			},
+			content: {
+				mode: 'table',
+				item: {
+					fields: [
+						{ key: 'portfolio', label: 'Portfolio' },
+						{
+							key: 'mix',
+							label: 'Composition',
+							renderAs: 'compositionBar',
+							renderAsOptions: {
+								legend: 'inline',
+								percentages: false,
+							},
+						},
+					],
+					layout: { type: 'auto' },
+				},
+			},
+		},
+	}}
+/>
+
+Data snippet:
+
+```tsx
+const data = [
+	{
+		portfolio: 'Operating Reserve',
+		mix: {
+			segments: [
+				{ label: 'Cash', value: 52, color: '#22c55e' },
+				{ label: 'Bonds', value: 33, color: '#3b82f6' },
+				{ label: 'Other', value: 15, color: '#a855f7' },
+			],
+		},
+	},
+];
+```
+
+Config snippet:
+
+```tsx
+{
+	key: 'mix',
+	label: 'Composition',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'inline',
+		percentages: false,
+	},
+}
+```
+
+### Pattern 2 Example: Row Data Has Values, Config Supplies Shared Schema
+
+Use Pattern 2 when rows all follow the same segment schema, but each row has different values.
+
+<WidgemoShowcase
+	title="Pattern 2: Row Values + Config Mapping"
+	description="Each row stores only values. Config maps those values into shared labels and colors."
+	data={[
+		{ team: 'North America', values: [48, 37, 15] },
+		{ team: 'EMEA', values: [33, 49, 18] },
+	]}
+	config={{
+		zones: {
+			header: {
+				title: 'Pattern 2',
+				subtitle: 'Data carries values only; config defines shared segment schema',
+			},
+			content: {
+				mode: 'table',
+				item: {
+					fields: [
+						{ key: 'team', label: 'Team' },
+						{
+							key: 'values',
+							label: 'Composition',
+							renderAs: 'compositionBar',
+							renderAsOptions: {
+								legend: 'inline',
+								percentages: false,
+								segments: (entity) => {
+									const values = Array.isArray(entity.values) ? entity.values : [];
+									return [
+										{ label: 'Cash', value: Number(values[0] ?? 0), color: '#22c55e' },
+										{ label: 'Equity', value: Number(values[1] ?? 0), color: '#3b82f6' },
+										{ label: 'Debt', value: Number(values[2] ?? 0), color: '#ef4444' },
+									];
+								},
+							},
+						},
+					],
+					layout: { type: 'auto' },
+				},
+			},
+		},
+	}}
+/>
+
+Data snippet:
+
+```tsx
+const data = [
+	{ team: 'North America', values: [48, 37, 15] },
+	{ team: 'EMEA', values: [33, 49, 18] },
+];
+```
+
+Config snippet:
+
+```tsx
+{
+	key: 'values',
+	label: 'Composition',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'inline',
+		segments: (entity) => {
+			const values = Array.isArray(entity.values) ? entity.values : [];
+			return [
+				{ label: 'Cash', value: Number(values[0] ?? 0), color: '#22c55e' },
+				{ label: 'Equity', value: Number(values[1] ?? 0), color: '#3b82f6' },
+				{ label: 'Debt', value: Number(values[2] ?? 0), color: '#ef4444' },
+			];
+		},
+	},
+}
+```
+
+### Pattern 3 Example: Static Reference Composition from Config
+
+Use Pattern 3 when the bar is a repeated benchmark, target, or policy mix rather than row-specific composition data.
+
+<WidgemoShowcase
+	title="Pattern 3: Static Reference Composition"
+	description="Each row shows the same reference mix from config. Row text differs, but the composition bar is intentionally constant."
+	data={[
+		{ account: 'Ops Budget', note: 'Target benchmark' },
+		{ account: 'Payroll Reserve', note: 'Target benchmark' },
+	]}
+	config={{
+		zones: {
+			header: {
+				title: 'Pattern 3',
+				subtitle: 'Config carries a constant benchmark composition',
+			},
+			content: {
+				mode: 'table',
+				item: {
+					fields: [
+						{ key: 'account', label: 'Account' },
+						{ key: 'note', label: 'Note' },
+						{
+							key: 'account',
+							label: 'Reference Mix',
+							renderAs: 'compositionBar',
+							renderAsOptions: {
+								legend: 'inline',
+								percentages: false,
+								segments: [
+									{ label: 'Target Cash', value: 40, color: '#22c55e' },
+									{ label: 'Target Equity', value: 45, color: '#3b82f6' },
+									{ label: 'Target Debt', value: 15, color: '#ef4444' },
+								],
+							},
+						},
+					],
+					layout: { type: 'auto' },
+				},
+			},
+		},
+	}}
+/>
+
+Data snippet:
+
+```tsx
+const data = [
+	{ account: 'Ops Budget', note: 'Target benchmark' },
+	{ account: 'Payroll Reserve', note: 'Target benchmark' },
+];
+```
+
+Config snippet:
+
+```tsx
+{
+	key: 'account',
+	label: 'Reference Mix',
+	renderAs: 'compositionBar',
+	renderAsOptions: {
+		legend: 'inline',
+		segments: [
+			{ label: 'Target Cash', value: 40, color: '#22c55e' },
+			{ label: 'Target Equity', value: 45, color: '#3b82f6' },
+			{ label: 'Target Debt', value: 15, color: '#ef4444' },
+		],
+	},
+}
+```
+
+### Why Static Config Segments Can Still Be Useful
+
+It is true that static segments are not for “real per-row composition” comparisons. They are useful for reference or target visuals.
+
+Common scenarios:
+
+- Target mix baseline: show the same planned allocation band next to each row, while row text values vary.
+- Policy or SLA mix: display a constant required distribution that every row should meet.
+- Benchmark overlay in tabular views: each row keeps its own metadata, but composition bar intentionally shows the same benchmark template.
+- Placeholder or staged rollout: keep a stable bar shape while waiting for row-level composition data to be available.
+
+If your intent is to compare row-to-row composition values, prefer Pattern 1 or Pattern 2 above.
 
 ### Style and Corner Controls
 
