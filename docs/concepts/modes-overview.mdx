@@ -2,6 +2,236 @@
 sidebar_position: 1
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const modeExampleData = [
+  { id: 1, name: 'Alice', email: 'alice@example.com', status: 'active' },
+  { id: 2, name: 'Bob', email: 'bob@example.com', status: 'pending' },
+  { id: 3, name: 'Charlie', email: 'charlie@example.com', status: 'inactive' },
+];
+
+export const tableModeExampleConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          hover: true,
+          showHeader: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', sortable: true },
+          { key: 'email', label: 'Email' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const gridModeExampleConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '240px',
+          maxColumns: 4,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'email', label: 'Email' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const carouselModeExampleConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 280,
+          itemHeight: 200,
+          gap: 16,
+          showArrows: true,
+          showIndicators: true,
+          infinite: true,
+          revolving: true,
+          autoPlay: true,
+          autoPlayInterval: 4000,
+          dragThreshold: 50,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'email', label: 'Email' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const boardModeExampleData = [
+  { id: 1, name: 'Alice', status: 'active' },
+  { id: 2, name: 'Bob', status: 'pending' },
+  { id: 3, name: 'Charlie', status: 'inactive' },
+  { id: 4, name: 'Dina', status: 'active' },
+];
+
+export const boardModeExampleConfig = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
+              { id: 'pending', label: 'Pending', value: 'pending', color: '#f59e0b', wipLimit: 5 },
+              { id: 'inactive', label: 'Inactive', value: 'inactive', color: '#6b7280' },
+            ],
+          },
+          dragEnabled: true,
+        },
+      },
+      actions: [
+        { id: 'open-card', label: 'Open', icon: 'view', placement: 'pinned', variant: 'secondary' },
+      ],
+      gestures: [
+        { type: 'item-drop', enabled: true, interactionId: 'board-drop', interactionLabel: 'Board Drop' },
+      ],
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const boardSwimlaneExampleData = [
+  { id: 1, name: 'Alice', status: 'active', department: 'Engineering' },
+  { id: 2, name: 'Bob', status: 'pending', department: 'Design' },
+  { id: 3, name: 'Charlie', status: 'inactive', department: 'Engineering' },
+  { id: 4, name: 'Dina', status: 'active', department: 'Design' },
+];
+
+export const boardSwimlaneExampleConfig = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active' },
+              { id: 'pending', label: 'Pending', value: 'pending' },
+              { id: 'inactive', label: 'Inactive', value: 'inactive' },
+            ],
+          },
+          swimlanes: {
+            field: 'department',
+            items: [
+              { id: 'engineering', label: 'Engineering', value: 'Engineering' },
+              { id: 'design', label: 'Design', filter: (entity) => entity.department === 'Design' },
+            ],
+            layout: { type: 'matrix' },
+            repeatingHeaders: false,
+          },
+          dragEnabled: true,
+        },
+      },
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const responsiveExampleData = [
+  { id: 1, name: 'Alice', department: 'Engineering', status: 'active' },
+  { id: 2, name: 'Bob', department: 'Design', status: 'pending' },
+  { id: 3, name: 'Charlie', department: 'Operations', status: 'inactive' },
+];
+
+export const responsiveDesktopPreviewConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        table: {
+          showHeader: true,
+          hover: true,
+        },
+      },
+    },
+  },
+};
+
+export const responsiveTabletPreviewConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        grid: { minItemWidth: '260px', gap: '0.75rem' },
+      },
+    },
+  },
+};
+
+export const responsiveMobilePreviewConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        carousel: { itemWidth: 260, showIndicators: true },
+      },
+    },
+  },
+};
+
 # Modes Overview
 
 widgemo-core supports five rendering modes for different UX contexts. Choose the mode via `config.zones.content.mode`. Customize per-mode behavior under `modeConfig.<mode>`.
@@ -11,6 +241,10 @@ For host CSS effects on table semantics and defensive resets, see [Host CSS and 
 ## Table Mode
 
 Best for operational data, admin workflows, and sortable/filterable data.
+
+<WidgemoShowcase title="Example Widget" data={modeExampleData} config={tableModeExampleConfig} />
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 content: {
@@ -30,6 +264,10 @@ content: {
 ## Grid Mode
 
 Best for card-based displays, product listings, and dashboards.
+
+<WidgemoShowcase title="Example Widget" data={modeExampleData} config={gridModeExampleConfig} />
+
+<div style={{ marginBottom: '1rem' }} />
 
 For most Widgemo card grids, start with `minItemWidth`, `maxColumns`, and `gap`, then add `content.responsive.breakpoints` when you need viewport-based mode switching.
 
@@ -60,6 +298,10 @@ Defaults are recommended for most card grids. Use these controls when you need s
 ## Carousel Mode
 
 Best for featured content, media galleries, and horizontal browsing.
+
+<WidgemoShowcase title="Example Widget" data={modeExampleData} config={carouselModeExampleConfig} />
+
+<div style={{ marginBottom: '1rem' }} />
 
 Looping controls:
 
@@ -93,6 +335,10 @@ content: {
 ## Board (Kanban) Mode
 
 Best for workflow status tracking and drag-and-drop pipelines.
+
+<WidgemoShowcase title="Example Widget" data={boardModeExampleData} config={boardModeExampleConfig} />
+
+<div style={{ marginBottom: '1rem' }} />
 
 Board columns are configured under `modeConfig.board.columns`.
 
@@ -140,6 +386,10 @@ content: {
 - `value`: maps field values to the swimlane.
 - `filter`: custom function-based routing for the swimlane.
 
+<WidgemoShowcase title="Example Widget" data={boardSwimlaneExampleData} config={boardSwimlaneExampleConfig} />
+
+<div style={{ marginBottom: '1rem' }} />
+
 ```tsx
 modeConfig: {
   board: {
@@ -176,6 +426,30 @@ Runtime breakpoint buckets:
 - `mobile`: width `< 768`
 - `tablet`: width `768-1023`
 - `desktop`: width `>= 1024`
+
+### Example Widgets by Width
+
+For docs preview, these widgets simulate each responsive target mode using the same data and equivalent mode settings from the breakpoint snippet.
+
+#### Desktop width (table)
+
+<div style={{ width: '100%', maxWidth: '1120px' }}>
+  <WidgemoShowcase title="Example Widget" data={responsiveExampleData} config={responsiveDesktopPreviewConfig} />
+</div>
+
+#### Tablet width (grid)
+
+<div style={{ width: '100%', maxWidth: '900px' }}>
+  <WidgemoShowcase title="Example Widget" data={responsiveExampleData} config={responsiveTabletPreviewConfig} />
+</div>
+
+#### Mobile width (carousel)
+
+<div style={{ width: '100%', maxWidth: '420px' }}>
+  <WidgemoShowcase title="Example Widget" data={responsiveExampleData} config={responsiveMobilePreviewConfig} />
+</div>
+
+<div style={{ marginBottom: '1rem' }} />
 
 Working example:
 

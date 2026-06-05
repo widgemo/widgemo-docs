@@ -67,6 +67,8 @@ Pass `data` as a top-level prop and describe the layout in `config`. Mode-specif
   config={quickStartConfig}
 />
 
+<div style={{ marginBottom: '1rem' }} />
+
 ### Example Code
 
 ```tsx
@@ -118,6 +120,8 @@ Pass a `WidgemoTheme` object to override tokens or zone styles:
   </div>
 </WidgemoThemeProvider>
 
+<div style={{ marginBottom: '1rem' }} />
+
 ### Example Code
 
 ```tsx
@@ -145,6 +149,8 @@ Fields are inferred from data keys — the minimum viable config:
   config={zeroConfig}
 />
 
+<div style={{ marginBottom: '1rem' }} />
+
 ### Example Code
 
 ```tsx
@@ -158,4 +164,10 @@ const config = {
 
 <Widgemo data={data} config={config} />
 ```
+
+## Using Widgemo in an Existing App
+
+If you are adding Widgemo to an already-running product (instead of starting from scratch), continue with the integration guide:
+
+- [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app)
 

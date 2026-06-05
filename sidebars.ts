@@ -7,7 +7,11 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  - create an ordered group of docs
  - render a sidebar for each doc of that group
  - provide next/previous navigation
-
+        {
+          type: 'doc',
+          id: 'getting-started/quick-start',
+          label: 'Quick Start',
+        },
  The sidebars can be generated from the filesystem, or explicitly defined here.
 
  Create as many sidebars as you want.
@@ -21,7 +25,6 @@ const sidebars: SidebarsConfig = {
       items: [
         'getting-started/installation',
         'getting-started/quick-start',
-        'guides/integrate-into-existing-app',
       ],
     },
     {
@@ -39,6 +42,7 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Guides',
       items: [
+        'guides/integrate-into-existing-app',
         'guides/adopting-widgemo',
         'guides/temporal-fields',
         'guides/composition-bar',

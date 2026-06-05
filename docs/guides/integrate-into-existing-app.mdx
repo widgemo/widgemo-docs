@@ -10,6 +10,43 @@ This guide is for teams adding `@widgemo/widgemo-core` to an already-started or 
 
 The goal is not a full rewrite. The goal is a controlled replacement of existing table/card/list surfaces with Widgemo, one widget at a time.
 
+## Initial Integration Steps
+
+Start with this baseline sequence before planning larger adoption phases.
+
+1. Install widgemo-core.
+2. Ensure peer dependencies are present in your app.
+3. Import the Widgemo stylesheet at your app root.
+4. Replace one existing table/card surface with a minimal Widgemo instance.
+
+```bash
+npm install @widgemo/widgemo-core
+```
+
+```tsx
+import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/style.css';
+
+function AccountsWidget({ rows }) {
+  return (
+    <WidgemoThemeProvider theme="light">
+      <Widgemo
+        data={rows}
+        config={{
+          zones: {
+            content: {
+              mode: 'table',
+            },
+          },
+        }}
+      />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+After this baseline works, continue with discovery and phased migration below.
+
 <WidgemoShowcase
   title="Minimum Viable Replacement"
   description="A realistic first replacement target: existing data stays the same, while the rendering layer moves to Widgemo."
