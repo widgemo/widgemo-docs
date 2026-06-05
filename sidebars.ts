@@ -19,7 +19,6 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Getting Started',
       items: [
-        'getting-started/docs-map',
         'getting-started/installation',
         'getting-started/quick-start',
         'guides/integrate-into-existing-app',
@@ -74,7 +73,6 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Release Notes',
       items: [
-        'changelog',
         'release-notes/upgrading/migration-compatibility',
       ],
     },

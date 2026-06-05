@@ -5,107 +5,62 @@ slug: /
 
 # widgemo-core Documentation
 
-Welcome to the **widgemo-core** documentation hub. Here you'll find everything you need to build, customize, and extend zero-dependency React components for configurable data display.
+Welcome to the **widgemo-core** documentation hub. This page explains how the docs site is organized so you can quickly find implementation details, configuration references, and extension guidance.
 
-## What is widgemo-core?
+## How This Documentation Is Organized
 
-**widgemo-core** is a zero-dependency React component library that makes it easy to build powerful, configurable data components. With minimal runtime dependencies (React and React-DOM are peers), it provides:
+- **Getting Started** — Start here to get aligned with package setup and the expected app integration flow.
+  - `Installation` covers package setup, peer dependencies, and stylesheet import.
+  - `Quick Start` provides the first working `Widgemo` setup.
+  - `Integrate Into Existing App` focuses on adopting widgemo-core in an existing product.
+- **Concepts** — Defines the core mental model used throughout the docs: modes, theming, DevMode, configuration model, and extension architecture.
+- **Reference** — Source-of-truth API documentation for props and configuration (`widgemo-props`, `widgemo-config`, `content-config`, `field-config`, actions, CSS, and theme APIs).
+- **Guides** — Task-oriented walkthroughs for real implementation scenarios (adoption workflow, temporal fields, composition bar).
+- **Extensions & Customizations** — Advanced extension points for custom `renderAs`, custom field types, custom modes, custom icons, and extension API behavior.
+- **Release Notes** — Migration and compatibility guidance for upgrades.
 
-- **Multiple rendering modes** — Table, Grid, Carousel, Board, and Chart modes
-- **Flexible configuration** — Define component behavior entirely through a JSON-like config object
-- **Built-in field renderers** — Currency, progress, links, ratings, and more, out of the box
-- **Automatic theming** — Light/dark mode support with customizable CSS variables
-- **Extension API** — Register custom renderers, modes, icons, and field types
-- **TypeScript-first** — Complete type safety from the ground up
+## Getting Started at a Glance
 
-## Quick Links
+This intro is a fast orientation. The steps below are the absolute minimum to render Widgemo. For setup specifics and edge cases, use the Getting Started pages.
 
-- **Docs Map** — One-page navigation map for all sections: [Open Docs Map](/core/getting-started/docs-map)
-- **Installation** — Get widgemo-core into your project in seconds: [Open Installation](/core/getting-started/installation)
-- **Quick Start** — Your first `<Widgemo>` component: [Open Quick Start](/core/getting-started/quick-start)
-- **Integrate Into Existing App** — Adoption path for existing products: [Open Integration Guide](/core/guides/integrate-into-existing-app)
-- **Extension API** — Register custom icons, field types, renderers, hooks, and modes: [Open Extension API](/core/reference/extension-api)
-- **Concepts** — Understand modes, theming, and DevMode: [Open Concepts](/core/concepts/modes-overview)
-- **API Reference** — Complete prop and config documentation: [Open API Reference](/core/reference/widgemo-props)
-- **Migration & Compatibility** — Upgrade-safe migration details: [Open Migration and Compatibility](/core/release-notes/upgrading/migration-compatibility)
-
-## Getting Started (2 minutes)
-
-Install via npm:
+1. Install widgemo-core.
+2. Import the stylesheet once at your app root.
+3. Render `Widgemo` with `data` and a `zones`-based `config`.
 
 ```bash
-npm install @widgemo/widgemo-core react react-dom
+npm install @widgemo/widgemo-core
 ```
 
-Render a table in your React app:
-
 ```tsx
-import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+import { WidgemoThemeProvider, Widgemo } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/style.css';
 
-export function MyDataTable() {
-  const data = [
-    { id: 1, name: 'Alice', role: 'Engineer', salary: 125000 },
-    { id: 2, name: 'Bob', role: 'Designer', salary: 95000 },
-  ];
-
+function App() {
   return (
-    <WidgemoThemeProvider>
-      <Widgemo
-        config={{
-          mode: 'table',
-          fields: [
-            { name: 'name', label: 'Name' },
-            { name: 'role', label: 'Role' },
-            { name: 'salary', label: 'Salary', renderAs: 'currency' },
-          ],
-          content: {
-            filtering: [{ fieldKey: 'role', operator: 'eq', value: 'Engineer' }],
-            searching: { enabled: true },
-            sorting: { enabled: true },
-          },
-        }}
-        data={data}
-      />
+    <WidgemoThemeProvider theme="light">
+      <Widgemo data={data} config={config} />
     </WidgemoThemeProvider>
   );
 }
 ```
 
-That's it! You now have a fully-featured data table with search, filter, and sort.
+For the complete runnable setup, use:
 
-## Documentation Structure
+- [Installation](/core/getting-started/installation)
+- [Quick Start](/core/getting-started/quick-start)
 
-- **Getting Started** — Docs map, installation, quick start, and integration path
-- **Concepts** — Deep dives into modes, theming, and DevMode
-- **Reference** — Complete prop tables, config schemas, and extension API documentation
-- **Guides** — How-to articles for adoption workflows and specialized renderers
-- **Extensions & Customizations** — Custom renderers, field types, modes, and icon systems
-- **Release Notes** — Changelog plus migration and compatibility updates
+## Runtime Footprint
 
-## Peer Dependencies
+widgemo-core keeps runtime dependencies lean by using React and React-DOM as peers.
 
-widgemo-core requires **React 16.8+** and **React-DOM 16.8+**. No other runtime dependencies.
-
-```json
-{
-  "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
-  }
-}
-```
+For exact supported versions and install commands, see [Installation](/core/getting-started/installation).
 
 ## Resources
 
 - **[GitHub Repository](https://github.com/widgemo/widgemo-core)** — Source code, issues, and discussions
 - **[widgemo-demo](https://demo.widgemo.com)** — Live interactive examples and sandbox
-- **[Changelog](/core/changelog)** — Release notes and updates
 
 ---
 
 **Ready to dive in?** Check out the [GitHub Repository](https://github.com/widgemo/widgemo-core) or explore the [widgemo-demo](https://demo.widgemo.com) for interactive examples.
 
-## Continue Reading
-
-- Next: [Docs Map](/core/getting-started/docs-map)
-- Then: [Configuration Model](/core/concepts/configuration-model)
