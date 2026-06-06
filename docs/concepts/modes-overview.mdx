@@ -153,13 +153,13 @@ For shared mode-level behavior, start with the pages below. Each guide focuses o
 
 The same dataset below is shown as a table, grid, carousel, board, and two chart types.
 
-<div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', alignItems: 'start' }}>
-	<WidgemoShowcase title="Table" data={modesOverviewData} config={modesOverviewTableConfig} />
-	<WidgemoShowcase title="Grid" data={modesOverviewData} config={modesOverviewGridConfig} />
-	<WidgemoShowcase title="Carousel" data={modesOverviewData} config={modesOverviewCarouselConfig} />
-	<WidgemoShowcase title="Board" data={modesOverviewData} config={modesOverviewBoardConfig} />
-	<WidgemoShowcase title="Bar Chart" data={modesOverviewData} config={modesOverviewBarChartConfig} />
-	<WidgemoShowcase title="Pie Chart" data={modesOverviewData} config={modesOverviewPieChartConfig} />
+<div className="modes-overview-grid">
+	<WidgemoShowcase className="modes-overview-preview" title="Table" data={modesOverviewData} config={modesOverviewTableConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Grid" data={modesOverviewData} config={modesOverviewGridConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Carousel" data={modesOverviewData} config={modesOverviewCarouselConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Board" data={modesOverviewData} config={modesOverviewBoardConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Bar Chart" data={modesOverviewData} config={modesOverviewBarChartConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Pie Chart" data={modesOverviewData} config={modesOverviewPieChartConfig} />
 </div>
 
 ## Guides
