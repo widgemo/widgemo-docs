@@ -20,37 +20,41 @@ This is the core mental model for the library.
 - `item` answers: how is one record arranged?
 - `fields` answer: how does each value appear?
 
+export const configurationModelData = [
+  { name: 'Aurora Chen', role: 'Design Lead', status: 'active', salary: 142000 },
+  { name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending', salary: 131500 },
+];
+
+export const configurationModelConfig = {
+  zones: {
+    header: {
+      title: 'Team Directory',
+      subtitle: 'zones.header defines the top-level presentation chrome',
+    },
+    content: {
+      mode: 'table',
+      sorting: [{ fieldKey: 'salary', direction: 'desc' }],
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+          { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+    footer: {
+      subtitle: 'fields control value rendering; content controls the dataset view',
+    },
+  },
+};
+
 <WidgemoShowcase
   title="Configuration Model Live Example"
   description="This example shows the full nesting: header zone, content mode, item layout, and field renderers."
-  data={[
-    { name: 'Aurora Chen', role: 'Design Lead', status: 'active', salary: 142000 },
-    { name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending', salary: 131500 },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Team Directory',
-        subtitle: 'zones.header defines the top-level presentation chrome',
-      },
-      content: {
-        mode: 'table',
-        sorting: [{ fieldKey: 'salary', direction: 'desc' }],
-        item: {
-          fields: [
-            { key: 'name', label: 'Name' },
-            { key: 'role', label: 'Role' },
-            { key: 'status', label: 'Status', renderAs: 'badge' },
-            { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-      footer: {
-        subtitle: 'fields control value rendering; content controls the dataset view',
-      },
-    },
-  }}
+  data={configurationModelData}
+  config={configurationModelConfig}
 />
 
 ## The Four Layers
@@ -60,7 +64,7 @@ This is the core mental model for the library.
 At the outermost level, you pass `data` and `config` into `<Widgemo>`.
 
 ```tsx
-<Widgemo data={rows} config={config} />
+<Widgemo data={configurationModelData} config={configurationModelConfig} />
 ```
 
 This is the runtime shell. Everything else lives inside `config`.
@@ -70,13 +74,23 @@ This is the runtime shell. Everything else lives inside `config`.
 Zones organize the widget surface into named regions.
 
 ```tsx
-config = {
-  zones: {
-    header: { title: 'Accounts' },
-    content: { ... },
-    footer: { subtitle: 'Last synced 2m ago' },
+const zones = configurationModelConfig.zones;
+
+// zones from the live example above
+{
+  header: {
+    title: 'Team Directory',
+    subtitle: 'zones.header defines the top-level presentation chrome',
   },
-};
+  content: {
+    mode: 'table',
+    sorting: [{ fieldKey: 'salary', direction: 'desc' }],
+    item: { ... },
+  },
+  footer: {
+    subtitle: 'fields control value rendering; content controls the dataset view',
+  },
+}
 ```
 
 Use zones when you want structure such as titles, actions, summaries, and supporting metadata around the main content.
@@ -86,11 +100,12 @@ Use zones when you want structure such as titles, actions, summaries, and suppor
 `zones.content` defines how the dataset behaves and renders.
 
 ```tsx
-content: {
+const content = configurationModelConfig.zones.content;
+
+// content from the live example above
+{
   mode: 'table',
-  filtering: [...],
-  sorting: [...],
-  pagination: { pageSize: 20 },
+  sorting: [{ fieldKey: 'salary', direction: 'desc' }],
   item: { ... },
 }
 ```
@@ -102,10 +117,15 @@ This is where you choose the rendering mode and content-level behavior.
 `item` defines how a single entity is rendered. `fields` define each displayed value.
 
 ```tsx
-item: {
+const item = configurationModelConfig.zones.content.item;
+
+// item from the live example above
+{
   fields: [
     { key: 'name', label: 'Name' },
+    { key: 'role', label: 'Role' },
     { key: 'status', label: 'Status', renderAs: 'badge' },
+    { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
   ],
   layout: { type: 'auto' },
 }
