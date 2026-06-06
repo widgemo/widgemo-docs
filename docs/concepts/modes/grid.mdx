@@ -1,0 +1,157 @@
+---
+sidebar_position: 2
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Grid Mode
+
+`modeConfig.grid` controls how Widgemo tiles items into a responsive card grid. Shared item layout details live in [Field Config](/core/reference/field-config), while shared content behavior like search, pagination, filtering, and actions lives in [Content Config](/core/reference/content-config).
+
+## Compact Grid
+
+This version keeps cards compact and lets the grid auto-pack into a predictable set of columns.
+
+<WidgemoShowcase
+  title="Compact Grid"
+  description="A straightforward grid with fixed minimum card width and a capped column count."
+  data={gridModeData}
+  config={gridCompactConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '240px',
+          maxColumns: 4,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Alignment Controls
+
+Use the alignment controls when card width, spacing, or packing needs to be tuned beyond the defaults.
+
+<WidgemoShowcase
+  title="Alignment Controls"
+  description="This version uses a denser packing strategy and centered cards inside the grid cells."
+  data={gridModeData}
+  config={gridAlignedConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '260px',
+          maxColumns: 3,
+          gap: '1.5rem',
+          autoFlow: 'dense',
+          justifyItems: 'center',
+          alignItems: 'stretch',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Grid Options
+
+| Option | What it changes |
+|---|---|
+| `gap` | Sets spacing between cards. |
+| `minItemWidth` | Sets the minimum width before cards wrap. |
+| `maxColumns` | Caps how many cards can appear per row. |
+| `autoFlow` | Controls how items are packed into the grid. |
+| `justifyItems` | Controls horizontal alignment inside each cell. |
+| `alignItems` | Controls vertical alignment inside each cell. |
+
+export const gridModeData = [
+  { name: 'Aurora Chen', role: 'Design Lead', status: 'active' },
+  { name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending' },
+  { name: 'Priya Nair', role: 'Operations', status: 'inactive' },
+  { name: 'Samir Khan', role: 'QA', status: 'active' },
+  { name: 'Leah Wong', role: 'Customer Success', status: 'active' },
+  { name: 'Iris Patel', role: 'Analytics', status: 'pending' },
+];
+
+export const gridCompactConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '240px',
+          maxColumns: 4,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const gridAlignedConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '260px',
+          maxColumns: 3,
+          gap: '1.5rem',
+          autoFlow: 'dense',
+          justifyItems: 'center',
+          alignItems: 'stretch',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};

@@ -1,0 +1,170 @@
+---
+sidebar_position: 5
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Responsive Switching
+
+Responsive switching uses a base `content.mode` and then swaps in breakpoint-specific mode and `modeConfig` overrides from `content.responsive.breakpoints`.
+
+Shared options such as search, filtering, pagination, actions, and gestures are covered in [Content Config](/core/reference/content-config).
+
+## What It Changes
+
+Use responsive switching when the same dataset should present differently across widths.
+
+- `content.mode` defines the default desktop mode.
+- `content.responsive.breakpoints` adds width-specific overrides.
+- Each breakpoint can swap the mode and tune that mode's config.
+
+## Live Preview
+
+These widgets mirror the same data across the three target widths shown in the example below.
+
+### Desktop width
+
+<div style={{ width: '100%', maxWidth: '1120px' }}>
+  <WidgemoShowcase title="Desktop Width" data={responsiveData} config={responsiveDesktopConfig} />
+</div>
+
+### Tablet width
+
+<div style={{ width: '100%', maxWidth: '900px' }}>
+  <WidgemoShowcase title="Tablet Width" data={responsiveData} config={responsiveTabletConfig} />
+</div>
+
+### Mobile width
+
+<div style={{ width: '100%', maxWidth: '420px' }}>
+  <WidgemoShowcase title="Mobile Width" data={responsiveData} config={responsiveMobileConfig} />
+</div>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        table: {
+          showHeader: true,
+          hover: true,
+        },
+      },
+      responsive: {
+        breakpoints: {
+          tablet: {
+            mode: 'grid',
+            modeConfig: {
+              grid: {
+                minItemWidth: '260px',
+                gap: '0.75rem',
+              },
+            },
+          },
+          mobile: {
+            mode: 'carousel',
+            modeConfig: {
+              carousel: {
+                itemWidth: 260,
+                showIndicators: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+## Responsive Options
+
+| Option | What it changes |
+|---|---|
+| `content.mode` | Sets the default mode before breakpoints are applied. |
+| `content.responsive.breakpoints` | Declares width-specific overrides. |
+| `breakpoints.<name>.mode` | Switches the mode at that breakpoint. |
+| `breakpoints.<name>.modeConfig` | Overrides the chosen mode's config at that breakpoint. |
+
+export const responsiveData = [
+  { name: 'Aurora Chen', department: 'Engineering', status: 'active' },
+  { name: 'Mateo Silva', department: 'Design', status: 'pending' },
+  { name: 'Priya Nair', department: 'Operations', status: 'inactive' },
+];
+
+export const responsiveDesktopConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        table: {
+          showHeader: true,
+          hover: true,
+        },
+      },
+    },
+  },
+};
+
+export const responsiveTabletConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        grid: {
+          minItemWidth: '260px',
+          gap: '0.75rem',
+        },
+      },
+    },
+  },
+};
+
+export const responsiveMobileConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        carousel: {
+          itemWidth: 260,
+          showIndicators: true,
+        },
+      },
+    },
+  },
+};

@@ -1,0 +1,238 @@
+---
+sidebar_position: 1
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Table Mode
+
+`modeConfig.table` controls table-only presentation. Shared content features such as search, pagination, filtering, sorting, actions, gestures, and responsive breakpoints are documented in [Content Config](/core/reference/content-config).
+
+## Traditional Table
+
+This example shows the default table shape with header, hover, alternating rows, and row separators.
+
+<WidgemoShowcase
+  title="Traditional Table"
+  description="A straight table layout with the most common presentation toggles enabled."
+  data={tableModeData}
+  config={tableTraditionalConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          hover: true,
+          showHeader: true,
+          rowSeparator: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Rich Cells
+
+Use `type: 'rich-cells'` when you want each row to read like denser cards while still staying in table mode.
+
+<WidgemoShowcase
+  title="Rich Cells Table"
+  description="The same data rendered as richer cells with two visible columns per row block."
+  data={tableModeData}
+  config={tableRichCellsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'rich-cells',
+          columns: 2,
+          showHeader: false,
+          hover: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Row Highlighting
+
+`conditionalBackgroundColor` is useful when rows need a visible state such as active, warning, or inactive.
+
+<WidgemoShowcase
+  title="Conditional Row Styling"
+  description="This example colors each row from the entity status value."
+  data={tableModeData}
+  config={tableConditionalConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          conditionalBackgroundColor: (entity) => {
+            if (entity.status === 'active') {
+              return { backgroundColor: '#e8f7ee', color: '#0f5132' };
+            }
+            if (entity.status === 'pending') {
+              return { backgroundColor: '#fff8e6', color: '#8a6d3b' };
+            }
+            return { backgroundColor: '#f5f5f5', color: '#4b5563' };
+          },
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Table Options
+
+| Option | What it changes |
+|---|---|
+| `type` | Chooses between the standard table layout and the denser rich-cells layout. |
+| `columns` | Sets how many rich cells appear per row block when `type` is `rich-cells`. |
+| `hover` | Adds row hover emphasis. |
+| `showHeader` | Shows or hides the header row. |
+| `alternatingRows` | Enables zebra striping. |
+| `rowSeparator` | Draws separators between rows. |
+| `conditionalBackgroundColor` | Returns a row-specific background and optional text color. |
+| `hooks.onSort` | Receives sort changes. This is behavioral, not visual. |
+| `hooks.onGroup` | Receives grouping changes. This is behavioral, not visual. |
+| `hooks.preRowRender` | Lets you transform each row before render. |
+| `hooks.onGroupToggle` | Receives group expand/collapse changes. |
+
+For field-level table behavior such as `sortable`, `width`, and `align`, see [Field Config](/core/reference/field-config).
+
+export const tableModeData = [
+  { name: 'Aurora Chen', team: 'Design', status: 'active' },
+  { name: 'Mateo Silva', team: 'Platform', status: 'pending' },
+  { name: 'Priya Nair', team: 'Operations', status: 'inactive' },
+];
+
+export const tableTraditionalConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          hover: true,
+          showHeader: true,
+          rowSeparator: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableRichCellsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'rich-cells',
+          columns: 2,
+          showHeader: false,
+          hover: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableConditionalConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          conditionalBackgroundColor: (entity) => {
+            if (entity.status === 'active') {
+              return { backgroundColor: '#e8f7ee', color: '#0f5132' };
+            }
+            if (entity.status === 'pending') {
+              return { backgroundColor: '#fff8e6', color: '#8a6d3b' };
+            }
+            return { backgroundColor: '#f5f5f5', color: '#4b5563' };
+          },
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};

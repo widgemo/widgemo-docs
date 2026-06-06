@@ -32,7 +32,19 @@ const sidebars: SidebarsConfig = {
       label: 'Concepts',
       items: [
         'concepts/configuration-model',
-        'concepts/modes-overview',
+        {
+          type: 'category',
+          label: 'Modes',
+          items: [
+            'concepts/modes-overview',
+            'concepts/modes/table',
+            'concepts/modes/grid',
+            'concepts/modes/carousel',
+            'concepts/modes/board',
+            'concepts/modes/chart',
+            'concepts/modes/responsive-switching',
+          ],
+        },
         'concepts/theming',
         'concepts/devmode',
         'concepts/extension-architecture',
