@@ -96,6 +96,34 @@ content: {
 
 ## Grouping
 
+`groupings` is the canonical grouping contract under `zones.content`, independent from mode-specific presentation controls.
+
+`GroupingConfig` shape:
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `fieldKey` | `string` | required | Data field used to build group buckets. |
+| `initiallyCollapsed` | `boolean` | `false` | Starts every group collapsed when true. |
+| `collapsible` | `boolean` | `true` | Enables user expand/collapse interactions for groups. |
+| `renderer` | `(groupValue, count, isCollapsed) => ReactNode` | unset | Custom group header label renderer. |
+| `showDropdownControl` | `boolean` | `false` | Table-only: shows the Group by dropdown control. |
+| `showHeaderControls` | `boolean` | `true` | Table-only: shows grouping controls in table headers. |
+| `aggregates` | `Record<string, AggregateType>` | unset | Table-only: aggregate chips in grouped table headers. |
+
+Mode applicability:
+
+| Grouping field | Table mode | Non-table modes |
+|---|---|---|
+| `fieldKey` | supported | supported |
+| `initiallyCollapsed` | supported | supported |
+| `collapsible` | supported | supported |
+| `renderer` | supported | supported |
+| `showDropdownControl` | supported | ignored |
+| `showHeaderControls` | supported | ignored |
+| `aggregates` | supported | ignored |
+
+For table-specific grouping control UX and live variants (dropdown-only, header-icons-only, both), see [Table Mode: Grouping UI Controls](/core/concepts/modes/table#grouping-ui-controls).
+
 ```tsx
 content: {
   mode: 'table',
@@ -103,6 +131,8 @@ content: {
     {
       fieldKey: 'department',
       initiallyCollapsed: false,
+      showDropdownControl: true,
+      showHeaderControls: true,
       renderer: (groupValue, count, isCollapsed) =>
         `${groupValue} — ${count} members ${isCollapsed ? '▶' : '▼'}`,
     },
@@ -110,6 +140,8 @@ content: {
   item: { fields: […], layout: { type: 'auto' } },
 },
 ```
+
+For grouped table header styling and host-CSS caveats, see [Host CSS and Table Layout](/core/reference/host-css-table-layout#grouping-chevron-color-contract).
 
 ## Action Overflow
 
