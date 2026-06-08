@@ -4,33 +4,127 @@ sidebar_position: 2
 
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
-# Grid Mode
+export const gridModeData = [
+  {
+    name: 'Aurora Chen',
+    role: 'Design Lead',
+    status: 'active',
+    team: 'Design',
+    bio: 'Runs design reviews and mentors the UI guild.',
+  },
+  {
+    name: 'Mateo Silva',
+    role: 'Platform Engineer',
+    status: 'pending',
+    team: 'Platform',
+    bio: 'Owns API reliability, observability, and release pipelines.',
+  },
+  {
+    name: 'Priya Nair',
+    role: 'Operations',
+    status: 'inactive',
+    team: 'Operations',
+    bio: 'Coordinates cross-team rollout and process updates.',
+  },
+  {
+    name: 'Samir Khan',
+    role: 'QA',
+    status: 'active',
+    team: 'Platform',
+    bio: 'Builds automated regression plans and release checks.',
+  },
+  {
+    name: 'Leah Wong',
+    role: 'Customer Success',
+    status: 'active',
+    team: 'Operations',
+    bio: 'Owns onboarding for enterprise accounts.',
+  },
+  {
+    name: 'Iris Patel',
+    role: 'Analytics',
+    status: 'pending',
+    team: 'Design',
+    bio: 'Maintains dashboards and KPI instrumentation.',
+  },
+  {
+    name: 'Jonas Bell',
+    role: 'Support Engineer',
+    status: 'active',
+    team: 'Operations',
+    bio: 'Handles escalations and post-incident follow-up.',
+  },
+  {
+    name: 'Niko Reyes',
+    role: 'UX Researcher',
+    status: 'inactive',
+    team: 'Design',
+    bio: 'Synthesizes research across product areas for roadmap input.',
+  },
+];
 
-`modeConfig.grid` controls how Widgemo tiles items into a responsive card grid. Shared item layout details live in [Field Config](/core/reference/field-config), while shared content behavior like search, pagination, filtering, and actions lives in [Content Config](/core/reference/content-config).
+export const gridFields = [
+  { key: 'name', label: 'Name' },
+  { key: 'role', label: 'Role' },
+  { key: 'status', label: 'Status', renderAs: 'badge' },
+  { key: 'team', label: 'Team' },
+];
 
-## Compact Grid
-
-This version keeps cards compact and lets the grid auto-pack into a predictable set of columns.
-
-<WidgemoShowcase
-  title="Compact Grid"
-  description="A straightforward grid with fixed minimum card width and a capped column count."
-  data={gridModeData}
-  config={gridCompactConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
+export const gridResponsiveConfig = {
   zones: {
     content: {
       mode: 'grid',
       modeConfig: {
         grid: {
-          minItemWidth: '240px',
+          minItemWidth: '230px',
           maxColumns: 4,
           gap: '1rem',
+        },
+      },
+      item: {
+        fields: gridFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const gridDensePackingConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          layoutMode: 'masonry',
+          minItemWidth: '210px',
+          maxColumns: 4,
+          gap: '0.75rem',
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'bio', label: 'Bio', wrap: true },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const gridAlignmentConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: {
+          minItemWidth: '280px',
+          maxColumns: 3,
+          gap: '1.25rem',
+          justifyItems: 'center',
+          alignItems: 'start',
         },
       },
       item: {
@@ -40,118 +134,140 @@ const config = {
           { key: 'status', label: 'Status', renderAs: 'badge' },
         ],
         layout: { type: 'auto' },
+        style: {
+          maxWidth: '210px',
+          width: '100%',
+        },
       },
     },
   },
 };
-```
 
-## Alignment Controls
+export const gridGroupingConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      groupings: [
+        {
+          fieldKey: 'team',
+          initiallyCollapsed: false,
+          collapsible: true,
+          renderer: (groupValue, count, isCollapsed) =>
+            `${groupValue} team · ${count} members ${isCollapsed ? '▶' : '▼'}`,
+        },
+      ],
+      modeConfig: {
+        grid: {
+          minItemWidth: '240px',
+          maxColumns: 3,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: gridFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# Grid Mode
+
+`modeConfig.grid` controls how Widgemo tiles items into a responsive card grid.
+
+Shared item layout details live in [Field Config](/core/reference/field-config), while shared content behavior like search, pagination, filtering, sorting, grouping, actions, gestures, and responsive breakpoints lives in [Content Config](/core/reference/content-config).
+
+## Grid Layout Examples
+
+### Responsive Grid (Baseline)
+
+This baseline emphasizes responsive wrapping with clear defaults for card width and maximum columns.
+
+
+<WidgemoShowcase
+  title="Responsive Grid"
+  description="A straightforward grid with fixed minimum card width and a capped column count."
+  data={gridModeData}
+  config={gridResponsiveConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Masonry Layout
+
+This example uses masonry layout to reduce visible vertical gaps when cards have variable heights.
+
+<WidgemoShowcase
+  title="Masonry Layout"
+  description="Uses layoutMode='masonry' with variable-height cards to produce a waterfall layout."
+  data={gridModeData}
+  config={gridDensePackingConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Alignment Controls
 
 Use the alignment controls when card width, spacing, or packing needs to be tuned beyond the defaults.
 
 <WidgemoShowcase
   title="Alignment Controls"
-  description="This version uses a denser packing strategy and centered cards inside the grid cells."
+  description="Centers narrower cards inside each grid cell to make justifyItems and alignItems behavior visible."
   data={gridModeData}
-  config={gridAlignedConfig}
+  config={gridAlignmentConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'grid',
-      modeConfig: {
-        grid: {
-          minItemWidth: '260px',
-          maxColumns: 3,
-          gap: '1.5rem',
-          autoFlow: 'dense',
-          justifyItems: 'center',
-          alignItems: 'stretch',
-        },
-      },
-      item: {
-        fields: [
-          { key: 'name', label: 'Name' },
-          { key: 'role', label: 'Role' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-```
+## Grouping in Grid
 
-## Grid Options
+`zones.content.groupings` also applies to grid mode. In grid, grouping controls are rendered as grouped sections (not table header controls).
 
-| Option | What it changes |
-|---|---|
-| `gap` | Sets spacing between cards. |
-| `minItemWidth` | Sets the minimum width before cards wrap. |
-| `maxColumns` | Caps how many cards can appear per row. |
-| `autoFlow` | Controls how items are packed into the grid. |
-| `justifyItems` | Controls horizontal alignment inside each cell. |
-| `alignItems` | Controls vertical alignment inside each cell. |
+<WidgemoShowcase
+  title="Grouped Grid"
+  description="Groups cards by team with collapsible group sections and a custom group label renderer."
+  data={gridModeData}
+  config={gridGroupingConfig}
+/>
 
-export const gridModeData = [
-  { name: 'Aurora Chen', role: 'Design Lead', status: 'active' },
-  { name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending' },
-  { name: 'Priya Nair', role: 'Operations', status: 'inactive' },
-  { name: 'Samir Khan', role: 'QA', status: 'active' },
-  { name: 'Leah Wong', role: 'Customer Success', status: 'active' },
-  { name: 'Iris Patel', role: 'Analytics', status: 'pending' },
-];
+<div style={{ marginBottom: '1rem' }} />
 
-export const gridCompactConfig = {
-  zones: {
-    content: {
-      mode: 'grid',
-      modeConfig: {
-        grid: {
-          minItemWidth: '240px',
-          maxColumns: 4,
-          gap: '1rem',
-        },
-      },
-      item: {
-        fields: [
-          { key: 'name', label: 'Name' },
-          { key: 'role', label: 'Role' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
+## Shared Content Features
 
-export const gridAlignedConfig = {
-  zones: {
-    content: {
-      mode: 'grid',
-      modeConfig: {
-        grid: {
-          minItemWidth: '260px',
-          maxColumns: 3,
-          gap: '1.5rem',
-          autoFlow: 'dense',
-          justifyItems: 'center',
-          alignItems: 'stretch',
-        },
-      },
-      item: {
-        fields: [
-          { key: 'name', label: 'Name' },
-          { key: 'role', label: 'Role' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
+Grid mode supports all shared `zones.content` features, including search, pagination, filtering, sorting, actions, gestures, responsive breakpoints, loading, and error states.
+
+Canonical references:
+
+- [Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config](/core/reference/content-config)
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Grid Option Reference
+
+| Option | Possible values | Default | Effect |
+|---|---|---|---|
+| `layoutMode` | `standard`, `masonry` | `standard` | Selects regular CSS grid or masonry layout strategy. |
+| `gap` | any CSS length | `1rem` | Sets spacing between cards. |
+| `minItemWidth` | any CSS length | `220px` | Sets minimum card width before wrapping. |
+| `maxColumns` | any number >= 1 | unset | Caps the maximum number of columns. |
+| `autoFlow` | `row`, `column`, `dense` | `row` | Controls packing direction and density behavior. |
+| `justifyItems` | `start`, `end`, `center`, `stretch` | browser default | Controls horizontal card alignment inside each grid cell. |
+| `alignItems` | `start`, `end`, `center`, `stretch` | browser default | Controls vertical card alignment inside each grid cell. |
+
+For grouping contract details and mode applicability, see [Content Config: Grouping](/core/reference/content-config#grouping).
+
+For item-level card layout/field rendering details, see [Field Config](/core/reference/field-config).
+
+## Coverage Summary
+
+Every grid setting is represented by at least one live example on this page:
+
+- `minItemWidth`, `maxColumns`, `gap`: Responsive Grid (Baseline)
+- `layoutMode`: Masonry Layout
+- `autoFlow`: documented in Grid Option Reference (best visualized when card footprints vary)
+- `justifyItems`, `alignItems`: Alignment Controls
+- `groupings` in grid mode: Grouped Grid
+- shared content settings with grid (`search`, `pagination`, `filtering`, `sorting`, `actions`, `gestures`): Shared Content Features links above
