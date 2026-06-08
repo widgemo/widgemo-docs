@@ -1,5 +1,4 @@
 ---
-sidebar_position: 3
 ---
 
 # Content Config
@@ -11,10 +10,13 @@ sidebar_position: 3
 | Field | Type | Description |
 |---|---|---|
 | `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| 'chart' \| string` | Display mode |
+| `enabled` | `boolean` | Toggles the content zone on or off (defaults to enabled) |
+| `layout` | `ModeLayout` | Optional non-mode layout metadata (mode-specific settings stay in `modeConfig`) |
 | `item` | `ItemConfig` | Field definitions and card layout |
 | `modeConfig` | `ModeConfig` | Mode-specific config (`table`, `grid`, `carousel`, `board`, `chart`) |
 | `actions` | `ActionConfig[]` | Per-item actions |
 | `actionOverflow` | `ActionOverflowConfig` | Overflow menu behaviour for item actions |
+| `theme` | `string` | Optional theme name for content-zone styling overrides |
 | `pagination` | `{ pageSize, initialPage?, onPageChange? }` | Pagination settings |
 | `search` | `{ enabled?, placeholder?, fields?, debounceMs? }` | Search bar |
 | `groupings` | `GroupingConfig[]` | Row/card groupings |
@@ -24,6 +26,7 @@ sidebar_position: 3
 | `responsive` | `{ breakpoints: Record<string, { mode?, modeConfig? }> }` | Per-breakpoint overrides |
 | `sizing` | `{ mode?: 'auto' \| 'fixed' \| 'fill'; height?: number \| string }` | Content sizing |
 | `status` | `'idle' \| 'loading' \| 'success' \| 'error'` | Content state |
+| `error` | `unknown` | Optional error payload used with error states |
 | `loadingState` | `LoadingStateConfig` | Loading UI options |
 | `errorState` | `ErrorStateConfig` | Error UI options |
 | `themeOverrides` | `Partial<ZoneTheme>` | Zone-scoped theme overrides |
