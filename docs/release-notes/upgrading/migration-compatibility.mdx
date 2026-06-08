@@ -1,12 +1,42 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
 
-# Migration Guide
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
-Current package: `@widgemo/widgemo-core`
+# Migration and Compatibility
+
+Use this page when you are upgrading or validating compatibility boundaries for existing Widgemo integrations.
+
+For first-time integration into an already built app, use [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app).
+
+<WidgemoShowcase
+  title="Stable Root API Compatibility"
+  description="This example uses only stable root API surfaces, which is the recommended baseline for upgrade-safe integrations."
+  data={[
+    { module: 'Accounts', status: 'supported', api: 'stable-root' },
+    { module: 'Ledger', status: 'supported', api: 'stable-root' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'module', label: 'Module' },
+            { key: 'api', label: 'API Surface', renderAs: 'badge' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
 
 ## API Surface
+
+Current package: `@widgemo/widgemo-core`
 
 widgemo-core exposes two intentional API tiers:
 
@@ -49,7 +79,7 @@ For the supported registry extension surface and helper methods, see:
 
 - [Extension API](/core/reference/extension-api)
 
-## CSS Variable Migration
+## CSS Variable Compatibility
 
 CSS variables use the `--widgemo-*` prefix to avoid host-app collisions:
 
@@ -69,3 +99,4 @@ Use the `--widgemo-*` variables in current integrations.
 Valid operators are `eq`, `ne`, `contains`, `startswith`, `gt`, and `lt`.
 
 Invalid operators throw an explicit error.
+

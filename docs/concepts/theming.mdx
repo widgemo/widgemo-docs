@@ -2,38 +2,195 @@
 sidebar_position: 2
 ---
 
+import { Widgemo, WidgemoThemeProvider, useWidgemoTheme } from '@widgemo/widgemo-core';
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
 # Theming
 
-widgemo-core uses CSS custom properties (`--widgemo-*` prefix) for theming. Set them via `WidgemoThemeProvider` or by overriding variables directly in your own stylesheet.
+widgemo-core supports multiple theming approaches so you can match your product vision or fit seamlessly into an existing app style.
 
-## First-Release Guarantee
+widgemo-core includes a built-in default theme out of the box, and then supports deeper theming when you need more control.
 
-Full widget dark/light theming is guaranteed through `WidgemoThemeProvider`.
+## Built-in Default Theme
 
-## Theme Provider
+If you do not provide a custom theme object, Widgemo uses built-in theme tokens and styles.
+
+- With `WidgemoThemeProvider`, the default is `theme="light"`.
+- With `theme="dark"`, the built-in dark preset is applied.
+
+### Example Widget (Default Light)
+
+<WidgemoThemeProvider theme="light">
+  <div className="widgemo-showcase__widget">
+    <Widgemo data={themingExampleData} config={baseThemeConfig} />
+  </div>
+</WidgemoThemeProvider>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Example Widget (Default Dark)
+
+<WidgemoThemeProvider theme="dark">
+  <div className="widgemo-showcase__widget">
+    <Widgemo data={themingExampleData} config={baseThemeConfig} />
+  </div>
+</WidgemoThemeProvider>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Example Code
+
+```tsx
+<WidgemoThemeProvider theme="light">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
+
+<WidgemoThemeProvider theme="dark">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
+```
+
+After the built-in defaults, you can customize theming in three ways:
+
+1. `WidgemoThemeProvider` preset (`light`, `dark`, `auto`)
+2. `WidgemoThemeProvider` custom theme object (`colors`, `spacing`, `zone`)
+3. Per-zone `themeOverrides` in `config`
+
+For full token lists, see [Theme API](/core/reference/theme-api) and [CSS Variables](/core/reference/css-variables).
+
+export const themingExampleData = [
+  { id: 1, name: 'Alice', role: 'Engineer', status: 'active' },
+  { id: 2, name: 'Bob', role: 'Designer', status: 'pending' },
+  { id: 3, name: 'Charlie', role: 'Product', status: 'inactive' },
+];
+
+export const baseThemeConfig = {
+  zones: {
+    header: {
+      title: 'Team Directory',
+      subtitle: 'Baseline themed widget',
+    },
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const customTheme = {
+  colors: {
+    actionButtonBg: '#0f172a',
+    actionButtonColor: '#f8fafc',
+    actionButtonHoverBg: '#1e293b',
+  },
+  spacing: {
+    'border-radius': '10px',
+    'card-padding': '1.25rem',
+  },
+  zone: {
+    backgroundColor: '#1e293b',
+    titleColor: '#f8fafc',
+    subtitleColor: '#94a3b8',
+    padding: '1rem 1.25rem',
+  },
+};
+
+export const zoneOverrideConfig = {
+  zones: {
+    header: {
+      title: 'Styled Header',
+      subtitle: 'Header and footer overrides from config',
+      themeOverrides: {
+        backgroundColor: '#111827',
+        titleColor: '#f9fafb',
+        subtitleColor: '#9ca3af',
+        padding: '1rem 1.25rem',
+        borderColor: '#374151',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderRadius: '8px 8px 0 0',
+      },
+    },
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+    footer: {
+      subtitle: 'Last synced just now',
+      themeOverrides: {
+        backgroundColor: '#f3f4f6',
+        subtitleColor: '#374151',
+        padding: '0.75rem 1.25rem',
+      },
+    },
+  },
+};
+
+## 1. Theme Provider Presets
+
+Use preset themes when you want fast parity with your app mode (`light`, `dark`, `auto`) without defining custom tokens.
+
+This option keeps setup lightweight and works well when your app already supports light and dark modes.
+
+### Example Widget
+
+<WidgemoThemeProvider theme="dark">
+  <div className="widgemo-showcase__widget">
+    <Widgemo data={themingExampleData} config={baseThemeConfig} />
+  </div>
+</WidgemoThemeProvider>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Example Code
 
 ```tsx
 import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
+
+<WidgemoThemeProvider theme="dark">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
+
+<WidgemoThemeProvider theme="auto">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
 ```
 
-Accepts `theme?: 'light' | 'dark' | 'auto' | WidgemoTheme`. Defaults to `'light'`.
+`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')` and does not subscribe to live OS preference changes.
 
-`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')`. It does not subscribe to live OS preference changes.
+## 2. Custom Theme Object
 
-Provider-scoped CSS variable tokens (`theme.colors`, `theme.spacing`) drive full-surface theming across widget styles.
+Use a custom theme object when you want consistent branded tokens across all widgets.
 
-## Recommended Pattern
+This gives you one central place to apply brand colors, spacing, and shared visual rules across the entire widget surface.
 
-Wrap `Widgemo` in `WidgemoThemeProvider` for predictable theme parity with the host app.
+### Example Widget
+
+<WidgemoThemeProvider theme={customTheme}>
+  <div className="widgemo-showcase__widget">
+    <Widgemo data={themingExampleData} config={baseThemeConfig} />
+  </div>
+</WidgemoThemeProvider>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Example Code
 
 ```tsx
-// Preset
-<WidgemoThemeProvider theme="dark">…</WidgemoThemeProvider>
-
-// System preference
-<WidgemoThemeProvider theme="auto">…</WidgemoThemeProvider>
-
-// Object — override only what you need
 <WidgemoThemeProvider theme={{
   colors: {
     actionButtonBg: '#0f172a',
@@ -48,55 +205,24 @@ Wrap `Widgemo` in `WidgemoThemeProvider` for predictable theme parity with the h
     backgroundColor: '#1e293b',
     titleColor: '#f8fafc',
     subtitleColor: '#94a3b8',
-    padding: '1rem 1.5rem',
+    padding: '1rem 1.25rem',
   },
 }}>
-  …
+  <Widgemo data={data} config={config} />
 </WidgemoThemeProvider>
 ```
 
-## WidgemoTheme shape
+## 3. Per-Zone Theme Overrides
 
-```ts
-interface WidgemoTheme {
-  /** Injected as --widgemo-color-* CSS vars */
-  colors?: {
-    actionButtonBg?: string;
-    actionButtonColor?: string;
-    actionButtonBorder?: string;
-    actionButtonHoverBg?: string;
-    actionButtonHoverBorder?: string;
-    actionMenuBg?: string;
-    actionMenuColor?: string;
-    actionMenuItemHoverBg?: string;
-    actionMenuItemHoverColor?: string;
-    [key: string]: string | undefined;
-  };
-  /** Injected as --widgemo-* CSS vars (border-radius, spacing, font-size, etc.) */
-  spacing?: Record<string, string>;
-  /** Zone inline-style overrides (header/footer/content theme layers) */
-  zone?: ZoneTheme;
-  /** Action theme shape (typed API surface) */
-  action?: ActionTheme;
-}
-```
+Use `themeOverrides` when you want targeted visual changes for a specific header/content/footer zone without introducing a full global theme object.
 
-Action visuals currently follow CSS variable tokens (for example `--widgemo-color-actionButtonBg`, `--widgemo-color-actionButtonColor`, `--widgemo-color-actionMenuBg`).
+Use this when only part of a widget needs special styling and the rest should continue using the current theme.
 
-## Runtime Theme Precedence
+<WidgemoShowcase title="Example Widget" data={themingExampleData} config={zoneOverrideConfig} />
 
-Applied from highest to lowest priority:
+<div style={{ marginBottom: '1rem' }} />
 
-1. Zone/content inline style and `themeOverrides` (`config.style`, `zones.*.themeOverrides`, `zones.*.style`).
-2. Merged runtime zone theme (`registry theme` + provider `theme.zone`).
-3. Provider-scoped CSS variables from `WidgemoThemeProvider` (`theme.colors`, `theme.spacing`).
-4. Root fallback CSS variables from `src/widgemo-theme.css`.
-
-`config.theme` participates in runtime zone/action theme layering. Use `WidgemoThemeProvider` when you need full-surface dark/light theming.
-
-## Per-Zone Theme Overrides
-
-Override zone appearance inline without creating a full theme:
+### Example Code
 
 ```tsx
 const config = {
@@ -104,60 +230,38 @@ const config = {
     header: {
       title: 'Styled Header',
       themeOverrides: {
-        backgroundColor: '#1e293b',
-        titleColor:      '#f8fafc',
-        subtitleColor:   '#94a3b8',
-        padding:         '1rem 1.5rem',
-        borderColor:     '#334155',
-        borderWidth:     '1px',
-        borderStyle:     'solid',
-        borderRadius:    '8px 8px 0 0',
-        iconColor:       '#f8fafc',
-        iconSize:        22,
-        titleFontSize:   '1.25rem',
-      },
-    },
-    footer: {
-      subtitle: 'Last synced just now',
-      themeOverrides: {
-        backgroundColor: '#f1f5f9',
-        subtitleColor:   '#475569',
-        padding:         '0.75rem 1.5rem',
+        backgroundColor: '#111827',
+        titleColor: '#f9fafb',
+        subtitleColor: '#9ca3af',
       },
     },
   },
 };
 ```
 
-`ZoneTheme` properties: `titleFontSize`, `titleColor`, `subtitleColor`, `backgroundColor`, `borderColor`, `borderWidth`, `borderStyle`, `borderRadius`, `padding`, `iconColor`, `iconSize`.
+## Runtime Theme Precedence
 
-## CSS Variable Overrides
+Theme values apply from highest to lowest priority:
 
-Override `--widgemo-*` variables directly in your stylesheet:
+1. Inline zone/content overrides (`config.style`, `zones.*.themeOverrides`, `zones.*.style`)
+2. Runtime zone theme merge (`registry theme` + provider `theme.zone`)
+3. Provider variables (`theme.colors`, `theme.spacing`)
+4. Root fallback CSS variables from library stylesheet
 
-```css
-:root {
-  --widgemo-border-radius: 12px;
-  --widgemo-card-padding:  1.25rem;
-  --widgemo-font-size:     14px;
-}
-```
+Use `WidgemoThemeProvider` for global consistency and `themeOverrides` for local exceptions.
 
-## Theme Hook
-
-Access the resolved theme from any component:
+## Accessing Theme in Custom Components
 
 ```tsx
-import { useWidgemoTheme } from '@widgemo/widgemo-core';
-
 function MyModeHeader() {
   const theme = useWidgemoTheme();
-  return <header style={{ background: theme.zone?.backgroundColor }}>…</header>;
+  return <header style={{ background: theme.zone?.backgroundColor }} />;
 }
 ```
 
-When no provider is present, `useWidgemoTheme()` returns an empty theme object (`{}`).
+Without a provider, `useWidgemoTheme()` returns `{}`.
 
-## Theme API Reference
+## References
 
-See [Theme API](../reference/theme-api) for the full list of exported theme utilities.
+- [Theme API](/core/reference/theme-api)
+- [CSS Variables](/core/reference/css-variables)

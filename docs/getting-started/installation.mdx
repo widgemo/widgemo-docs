@@ -4,6 +4,11 @@ sidebar_position: 1
 
 # Installation
 
+## Prerequisites
+
+- Node.js 18 or newer
+- A React project (Vite, Next.js, CRA, or custom bundler)
+
 ## Install
 
 ```bash
@@ -23,8 +28,8 @@ Peer dependency version range:
 ```json
 {
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   }
 }
 ```
@@ -45,6 +50,9 @@ Import the default stylesheet once at your app root (or layout):
 import '@widgemo/widgemo-core/style.css';
 ```
 
-## Next step
+## Common Install Issues
 
-Continue with [Quick Start](./quick-start).
+- Peer dependency warning for React: install matching `react` and `react-dom` versions in your app.
+- Invalid hook call at runtime: ensure there is only one React instance in the app (common in monorepos and linked local packages).
+- Styles not applied: verify `@widgemo/widgemo-core/style.css` is imported in a global entry point (`app/layout.tsx`, `pages/_app.tsx`, or main app entry).
+

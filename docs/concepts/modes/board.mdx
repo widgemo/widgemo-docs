@@ -1,0 +1,188 @@
+---
+sidebar_position: 4
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Board Mode
+
+`modeConfig.board` controls Kanban-style routing, column metadata, swimlanes, and drag behavior. Shared actions, gestures, and other content behavior live in [Content Config](/core/reference/content-config).
+
+## Column Routing
+
+Use column routing when the board is shaped by one field, such as status or phase.
+
+<WidgemoShowcase
+  title="Board Columns"
+  description="A simple board with column routing, widths, colors, and WIP limits."
+  data={boardModeData}
+  config={boardColumnsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
+              { id: 'pending', label: 'Pending', value: 'pending', color: '#f59e0b', wipLimit: 5 },
+              { id: 'inactive', label: 'Inactive', value: 'inactive', color: '#6b7280' },
+            ],
+          },
+          dragEnabled: true,
+        },
+      },
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Swimlanes
+
+Use swimlanes when you need a second axis, such as department, region, or team.
+
+<WidgemoShowcase
+  title="Board Swimlanes"
+  description="The same board routed through columns and swimlanes, using a matrix layout."
+  data={boardSwimlaneData}
+  config={boardSwimlaneConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active' },
+              { id: 'pending', label: 'Pending', value: 'pending' },
+              { id: 'inactive', label: 'Inactive', value: 'inactive' },
+            ],
+          },
+          swimlanes: {
+            field: 'department',
+            items: [
+              { id: 'engineering', label: 'Engineering', value: 'Engineering' },
+              { id: 'design', label: 'Design', filter: (entity) => entity.department === 'Design' },
+            ],
+            layout: { type: 'matrix' },
+            repeatingHeaders: false,
+          },
+          dragEnabled: true,
+        },
+      },
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Board Options
+
+| Option | What it changes |
+|---|---|
+| `columns.field` | Selects the entity field used to route cards into columns. |
+| `columns.items` | Declares the visible columns and their order. |
+| `columns.items[].value` | Overrides the value used for routing. |
+| `columns.items[].filter` | Replaces value matching with a predicate. |
+| `columns.items[].width` | Sets the width of a column. |
+| `columns.items[].color` | Sets the accent color for a column. |
+| `columns.items[].wipLimit` | Adds a work-in-progress limit to a column. |
+| `swimlanes.field` | Selects the entity field used to route rows into swimlanes. |
+| `swimlanes.items` | Declares the swimlanes and their order. |
+| `swimlanes.layout.type` | Switches between `collapsible` and `matrix`. |
+| `swimlanes.repeatingHeaders` | Chooses whether column headers repeat for each swimlane. |
+| `dragEnabled` | Enables or disables board dragging. |
+
+export const boardModeData = [
+  { name: 'Aurora Chen', status: 'active' },
+  { name: 'Mateo Silva', status: 'pending' },
+  { name: 'Priya Nair', status: 'inactive' },
+  { name: 'Samir Khan', status: 'active' },
+];
+
+export const boardColumnsConfig = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
+              { id: 'pending', label: 'Pending', value: 'pending', color: '#f59e0b', wipLimit: 5 },
+              { id: 'inactive', label: 'Inactive', value: 'inactive', color: '#6b7280' },
+            ],
+          },
+          dragEnabled: true,
+        },
+      },
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const boardSwimlaneData = [
+  { name: 'Aurora Chen', status: 'active', department: 'Engineering' },
+  { name: 'Mateo Silva', status: 'pending', department: 'Design' },
+  { name: 'Priya Nair', status: 'inactive', department: 'Engineering' },
+  { name: 'Samir Khan', status: 'active', department: 'Design' },
+];
+
+export const boardSwimlaneConfig = {
+  zones: {
+    content: {
+      mode: 'board',
+      modeConfig: {
+        board: {
+          columns: {
+            field: 'status',
+            items: [
+              { id: 'active', label: 'Active', value: 'active' },
+              { id: 'pending', label: 'Pending', value: 'pending' },
+              { id: 'inactive', label: 'Inactive', value: 'inactive' },
+            ],
+          },
+          swimlanes: {
+            field: 'department',
+            items: [
+              { id: 'engineering', label: 'Engineering', value: 'Engineering' },
+              { id: 'design', label: 'Design', filter: (entity) => entity.department === 'Design' },
+            ],
+            layout: { type: 'matrix' },
+            repeatingHeaders: false,
+          },
+          dragEnabled: true,
+        },
+      },
+      item: {
+        fields: [{ key: 'name', label: 'Name' }],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};

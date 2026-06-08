@@ -1,0 +1,115 @@
+---
+sidebar_position: 4
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Extension Architecture
+
+Widgemo has multiple extension points, and they exist for different reasons.
+
+The main rule is:
+
+- use configuration first when built-in behavior is enough
+- use extensions when you need new behavior that config cannot express cleanly
+
+<WidgemoShowcase
+  title="Built-In Surface vs Extension Surface"
+  description="This live example uses built-in renderers and actions. Extension points exist when you need to add new versions of these surfaces, not replace config-first usage by default."
+  data={[
+    { name: 'North Region', health: 92, status: 'healthy', budget: 420000 },
+    { name: 'EMEA Region', health: 68, status: 'watch', budget: 315000 },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Extension Architecture',
+        subtitle: 'Most integrations start with built-in config before moving to custom extensions',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Region' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'health', label: 'Health', renderAs: 'scoreMeter', renderAsOptions: { density: 'compact' } },
+            { key: 'budget', label: 'Budget', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Decision Guide
+
+| Need | Prefer | Why |
+|---|---|---|
+| Reformat one field value | `renderAs` | Smallest extension surface |
+| Create a reusable new field type | custom field type | Best when the new value type should behave like a first-class field |
+| Create a new content view | custom mode | Best when table/grid/board/carousel/chart are not enough |
+| Add custom iconography | custom icons | Keeps icon names consistent in config |
+| Intercept lifecycle behavior | hooks | Runtime interception rather than layout definition |
+
+## Config First, Extensions Second
+
+A good adoption pattern is:
+
+1. Start with built-in `mode`, `fields`, `renderAs`, and theming
+2. Confirm the widget shape and data contract
+3. Introduce custom renderers, field types, or modes only when the built-in surface cannot express the requirement cleanly
+
+## Extension Points
+
+## Custom `renderAs`
+
+Use custom `renderAs` when you want to change how a single value is displayed inside an otherwise normal field.
+
+Examples:
+
+- status pills
+- compact sparkline variants
+- domain-specific formatting
+
+## Custom Field Types
+
+Use custom field types when the value behaves like a distinct field category and should be reused across many configs.
+
+Examples:
+
+- color swatch
+- avatar cluster
+- structured KPI tile
+
+## Custom Modes
+
+Use custom modes when the entire content area needs a new layout strategy.
+
+Examples:
+
+- timeline
+- radial planner
+- dependency map
+
+## Custom Icons
+
+Use custom icons when config should refer to your own icon names consistently.
+
+Examples:
+
+- product-specific actions
+- financial or operational domain icons
+- host design system icon packs
+
+## Hooks
+
+Use hooks when you need runtime interception or wrapping behavior rather than a new display primitive.
+
+Examples:
+
+- analytics on mode changes
+- wrapping rendered output
+- runtime logging or instrumentation
+
+

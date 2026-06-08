@@ -3,10 +3,35 @@ sidebar_position: 3
 ---
 
 import { defaultRenderWidgemoIcon } from '@widgemo/widgemo-core';
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Custom Icons Guide
 
 widgemo-core uses a named icon registry. Any built-in icon name can be overridden, and new names can be added.
+
+<WidgemoShowcase
+	title="Icon Naming in Config"
+	description="Actions reference icon names from the icon registry, which makes custom icon packs swappable without changing business logic."
+	data={[
+		{ action: 'Edit', iconName: 'edit', scope: 'item' },
+		{ action: 'Delete', iconName: 'delete', scope: 'item' },
+	]}
+	config={{
+		zones: {
+			content: {
+				mode: 'table',
+				item: {
+					fields: [
+						{ key: 'action', label: 'Action' },
+						{ key: 'iconName', label: 'Icon Name' },
+						{ key: 'scope', label: 'Scope', renderAs: 'badge' },
+					],
+					layout: { type: 'auto' },
+				},
+			},
+		},
+	}}
+/>
 
 ## Register a Custom Icon
 
@@ -279,3 +304,5 @@ zones: {
 	},
 }
 ```
+
+

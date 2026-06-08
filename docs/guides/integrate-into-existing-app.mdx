@@ -1,0 +1,185 @@
+---
+sidebar_position: 1
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Integrate Widgemo Into an Existing App
+
+This guide is for teams adding `@widgemo/widgemo-core` to an already-started or already-built application.
+
+The goal is not a full rewrite. The goal is a controlled replacement of existing table/card/list surfaces with Widgemo, one widget at a time.
+
+## Initial Integration Steps
+
+Start with this baseline sequence before planning larger adoption phases.
+
+1. Install widgemo-core.
+2. Ensure peer dependencies are present in your app.
+3. Import the Widgemo stylesheet at your app root.
+4. Replace one existing table/card surface with a minimal Widgemo instance.
+
+```bash
+npm install @widgemo/widgemo-core
+```
+
+```tsx
+import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/style.css';
+
+function AccountsWidget({ rows }) {
+  return (
+    <WidgemoThemeProvider theme="light">
+      <Widgemo
+        data={rows}
+        config={{
+          zones: {
+            content: {
+              mode: 'table',
+            },
+          },
+        }}
+      />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+After this baseline works, continue with discovery and phased migration below.
+
+<WidgemoShowcase
+  title="Minimum Viable Replacement"
+  description="A realistic first replacement target: existing data stays the same, while the rendering layer moves to Widgemo."
+  data={[
+    { id: 1, name: 'Acme North', status: 'active', owner: 'Aurora' },
+    { id: 2, name: 'Acme South', status: 'pending', owner: 'Mateo' },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Accounts',
+        subtitle: 'Same data, new rendering primitive',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Account' },
+            { key: 'owner', label: 'Owner' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Practical Goal
+
+For an existing app, Widgemo adoption should usually mean:
+
+1. keep your fetch and state-management layer
+2. keep your domain data shapes initially
+3. replace rendering surfaces incrementally
+4. avoid mixing Widgemo adoption with unrelated UI redesign work
+
+## Adoption Phases
+
+## 1. Discovery
+
+Run a read-only discovery pass over the app before editing.
+
+Key questions:
+
+- Where are data tables and card views currently rendered?
+- What are the current column and field definitions?
+- Which widgets already have sorting, filtering, pagination, or actions?
+- Which views already use custom formatting, badges, or domain-specific cells?
+
+## 2. Create an Adoption Brief
+
+Create one adoption brief per widget.
+
+```md
+### Widget: [name]
+
+**Data source**: [where data comes from]
+**Current component**: [current table/list/card implementation]
+**Fields**: [field list with type and renderAs equivalent]
+**Actions**: [zone-level and per-item actions]
+**Mode**: table | grid | carousel | board | chart
+**Sorting**: [default sort field and direction]
+**Filtering**: [static or user-controlled filters]
+**Migration complexity**: low | medium | high
+```
+
+## 3. Replace One Widget at a Time
+
+Preferred rollout order:
+
+1. replace a straightforward table or card list first
+2. start with `mode: 'table'` or `mode: 'grid'`
+3. keep `layout: { type: 'auto' }` until the basic replacement works
+4. introduce richer `renderAs`, actions, or gestures only after parity is reached
+
+## Minimum Viable Config
+
+```tsx
+import { Widgemo } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/dist/widgemo-theme.css';
+
+<Widgemo
+  data={rows}
+  config={{
+    zones: {
+      header: { title: 'Widget Title' },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'id', label: 'ID' },
+            { key: 'name', label: 'Name' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+```
+
+## Stable vs Advanced Imports
+
+For most app integrations, prefer the stable root API:
+
+```ts
+import { Widgemo, widgemoRegistry } from '@widgemo/widgemo-core';
+```
+
+Only use advanced exports when you intentionally need lower-level internals:
+
+```ts
+import { advanced } from '@widgemo/widgemo-core/advanced';
+```
+
+## CSS Variables
+
+Widgemo CSS variables use the `--widgemo-*` prefix to reduce collisions with host app styles.
+
+```css
+:root {
+  --widgemo-primary-color: #3498db;
+  --widgemo-border-color: #bdc3c7;
+}
+```
+
+## Team Adoption Resources
+
+For more structured team workflows and agent-ready prompts, see:
+
+- [Adopting Widgemo](/core/guides/adopting-widgemo)
+- [Extension API](/core/reference/extension-api)
+- [Migration and Compatibility](/core/release-notes/upgrading/migration-compatibility)
+- [widgemo-core adoption docs on GitHub](https://github.com/widgemo/widgemo-core/tree/main/docs/adoption)
+

@@ -1,0 +1,357 @@
+---
+sidebar_position: 5
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Chart Mode
+
+Chart mode owns the full content area as a chart. Use it when the visualization itself is the primary surface, not a small field renderer. For inline composition bars, see [compositionBar vs Chart Mode](/core/guides/composition-bar#when-to-use-compositionbar-vs-chart-mode).
+
+`modeConfig.chart` accepts five series types: `bar`, `line`, `area`, `pie`, and `donut`. The chart can also control legend placement, grid lines, labels, size, colors, tooltip behavior, and line/area/polar tuning.
+
+Shared content behavior such as search, actions, filtering, pagination, and responsive breakpoints is documented in [Content Config](/core/reference/content-config).
+
+## Bar Chart
+
+Use bar charts for direct comparisons across categories.
+
+<WidgemoShowcase
+  title="Bar Chart"
+  description="A basic vertical bar chart with two series."
+  data={barChartData}
+  config={barChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'bar' },
+            { key: 'visits', label: 'Visits', type: 'bar' },
+          ],
+        },
+      },
+    },
+  },
+};
+```
+
+## Line Chart
+
+Use line charts when the main story is the change over time.
+
+<WidgemoShowcase
+  title="Line Chart"
+  description="A multi-series line chart with dots enabled for easier reading."
+  data={lineChartData}
+  config={lineChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          showDots: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'line' },
+            { key: 'visits', label: 'Visits', type: 'line' },
+          ],
+        },
+      },
+    },
+  },
+};
+```
+
+## Area Chart
+
+Use area charts when you want the same trend view with more visual weight.
+
+<WidgemoShowcase
+  title="Area Chart"
+  description="A stacked-feeling view with area fills and a slightly higher emphasis on volume."
+  data={areaChartData}
+  config={areaChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          showDots: false,
+          areaGradient: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'area' },
+            { key: 'visits', label: 'Visits', type: 'area' },
+          ],
+        },
+      },
+    },
+  },
+};
+```
+
+## Pie Chart
+
+Use pie charts when a single category breakdown is easier to read than a cartesian chart.
+
+<WidgemoShowcase
+  title="Pie Chart"
+  description="A single polar series with category labels and a visible legend."
+  data={pieChartData}
+  config={pieChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'segment',
+          height: 320,
+          showLegend: true,
+          showGrid: false,
+          series: [
+            { key: 'value', label: 'Share', type: 'pie' },
+          ],
+        },
+      },
+    },
+  },
+};
+```
+
+## Donut Chart
+
+Use donut charts when you want the same category breakdown with more center breathing room.
+
+<WidgemoShowcase
+  title="Donut Chart"
+  description="The same polar data rendered as a donut with a slightly smaller inner hole."
+  data={donutChartData}
+  config={donutChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'segment',
+          height: 320,
+          showLegend: true,
+          showGrid: false,
+          donutInnerRadiusRatio: 0.68,
+          series: [
+            { key: 'value', label: 'Share', type: 'donut' },
+          ],
+        },
+      },
+    },
+  },
+};
+```
+
+## Chart Options
+
+| Option | What it changes |
+|---|---|
+| `xAxis` | Selects the label field used for chart categories. |
+| `height` | Sets the chart height. |
+| `showLegend` | Shows or hides the legend. |
+| `legendAlign` | Aligns the legend left, center, or right. |
+| `showGrid` | Shows or hides the cartesian grid. |
+| `showLabels` | Shows or hides data labels. |
+| `colors` | Overrides the default series color palette. |
+| `orientation` | Flips bar charts to horizontal when set to `horizontal`. |
+| `lineThickness` | Sets the default thickness for line and area series. |
+| `showDots` | Shows or hides line/area data points. |
+| `areaGradient` | Enables or disables gradient fills for area series. |
+| `donutInnerRadiusRatio` | Controls the donut hole size. |
+| `tooltip.position` | Sets tooltip placement. |
+| `tooltip.render` | Replaces the built-in tooltip content. |
+
+### Example: Horizontal Bars
+
+If you want a horizontal bar chart, keep the series type as `bar` and set `orientation: 'horizontal'`.
+
+```tsx
+chart: {
+  xAxis: 'month',
+  orientation: 'horizontal',
+  series: [{ key: 'revenue', type: 'bar' }],
+}
+```
+
+export const barChartData = [
+  { month: 'Jan', revenue: 120, visits: 180 },
+  { month: 'Feb', revenue: 150, visits: 210 },
+  { month: 'Mar', revenue: 132, visits: 190 },
+  { month: 'Apr', revenue: 174, visits: 230 },
+];
+
+export const lineChartData = [
+  { month: 'Jan', revenue: 90, visits: 160 },
+  { month: 'Feb', revenue: 120, visits: 190 },
+  { month: 'Mar', revenue: 165, visits: 205 },
+  { month: 'Apr', revenue: 180, visits: 220 },
+];
+
+export const areaChartData = [
+  { month: 'Jan', revenue: 95, visits: 140 },
+  { month: 'Feb', revenue: 130, visits: 170 },
+  { month: 'Mar', revenue: 160, visits: 200 },
+  { month: 'Apr', revenue: 175, visits: 225 },
+];
+
+export const pieChartData = [
+  { segment: 'Product', value: 42 },
+  { segment: 'Support', value: 21 },
+  { segment: 'Services', value: 17 },
+  { segment: 'Other', value: 20 },
+];
+
+export const donutChartData = [
+  { segment: 'Desktop', value: 55 },
+  { segment: 'Tablet', value: 18 },
+  { segment: 'Mobile', value: 27 },
+];
+
+export const barChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'bar' },
+            { key: 'visits', label: 'Visits', type: 'bar' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const lineChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          showDots: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'line' },
+            { key: 'visits', label: 'Visits', type: 'line' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const areaChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 320,
+          showLegend: true,
+          showGrid: true,
+          showDots: false,
+          areaGradient: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'area' },
+            { key: 'visits', label: 'Visits', type: 'area' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const pieChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'segment',
+          height: 320,
+          showLegend: true,
+          showGrid: false,
+          series: [
+            { key: 'value', label: 'Share', type: 'pie' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const donutChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'segment',
+          height: 320,
+          showLegend: true,
+          showGrid: false,
+          donutInnerRadiusRatio: 0.68,
+          series: [
+            { key: 'value', label: 'Share', type: 'donut' },
+          ],
+        },
+      },
+    },
+  },
+};

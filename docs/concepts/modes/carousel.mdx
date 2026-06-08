@@ -1,0 +1,179 @@
+---
+sidebar_position: 3
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Carousel Mode
+
+`modeConfig.carousel` controls horizontal browsing behavior for featured content. Shared content controls such as search, pagination, filtering, and actions are documented in [Content Config](/core/reference/content-config).
+
+## Fixed-Size Carousel
+
+This version uses fixed item sizing plus visible arrows and indicators.
+
+<WidgemoShowcase
+  title="Fixed-Size Carousel"
+  description="A standard carousel with explicit item size and visible navigation controls."
+  data={carouselModeData}
+  config={carouselFixedConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 280,
+          itemHeight: 200,
+          gap: 16,
+          showIndicators: true,
+          showArrows: true,
+          infinite: true,
+          revolving: true,
+          autoPlay: false,
+          dragThreshold: 50,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Auto-Playing Carousel
+
+The controls below show the looping settings and automatic slide advance.
+
+<WidgemoShowcase
+  title="Auto-Playing Carousel"
+  description="This version uses auto-play, a shorter gap, and auto-sized item height."
+  data={carouselModeData}
+  config={carouselAutoPlayConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 260,
+          itemHeight: 'auto',
+          gap: 12,
+          showIndicators: false,
+          showArrows: true,
+          infinite: true,
+          revolving: false,
+          autoPlay: true,
+          autoPlayInterval: 3000,
+          dragThreshold: 40,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Carousel Options
+
+| Option | What it changes |
+|---|---|
+| `itemWidth` | Sets the width of each card. |
+| `itemHeight` | Sets the item height, or lets items grow naturally with `auto`. |
+| `gap` | Sets spacing between carousel items. |
+| `showIndicators` | Shows or hides dot indicators. |
+| `showArrows` | Shows or hides navigation arrows. |
+| `infinite` | Enables looping at the ends. |
+| `revolving` | Changes how looping behaves when `infinite` is enabled. |
+| `autoPlay` | Enables automatic slide advance. |
+| `autoPlayInterval` | Sets the auto-play interval in milliseconds. |
+| `dragThreshold` | Sets the drag distance needed to change slides. |
+
+export const carouselModeData = [
+  { title: 'Release Notes', summary: 'Review the newest changes first.', status: 'new' },
+  { title: 'Gallery', summary: 'Browse a curated set of visuals.', status: 'featured' },
+  { title: 'Roadmap', summary: 'See what is queued next.', status: 'planned' },
+  { title: 'Weekly Update', summary: 'Track the latest rollout progress.', status: 'live' },
+];
+
+export const carouselFixedConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 280,
+          itemHeight: 200,
+          gap: 16,
+          showIndicators: true,
+          showArrows: true,
+          infinite: true,
+          revolving: true,
+          autoPlay: false,
+          dragThreshold: 50,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const carouselAutoPlayConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 260,
+          itemHeight: 'auto',
+          gap: 12,
+          showIndicators: false,
+          showArrows: true,
+          infinite: true,
+          revolving: false,
+          autoPlay: true,
+          autoPlayInterval: 3000,
+          dragThreshold: 40,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};

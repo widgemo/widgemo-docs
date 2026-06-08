@@ -1,0 +1,83 @@
+---
+sidebar_position: 3
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Custom Field Types
+
+A custom field type is a heavier extension than custom `renderAs`.
+
+Use it when the value should behave like a distinct first-class field category rather than a one-off visual formatting choice.
+
+<WidgemoShowcase
+  title="Custom Field Type Reuse Goal"
+  description="Custom field types are ideal when a domain field should behave consistently across many widgets."
+  data={[
+    { brand: 'Northwind', fieldType: 'swatch', kind: 'branding' },
+    { brand: 'Acme', fieldType: 'swatch', kind: 'branding' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'brand', label: 'Brand' },
+            { key: 'fieldType', label: 'Field Type' },
+            { key: 'kind', label: 'Kind', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Register a custom field type
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoFieldType({
+  name: 'swatch',
+  render: (value, config) => (
+    <span
+      title={String(value)}
+      style={{
+        display: 'inline-block',
+        width: 18,
+        height: 18,
+        borderRadius: 3,
+        backgroundColor: String(value),
+        border: '1px solid #dee2e6',
+        verticalAlign: 'middle',
+      }}
+    />
+  ),
+  defaultConfig: { type: 'swatch' },
+});
+
+// Use in fields:
+{ key: 'brandColor', label: 'Color', type: 'swatch' }
+```
+
+## When to Choose a Custom Field Type
+
+Use a custom field type when:
+
+- the value is conceptually a reusable domain field, not just a formatting tweak
+- you expect many configs to use the same field behavior
+- you want the field to read naturally through `type`, not `renderAs`
+
+## Registration Order
+
+Register custom types before any Widgemo component renders. A safe place is module scope in your app entry file.
+
+## Collision Behavior
+
+Collision semantics are defined in [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).
+
+Use namespaced names (for example, `acme.swatch`, `acme.json`) to reduce accidental collisions.
+
+

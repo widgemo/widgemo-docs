@@ -1,218 +1,174 @@
----
-sidebar_position: 1
----
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const modesOverviewData = [
+	{ name: 'Aurora Chen', department: 'Engineering', status: 'active', value: 42 },
+	{ name: 'Mateo Silva', department: 'Design', status: 'pending', value: 31 },
+	{ name: 'Priya Nair', department: 'Operations', status: 'inactive', value: 27 },
+	{ name: 'Samir Khan', department: 'Engineering', status: 'active', value: 50 },
+];
+
+export const modesOverviewTableConfig = {
+	zones: {
+		content: {
+			mode: 'table',
+			modeConfig: {
+				table: {
+					type: 'traditional',
+					alternatingRows: true,
+					hover: true,
+					showHeader: true,
+				},
+			},
+			item: {
+				fields: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'department', label: 'Department' },
+					{ key: 'status', label: 'Status', renderAs: 'badge' },
+				],
+				layout: { type: 'auto' },
+			},
+		},
+	},
+};
+
+export const modesOverviewGridConfig = {
+	zones: {
+		content: {
+			mode: 'grid',
+			modeConfig: {
+				grid: {
+					minItemWidth: '180px',
+					maxColumns: 4,
+					gap: '0.75rem',
+				},
+			},
+			item: {
+				fields: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'department', label: 'Department' },
+					{ key: 'status', label: 'Status', renderAs: 'badge' },
+				],
+				layout: { type: 'auto' },
+			},
+		},
+	},
+};
+
+export const modesOverviewCarouselConfig = {
+	zones: {
+		content: {
+			mode: 'carousel',
+			modeConfig: {
+				carousel: {
+					itemWidth: 220,
+					itemHeight: 150,
+					gap: 12,
+					showArrows: true,
+					showIndicators: true,
+					infinite: true,
+					revolving: true,
+				},
+			},
+			item: {
+				fields: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'department', label: 'Department' },
+					{ key: 'status', label: 'Status', renderAs: 'badge' },
+				],
+				layout: { type: 'auto' },
+			},
+		},
+	},
+};
+
+export const modesOverviewBoardConfig = {
+	zones: {
+		content: {
+			mode: 'board',
+			modeConfig: {
+				board: {
+					columns: {
+						field: 'status',
+						items: [
+							{ id: 'active', label: 'Active', value: 'active' },
+							{ id: 'pending', label: 'Pending', value: 'pending' },
+							{ id: 'inactive', label: 'Inactive', value: 'inactive' },
+						],
+					},
+					dragEnabled: false,
+				},
+			},
+			item: {
+				fields: [
+					{ key: 'name', label: 'Name' },
+					{ key: 'department', label: 'Department' },
+				],
+				layout: { type: 'auto' },
+			},
+		},
+	},
+};
+
+export const modesOverviewBarChartConfig = {
+	zones: {
+		content: {
+			mode: 'chart',
+			modeConfig: {
+				chart: {
+					xAxis: 'name',
+					height: 240,
+					showLegend: false,
+					showGrid: true,
+					series: [{ key: 'value', label: 'Value', type: 'bar' }],
+				},
+			},
+		},
+	},
+};
+
+export const modesOverviewPieChartConfig = {
+	zones: {
+		content: {
+			mode: 'chart',
+			modeConfig: {
+				chart: {
+					xAxis: 'name',
+					height: 240,
+					showLegend: true,
+					showGrid: false,
+					series: [{ key: 'value', label: 'Value', type: 'pie' }],
+				},
+			},
+		},
+	},
+};
 
 # Modes Overview
 
-widgemo-core supports five rendering modes for different UX contexts. Choose the mode via `config.zones.content.mode`. Customize per-mode behavior under `modeConfig.<mode>`.
+widgemo-core ships with a small set of mode guides that explain each mode-specific config surface and show how the settings change the rendered widget.
 
-For host CSS effects on table semantics and defensive resets, see [Host CSS and Table Layout](/core/reference/host-css-table-layout).
+For shared mode-level behavior, start with the pages below. Each guide focuses on one configuration surface and shows the visible effect of the settings.
 
-## Table Mode
+## Quick Look
 
-Best for operational data, admin workflows, and sortable/filterable data.
+The same dataset below is shown as a table, grid, carousel, board, and two chart types.
 
-```tsx
-content: {
-  mode: 'table',
-  modeConfig: {
-    table: {
-      type: 'traditional',  // 'traditional' | 'rich-cells'
-      alternatingRows: true, // Widgemo row striping control; defaults true
-      hover: true,
-      showHeader: true,
-    },
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
+<div className="modes-overview-grid">
+	<WidgemoShowcase className="modes-overview-preview" title="Table" data={modesOverviewData} config={modesOverviewTableConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Grid" data={modesOverviewData} config={modesOverviewGridConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Carousel" data={modesOverviewData} config={modesOverviewCarouselConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Board" data={modesOverviewData} config={modesOverviewBoardConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Bar Chart" data={modesOverviewData} config={modesOverviewBarChartConfig} />
+	<WidgemoShowcase className="modes-overview-preview" title="Pie Chart" data={modesOverviewData} config={modesOverviewPieChartConfig} />
+</div>
 
-## Grid Mode
+## Guides
 
-Best for card-based displays, product listings, and dashboards.
+- [Chart Mode](./modes/chart)
+- [Table Mode](./modes/table)
+- [Grid Mode](./modes/grid)
+- [Carousel Mode](./modes/carousel)
+- [Board Mode](./modes/board)
+- [Responsive Switching](./modes/responsive-switching)
 
-For most Widgemo card grids, start with `minItemWidth`, `maxColumns`, and `gap`, then add `content.responsive.breakpoints` when you need viewport-based mode switching.
-
-```tsx
-content: {
-  mode: 'grid',
-  modeConfig: {
-    grid: {
-      minItemWidth: '240px',
-      maxColumns: 4,
-      gap: '1rem',
-    },
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
-
-### Advanced Grid Alignment
-
-`autoFlow`, `justifyItems`, and `alignItems` are supported advanced CSS Grid alignment controls.
-
-- `autoFlow` (`row` | `column` | `dense`): controls how items are auto-placed into the grid.
-- `justifyItems` (`start` | `end` | `center` | `stretch`): controls horizontal alignment of each grid item within its cell.
-- `alignItems` (`start` | `end` | `center` | `stretch`): controls vertical alignment of each grid item within its cell.
-
-Defaults are recommended for most card grids. Use these controls when you need specific placement or alignment behavior.
-
-## Carousel Mode
-
-Best for featured content, media galleries, and horizontal browsing.
-
-Looping controls:
-
-- `infinite` enables looping at carousel boundaries.
-- `revolving` controls loop style when `infinite` is `true`.
-- `revolving: true` uses continuous wrap behavior.
-- `revolving: false` uses rewind-style loop behavior.
-- `revolving` has no practical effect when `infinite` is `false`.
-
-```tsx
-content: {
-  mode: 'carousel',
-  modeConfig: {
-    carousel: {
-      itemWidth: 280,
-      itemHeight: 200,   // omit for 'auto'
-      gap: 16,
-      showArrows: true,
-      showIndicators: true,
-      infinite: true,
-      revolving: true,
-      autoPlay: true,
-      autoPlayInterval: 4000,
-      dragThreshold: 50,
-    },
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
-
-## Board (Kanban) Mode
-
-Best for workflow status tracking and drag-and-drop pipelines.
-
-Board columns are configured under `modeConfig.board.columns`.
-
-- `modeConfig.board.columns.field` and `modeConfig.board.columns.items` are required to render board columns.
-- `columns.items` defines the rendered columns and their order.
-- Each column requires `id` and `label`.
-- `value` optionally overrides the match value for that column; when omitted, `id` is used.
-- `filter` optionally provides custom function-based predicate routing for that column.
-- `width`, `color`, and `wipLimit` are optional display and constraint controls.
-
-Per-item actions are configured through `content.actions`.
-
-```tsx
-content: {
-  mode: 'board',
-  modeConfig: {
-    board: {
-      columns: {
-        field: 'status',  // entity field that routes items into columns
-        items: [
-          { id: 'active',   label: 'Active',   value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
-          { id: 'pending',  label: 'Pending',  filter: (entity) => entity.status === 'pending', color: '#f59e0b', wipLimit: 5 },
-          { id: 'inactive', label: 'Inactive', color: '#6b7280' },
-        ],
-      },
-      dragEnabled: true,
-    },
-  },
-  actions: [
-    { id: 'open-card', label: 'Open', icon: 'view', placement: 'pinned', variant: 'secondary' },
-  ],
-  gestures: [
-    { type: 'item-drop', enabled: true, interactionId: 'board-drop', interactionLabel: 'Board Drop' },
-  ],
-  item: { fields: [{ key: 'name', label: 'Name' }], layout: { type: 'auto' } },
-},
-```
-
-### Board Swimlanes
-
-`board.swimlanes.items` supports these item fields:
-
-- `id`: identifies the swimlane.
-- `label`: display text for the swimlane header.
-- `value`: maps field values to the swimlane.
-- `filter`: custom function-based routing for the swimlane.
-
-```tsx
-modeConfig: {
-  board: {
-    columns: {
-      field: 'status',
-      items: [ /* … */ ],
-    },
-    swimlanes: {
-      field: 'department',
-      items: [
-        { id: 'engineering', label: 'Engineering', value: 'Engineering' },
-        { id: 'design',      label: 'Design',      filter: (entity) => entity.department === 'Design' },
-      ],
-      layout: { type: 'matrix' },     // 'collapsible' (default) | 'matrix'
-      repeatingHeaders: false,
-    },
-    dragEnabled: true,
-  },
-},
-```
-
-## Responsive Mode Switching
-
-Responsive mode switching uses `content.mode` as the base mode and applies overrides from `content.responsive.breakpoints`.
-
-Required setup:
-
-- A base `content.mode` (used as the desktop default).
-- A valid `content.item` config with real `fields` and `layout`.
-- One or more `content.responsive.breakpoints` entries (`tablet`, `mobile`).
-
-Runtime breakpoint buckets:
-
-- `mobile`: width `< 768`
-- `tablet`: width `768-1023`
-- `desktop`: width `>= 1024`
-
-Working example:
-
-```tsx
-content: {
-  mode: 'table', // desktop base mode
-  item: {
-    fields: [
-      { key: 'name', label: 'Name' },
-      { key: 'department', label: 'Department' },
-      { key: 'status', label: 'Status', renderAs: 'badge' },
-    ],
-    layout: { type: 'auto' },
-  },
-  modeConfig: {
-    table: {
-      showHeader: true,
-      hover: true,
-    },
-  },
-  responsive: {
-    breakpoints: {
-      tablet: {
-        mode: 'grid',
-        modeConfig: {
-          grid: { minItemWidth: '260px', gap: '0.75rem' },
-        },
-      },
-      mobile: {
-        mode: 'carousel',
-        modeConfig: {
-          carousel: { itemWidth: 260, showIndicators: true },
-        },
-      },
-    },
-  },
-},
-```
-
-Per-breakpoint `modeConfig` overrides can be provided when a breakpoint needs mode-specific tuning.
+If you want the broader contract instead of the mode-specific settings, see [Content Config](/core/reference/content-config) and [Widgemo Config](/core/reference/widgemo-config).

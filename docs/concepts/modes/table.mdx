@@ -1,0 +1,393 @@
+---
+sidebar_position: 1
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const tableOptionData = [
+  { name: 'Aurora Chen', team: 'Design', status: 'active', score: 98, owner: 'Leah', priority: 'P1' },
+  { name: 'Mateo Silva', team: 'Platform', status: 'pending', score: 84, owner: 'Samir', priority: 'P2' },
+  { name: 'Priya Nair', team: 'Operations', status: 'inactive', score: 72, owner: 'Iris', priority: 'P3' },
+  { name: 'Niko Reyes', team: 'Design', status: 'active', score: 91, owner: 'Leah', priority: 'P1' },
+];
+
+export const tableModeData = [
+  { name: 'Aurora Chen', team: 'Design', status: 'active' },
+  { name: 'Mateo Silva', team: 'Platform', status: 'pending' },
+  { name: 'Priya Nair', team: 'Operations', status: 'inactive' },
+];
+
+export const tableHookData = [
+  { name: 'Aurora Chen', team: 'Design', status: 'active', score: 98 },
+  { name: 'Mateo Silva', team: 'Platform', status: 'pending', score: 84 },
+  { name: 'Priya Nair', team: 'Operations', status: 'inactive', score: 72 },
+  { name: 'Niko Reyes', team: 'Design', status: 'active', score: 91 },
+];
+
+export const tableTraditionalConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: true,
+          hover: true,
+          showHeader: true,
+          rowSeparator: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableRichCellsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'rich-cells',
+          columns: 2,
+          showHeader: true,
+          hover: true,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+          { key: 'owner', label: 'Owner' },
+          { key: 'priority', label: 'Priority' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableTogglesConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          hover: false,
+          showHeader: false,
+          alternatingRows: false,
+          rowSeparator: false,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableConditionalConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: {
+        table: {
+          type: 'traditional',
+          alternatingRows: false,
+          conditionalBackgroundColor: (entity) => {
+            if (entity.status === 'active') {
+              return { backgroundColor: '#16a34a', color: '#f0fdf4' };
+            }
+            if (entity.status === 'pending') {
+              return { backgroundColor: '#d97706', color: '#fffbeb' };
+            }
+            return { backgroundColor: '#4f46e5', color: '#eef2ff' };
+          },
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'team', label: 'Team' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableHooksConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      sorting: [{ fieldKey: 'score', direction: 'desc' }],
+      groupings: [
+        {
+          fieldKey: 'team',
+          initiallyCollapsed: false,
+          collapsible: true,
+          showDropdownControl: true,
+          showHeaderControls: true,
+        },
+      ],
+      modeConfig: {
+        table: {
+          hooks: {
+            onSort: (field, direction) => console.log('sort changed', field, direction),
+            onGroup: (field) => console.log('group changed', field),
+            preRowRender: (entity) => entity,
+            onGroupToggle: (groupValue, isExpanded) =>
+              console.log('group toggle', groupValue, isExpanded),
+          },
+        },
+      },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', sortable: true, groupable: true },
+          { key: 'team', label: 'Team', sortable: true, groupable: true },
+          { key: 'status', label: 'Status', renderAs: 'badge', sortable: true, groupable: true },
+          { key: 'score', label: 'Score', sortable: true, align: 'right' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableGroupingControlData = [
+  { name: 'Aurora Chen', team: 'Design', status: 'active', score: 98 },
+  { name: 'Mateo Silva', team: 'Platform', status: 'pending', score: 84 },
+  { name: 'Priya Nair', team: 'Operations', status: 'inactive', score: 72 },
+  { name: 'Niko Reyes', team: 'Design', status: 'active', score: 91 },
+  { name: 'Elena Park', team: 'Platform', status: 'active', score: 88 },
+  { name: 'Jonas Bell', team: 'Operations', status: 'pending', score: 79 },
+];
+
+export const groupingControlFields = [
+  { key: 'name', label: 'Name', sortable: true },
+  { key: 'team', label: 'Team', sortable: true, groupable: true },
+  { key: 'status', label: 'Status', renderAs: 'badge', sortable: true, groupable: true },
+  { key: 'score', label: 'Score', sortable: true, align: 'right' },
+];
+
+export const tableGroupingDropdownOnlyConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      groupings: [
+        {
+          fieldKey: 'team',
+          initiallyCollapsed: false,
+          showDropdownControl: true,
+          showHeaderControls: false,
+        },
+      ],
+      item: {
+        fields: groupingControlFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableGroupingIconsOnlyConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      groupings: [
+        {
+          fieldKey: 'team',
+          initiallyCollapsed: false,
+          showHeaderControls: true,
+        },
+      ],
+      item: {
+        fields: groupingControlFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const tableGroupingBothControlsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      groupings: [
+        {
+          fieldKey: 'team',
+          initiallyCollapsed: false,
+          showDropdownControl: true,
+          showHeaderControls: true,
+        },
+      ],
+      item: {
+        fields: groupingControlFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# Table Mode
+
+modeConfig.table controls table-specific presentation and table lifecycle hooks.
+
+Shared content features such as search, pagination, filtering, sorting descriptors, actions, gestures, and responsive breakpoints are documented in [Content Config](/core/reference/content-config).
+
+## Layout Type Examples
+
+### Traditional Table
+
+<WidgemoShowcase
+  title="Traditional Table"
+  description="Default table shape with header, hover, alternating rows, and row separators."
+  data={tableModeData}
+  config={tableTraditionalConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Rich Cells
+
+<WidgemoShowcase
+  title="Rich Cells Table"
+  description="The same dataset rendered with rich-cells and multiple content columns per row."
+  data={tableOptionData}
+  config={tableRichCellsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Presentation Toggles Example
+
+This example focuses on hover, header visibility, striping, and row separators by turning all four off.
+
+<WidgemoShowcase
+  title="Presentation Toggles"
+  description="A minimal table surface with hover/header/striping/separators disabled."
+  data={tableModeData}
+  config={tableTogglesConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Row Highlighting Example
+
+Use conditionalBackgroundColor when rows need clear visual state coloring.
+
+<WidgemoShowcase
+  title="Conditional Row Styling"
+  description="This example colors each row from the entity status value."
+  data={tableModeData}
+  config={tableConditionalConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Grouping UI Controls
+
+Grouping is configured under `zones.content.groupings`; the canonical contract and cross-mode behavior live in [Content Config: Grouping](/core/reference/content-config#grouping).
+
+This section is intentionally table-specific and focuses on grouping interaction surfaces that apply in table mode.
+
+| Option | Possible values | Default | Effect |
+|---|---|---|---|
+| fieldKey | any field key | required | Field used to build groups. |
+| initiallyCollapsed | true or false | false | Sets whether groups start collapsed. |
+| collapsible | true or false | true | Lets users expand or collapse group blocks. |
+| showDropdownControl | true or false | false | Shows the group-by dropdown control above the table. |
+| showHeaderControls | true or false | true | Shows grouping icons in header cells for groupable fields. |
+
+Dropdown visibility still requires at least one field with groupable: true so the control has selectable columns.
+
+## Grouping Control Variants
+
+### Dropdown Only
+
+<WidgemoShowcase
+  title="Grouping Controls: Dropdown Only"
+  description="Only the dropdown is shown. Header grouping icons are disabled."
+  data={tableGroupingControlData}
+  config={tableGroupingDropdownOnlyConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Header Icons Only
+
+<WidgemoShowcase
+  title="Grouping Controls: Header Icons Only"
+  description="Only header grouping icons are shown on groupable columns."
+  data={tableGroupingControlData}
+  config={tableGroupingIconsOnlyConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Dropdown and Header Icons
+
+<WidgemoShowcase
+  title="Grouping Controls: Dropdown + Header Icons"
+  description="Both grouping control surfaces are enabled."
+  data={tableGroupingControlData}
+  config={tableGroupingBothControlsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Hook Callback Example
+
+This example is focused on hook wiring. Sort headers and grouping controls trigger callbacks.
+
+<WidgemoShowcase
+  title="Hook Callbacks"
+  description="Sort and group interactions trigger table hook callbacks."
+  data={tableHookData}
+  config={tableHooksConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Table Option Reference
+
+| Option | Possible values | Default | Effect |
+|---|---|---|---|
+| type | traditional or rich-cells | traditional | Chooses classic row/cell table layout or richer multi-column cell blocks. |
+| columns | any number >= 1 | 1 | Number of rich-cell columns when type is rich-cells. |
+| hover | true or false | true | Enables row hover behavior. |
+| showHeader | true or false | true | Shows or hides the header row. |
+| alternatingRows | true or false | true | Applies zebra striping to alternating rows. |
+| rowSeparator | true or false | true | Draws row bottom borders. |
+| conditionalBackgroundColor | function returning a color string, or an object with backgroundColor and optional color | unset | Applies dynamic row background and optional text color per entity. |
+| hooks.onSort | function (field, direction) => void | unset | Fires when a column sort changes. |
+| hooks.onGroup | function (field) => void | unset | Fires when grouping changes. |
+| hooks.preRowRender | function (entity) => entity | unset | Lets you transform a row before render. |
+| hooks.onGroupToggle | function (groupValue, isExpanded) => void | unset | Fires when a group expands or collapses. |
+
+## Coverage Summary
+
+Every table setting is represented by at least one live example on this page:
+
+- type and columns: Rich Cells
+- hover, showHeader, alternatingRows, rowSeparator: Traditional Table, Presentation Toggles
+- conditionalBackgroundColor: Row Highlighting Example
+- groupings.showDropdownControl and groupings.showHeaderControls: Grouping Control Variants
+- hooks.onSort, hooks.onGroup, hooks.preRowRender, hooks.onGroupToggle: Hook Callback Example
+
+For field-level table behavior such as sortable, width, and align, see [Field Config](/core/reference/field-config).

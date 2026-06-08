@@ -2,9 +2,35 @@
 sidebar_position: 2
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
 # Custom Modes Guide
 
 Custom modes let you build an entirely new layout and rendering strategy for your dataset, then ship it as a named value in `content.mode`.
+
+<WidgemoShowcase
+	title="Why Custom Modes Exist"
+	description="Use built-in modes first, then move to custom mode registration when your layout strategy cannot be represented as table, grid, board, carousel, or chart."
+	data={[
+		{ phase: 'Built-in mode fit', recommendation: 'Use config only', status: 'preferred' },
+		{ phase: 'Domain-specific layout', recommendation: 'Register custom mode', status: 'extension' },
+	]}
+	config={{
+		zones: {
+			content: {
+				mode: 'table',
+				item: {
+					fields: [
+						{ key: 'phase', label: 'Phase' },
+						{ key: 'recommendation', label: 'Recommendation' },
+						{ key: 'status', label: 'Status', renderAs: 'badge' },
+					],
+					layout: { type: 'auto' },
+				},
+			},
+		},
+	}}
+/>
 
 ## 1. Build the Mode Component
 
@@ -193,3 +219,5 @@ For lifecycle interception guidance, see [Extension API: When to Use Which](/cor
 Collision semantics are defined in [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).
 
 Use namespaced names (for example, `acme.timeline`) to reduce accidental collisions.
+
+
