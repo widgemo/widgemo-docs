@@ -10,9 +10,9 @@ sidebar_position: 3
 
 | Field | Type | Description |
 |---|---|---|
-| `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| string` | Display mode |
+| `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| 'chart' \| string` | Display mode |
 | `item` | `ItemConfig` | Field definitions and card layout |
-| `modeConfig` | `ModeConfig` | Mode-specific config (`table`, `grid`, `carousel`, `board`) |
+| `modeConfig` | `ModeConfig` | Mode-specific config (`table`, `grid`, `carousel`, `board`, `chart`) |
 | `actions` | `ActionConfig[]` | Per-item actions |
 | `actionOverflow` | `ActionOverflowConfig` | Overflow menu behaviour for item actions |
 | `pagination` | `{ pageSize, initialPage?, onPageChange? }` | Pagination settings |
@@ -145,28 +145,6 @@ For grouped table header styling and host-CSS caveats, see [Host CSS and Table L
 
 ## Action Overflow
 
-Controls how item and zone actions behave when there are more actions than can fit inline.
-The overflow button (⋯) appears automatically when actions are tucked into a menu.
-When the overflow count *increases* (e.g. due to a container resize), the button plays
-an attention animation defined by `indicator`.
-
-```tsx
-actionOverflow: {
-  maxInline: { mobile: 1, tablet: 2, desktop: 3 },  // or scalar number
-  menuLabel: 'More',           // label shown instead of ⋯ icon on desktop
-  menuTooltip: 'More actions', // tooltip on the overflow button
-  indicator: 'pulse',          // 'pulse' | 'scale' | 'color-shift' | 'none'
-},
-```
-
-### `indicator` values
-
-| Value | Effect |
-|---|---|
-| `'pulse'` | Scale pop + blue radial ripple. **Default.** |
-| `'scale'` | Clean scale-only pop — no color change. Subtler than pulse. |
-| `'color-shift'` | Brief background and border tint flash toward the primary color — no movement. Suitable when reducing motion is preferred. |
-| `'none'` | Animation disabled entirely. |
-
-The animation fires only when the overflow count **increases**, not on initial mount.
+`actionOverflow` applies to both zone configs and `ContentConfig`.
+For full options, behavior, and `indicator` values, see [Action Overflow](/core/reference/action-config#action-overflow).
 

@@ -145,9 +145,11 @@ export const modesOverviewPieChartConfig = {
 
 # Modes Overview
 
-widgemo-core ships with a small set of mode guides that explain each mode-specific config surface and show how the settings change the rendered widget.
+Use this page as a gateway:
 
-For shared mode-level behavior, start with the pages below. Each guide focuses on one configuration surface and shows the visible effect of the settings.
+- First, compare how the same data looks in each mode.
+- Then, open the mode guide for mode-specific settings.
+- Finally, use Reference pages for shared `zones.content` behavior that applies across modes.
 
 ## Quick Look
 
@@ -162,13 +164,34 @@ The same dataset below is shown as a table, grid, carousel, board, and two chart
 	<WidgemoShowcase className="modes-overview-preview" title="Pie Chart" data={modesOverviewData} config={modesOverviewPieChartConfig} />
 </div>
 
-## Guides
+## Shared vs Mode-Specific
 
-- [Chart Mode](./modes/chart)
-- [Table Mode](./modes/table)
-- [Grid Mode](./modes/grid)
-- [Carousel Mode](./modes/carousel)
-- [Board Mode](./modes/board)
-- [Responsive Switching](./modes/responsive-switching)
+Mode guides are intentionally mode-specific: they cover settings under `modeConfig.<mode>` and mode-only caveats.
 
-If you want the broader contract instead of the mode-specific settings, see [Content Config](/core/reference/content-config) and [Widgemo Config](/core/reference/widgemo-config).
+Shared behavior is canonical in Reference and should be treated as the source of truth:
+
+- [Content Config](/core/reference/content-config): search, pagination, filtering, sorting, grouping, gestures, responsive breakpoints, loading, and error handling
+- [Action Config](/core/reference/action-config): action shape, placement, and overflow behavior
+- [Field Config](/core/reference/field-config): item field rendering and layout contract
+- [Widgemo Config](/core/reference/widgemo-config): top-level widget configuration surface
+- [Content Config: Shape](/core/reference/content-config#shape): canonical location for shared `zones.content` contract fields
+
+## Choose a Mode Guide
+
+- [Chart Mode](/core/concepts/modes/chart)
+- [Table Mode](/core/concepts/modes/table)
+- [Grid Mode](/core/concepts/modes/grid)
+- [Carousel Mode](/core/concepts/modes/carousel)
+- [Board Mode](/core/concepts/modes/board)
+- [Responsive Switching](/core/concepts/modes/responsive-switching)
+
+## Progression Paths
+
+Follow one of these newcomer flows from overview to mode to canonical reference anchors:
+
+- Table-first flow: [Table Mode](/core/concepts/modes/table) -> [Content Config: Grouping](/core/reference/content-config#grouping) -> [Field Config](/core/reference/field-config)
+- Grid-first flow: [Grid Mode](/core/concepts/modes/grid) -> [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting) -> [Field Config](/core/reference/field-config)
+- Carousel-first flow: [Carousel Mode](/core/concepts/modes/carousel) -> [Action Config: Action Overflow](/core/reference/action-config#action-overflow) -> [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- Board-first flow: [Board Mode](/core/concepts/modes/board) -> [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions) -> [Action Config](/core/reference/action-config)
+- Chart-first flow: [Chart Mode](/core/concepts/modes/chart) -> [Content Config: Shape](/core/reference/content-config#shape) -> [Field Config](/core/reference/field-config)
+- Responsive flow: [Responsive Switching](/core/concepts/modes/responsive-switching) -> [Content Config: Shape](/core/reference/content-config#shape) -> [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)

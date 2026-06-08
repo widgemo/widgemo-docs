@@ -246,11 +246,25 @@ export const tableGroupingBothControlsConfig = {
 
 # Table Mode
 
+## Mode Purpose and When to Use
+
 modeConfig.table controls table-specific presentation and table lifecycle hooks.
+Use table mode when users need dense scanability, sortable columns, and row-level comparisons.
 
-Shared content features such as search, pagination, filtering, sorting descriptors, actions, gestures, and responsive breakpoints are documented in [Content Config](/core/reference/content-config).
+## Shared-Feature Boundary
 
-## Layout Type Examples
+Shared content behavior remains canonical in Reference:
+
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive breakpoints and shared content contract fields
+
+For field-level controls (label, width, alignment, renderAs, groupable, sortable), see [Field Config](/core/reference/field-config).
+
+## Core Examples
+
+### Layout Type Examples
 
 ### Traditional Table
 
@@ -274,7 +288,7 @@ Shared content features such as search, pagination, filtering, sorting descripto
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Presentation Toggles Example
+### Presentation Toggles Example
 
 This example focuses on hover, header visibility, striping, and row separators by turning all four off.
 
@@ -287,7 +301,7 @@ This example focuses on hover, header visibility, striping, and row separators b
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Row Highlighting Example
+### Row Highlighting Example
 
 Use conditionalBackgroundColor when rows need clear visual state coloring.
 
@@ -300,23 +314,20 @@ Use conditionalBackgroundColor when rows need clear visual state coloring.
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Grouping UI Controls
+### Grouping UI Controls
 
 Grouping is configured under `zones.content.groupings`; the canonical contract and cross-mode behavior live in [Content Config: Grouping](/core/reference/content-config#grouping).
 
-This section is intentionally table-specific and focuses on grouping interaction surfaces that apply in table mode.
+This section is intentionally table-specific and focuses on grouping interaction surfaces that apply only in table mode.
 
-| Option | Possible values | Default | Effect |
+| Option | Values | Default | Effect |
 |---|---|---|---|
-| fieldKey | any field key | required | Field used to build groups. |
-| initiallyCollapsed | true or false | false | Sets whether groups start collapsed. |
-| collapsible | true or false | true | Lets users expand or collapse group blocks. |
 | showDropdownControl | true or false | false | Shows the group-by dropdown control above the table. |
 | showHeaderControls | true or false | true | Shows grouping icons in header cells for groupable fields. |
 
 Dropdown visibility still requires at least one field with groupable: true so the control has selectable columns.
 
-## Grouping Control Variants
+### Grouping Control Variants
 
 ### Dropdown Only
 
@@ -351,7 +362,7 @@ Dropdown visibility still requires at least one field with groupable: true so th
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Hook Callback Example
+### Hook Callback Example
 
 This example is focused on hook wiring. Sort headers and grouping controls trigger callbacks.
 
@@ -364,9 +375,9 @@ This example is focused on hook wiring. Sort headers and grouping controls trigg
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Table Option Reference
+## Mode Option Reference
 
-| Option | Possible values | Default | Effect |
+| Option | Values | Default | Effect |
 |---|---|---|---|
 | type | traditional or rich-cells | traditional | Chooses classic row/cell table layout or richer multi-column cell blocks. |
 | columns | any number >= 1 | 1 | Number of rich-cell columns when type is rich-cells. |
@@ -380,6 +391,11 @@ This example is focused on hook wiring. Sort headers and grouping controls trigg
 | hooks.preRowRender | function (entity) => entity | unset | Lets you transform a row before render. |
 | hooks.onGroupToggle | function (groupValue, isExpanded) => void | unset | Fires when a group expands or collapses. |
 
+## Mode-Specific Caveats
+
+- Grouping dropdown visibility still requires at least one field with `groupable: true`.
+- `columns` applies only when `type` is `rich-cells`.
+
 ## Coverage Summary
 
 Every table setting is represented by at least one live example on this page:
@@ -390,4 +406,8 @@ Every table setting is represented by at least one live example on this page:
 - groupings.showDropdownControl and groupings.showHeaderControls: Grouping Control Variants
 - hooks.onSort, hooks.onGroup, hooks.preRowRender, hooks.onGroupToggle: Hook Callback Example
 
-For field-level table behavior such as sortable, width, and align, see [Field Config](/core/reference/field-config).
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [Host CSS and Table Layout](/core/reference/host-css-table-layout)

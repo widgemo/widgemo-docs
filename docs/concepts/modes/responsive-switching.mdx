@@ -1,16 +1,29 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
 # Responsive Switching
 
+## Mode Purpose and When to Use
+
 Responsive switching uses a base `content.mode` and then swaps in breakpoint-specific mode and `modeConfig` overrides from `content.responsive.breakpoints`.
 
-Shared options such as search, filtering, pagination, actions, and gestures are covered in [Content Config](/core/reference/content-config).
+Use responsive switching when the same dataset should present differently at desktop, tablet, and mobile widths without duplicating content contracts.
 
-## What It Changes
+## Shared-Feature Boundary
+
+Shared options are canonical in Reference:
+
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive breakpoint contract fields
+
+## Core Examples
+
+### What It Changes
 
 Use responsive switching when the same dataset should present differently across widths.
 
@@ -18,7 +31,7 @@ Use responsive switching when the same dataset should present differently across
 - `content.responsive.breakpoints` adds width-specific overrides.
 - Each breakpoint can swap the mode and tune that mode's config.
 
-## Live Preview
+### Live Preview
 
 These widgets mirror the same data across the three target widths shown in the example below.
 
@@ -88,14 +101,35 @@ const config = {
 };
 ```
 
-## Responsive Options
+## Mode Option Reference
 
-| Option | What it changes |
-|---|---|
-| `content.mode` | Sets the default mode before breakpoints are applied. |
-| `content.responsive.breakpoints` | Declares width-specific overrides. |
-| `breakpoints.<name>.mode` | Switches the mode at that breakpoint. |
-| `breakpoints.<name>.modeConfig` | Overrides the chosen mode's config at that breakpoint. |
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `content.mode` | `table`, `grid`, `board`, `carousel`, `chart`, string | required | Sets the default mode before breakpoints are applied. |
+| `content.responsive.breakpoints` | record of breakpoint objects | unset | Declares width-specific overrides. |
+| `breakpoints.<name>.mode` | `table`, `grid`, `board`, `carousel`, `chart`, string | unset | Switches the mode at that breakpoint. |
+| `breakpoints.<name>.modeConfig` | partial `ModeConfig` | unset | Overrides the chosen mode's config at that breakpoint. |
+
+## Mode-Specific Caveats
+
+- Each breakpoint `modeConfig` should match the mode selected at that breakpoint.
+- Shared contracts such as actions, search, and filtering still come from `zones.content` and are not redefined per mode page.
+
+## Coverage Summary
+
+Every responsive switching option is represented by at least one example or subsection on this page:
+
+- `content.mode`: What It Changes, Desktop width
+- `content.responsive.breakpoints`: What It Changes, Live Preview
+- `breakpoints.<name>.mode`: Tablet width, Mobile width
+- `breakpoints.<name>.modeConfig`: Tablet width, Mobile width
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Table Mode](/core/concepts/modes/table)
+- [Grid Mode](/core/concepts/modes/grid)
+- [Carousel Mode](/core/concepts/modes/carousel)
 
 export const responsiveData = [
   { name: 'Aurora Chen', department: 'Engineering', status: 'active' },
