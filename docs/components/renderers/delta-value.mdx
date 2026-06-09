@@ -1,0 +1,41 @@
+# deltaValue Renderer
+
+Use `renderAs: 'deltaValue'` for signed metric change display with optional trend indicators.
+
+## Typical Use Cases
+
+- Period-over-period variance
+- KPI movement (+/-)
+- Alerting around directional change
+
+## Example
+
+```tsx
+{
+  key: 'delta',
+  label: 'Delta',
+  renderAs: 'deltaValue',
+  renderAsOptions: {
+    trendIndicator: true,
+    suffixPercent: true,
+    fractionDigits: 1,
+    palette: {
+      positive: '#198754',
+      negative: '#dc3545',
+      neutral: '#6c757d',
+    },
+  },
+}
+```
+
+## Key Options
+
+- `trendIndicator`
+- `suffixPercent`
+- `fractionDigits`
+- `palette`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `DeltaValueRenderAsOptions` in core types

@@ -1,0 +1,29 @@
+# date Renderer
+
+Use `renderAs: 'date'` for date-only values with explicit parsing and locale formatting.
+
+## Example
+
+```tsx
+{
+  key: 'settlementDate',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: {
+    parseMode: 'iso-date',
+    locale: 'en-US',
+    timezone: 'local',
+    formatPreset: 'short',
+  },
+}
+```
+
+## Required Contract
+
+- `renderAsOptions.parseMode` is required.
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Option interface: `DateRenderAsOptions` in core types

@@ -1,0 +1,39 @@
+# currency Renderer
+
+Use `renderAs: 'currency'` for locale-aware numeric currency formatting.
+
+## Typical Use Cases
+
+- Finance amounts in table and grid views
+- Positive/negative value colorization
+- Compact notation for large values
+
+## Example
+
+```tsx
+{
+  key: 'amount',
+  label: 'Amount',
+  renderAs: 'currency',
+  renderAsOptions: {
+    currency: 'USD',
+    locale: 'en-US',
+    compact: true,
+    colorize: true,
+    negativeFormat: 'parentheses',
+  },
+}
+```
+
+## Key Options
+
+- `currency`, `locale`
+- `minimumFractionDigits`, `maximumFractionDigits`
+- `compact`, `compactThreshold`
+- `colorize`, `positiveColor`, `negativeColor`, `zeroColor`
+- `negativeFormat`, `decimalAlign`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `CurrencyRenderAsOptions` in core types

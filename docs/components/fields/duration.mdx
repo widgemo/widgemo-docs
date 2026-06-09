@@ -1,0 +1,32 @@
+# duration Field Type
+
+Use `type: 'duration'` for elapsed-time values.
+
+## Typical Use Cases
+
+- Processing latency
+- Queue lag
+- Runtime and uptime values
+
+## Example
+
+```tsx
+{
+  key: 'latencySec',
+  label: 'Latency',
+  type: 'duration',
+  renderAs: 'duration',
+  renderAsOptions: { unit: 'sec', format: 'clock' },
+}
+```
+
+## Contract
+
+- Pair with `renderAs: 'duration'` for explicit temporal rendering.
+- `renderAsOptions.unit` is required in temporal renderer mode.
+
+## Related
+
+- Renderer page: [duration Renderer](/core/components/renderers/duration)
+- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Canonical contract: [Field Config](/core/reference/field-config)

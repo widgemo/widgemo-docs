@@ -1,0 +1,33 @@
+# image Field Type
+
+Use `type: 'image'` for image and avatar-like field values.
+
+## Typical Use Cases
+
+- User avatars
+- Product thumbnails
+- Brand image references
+
+## Example
+
+```tsx
+{
+  key: 'avatar',
+  label: 'Avatar',
+  type: 'image',
+  imageOptions: {
+    circular: true,
+    width: 40,
+    height: 40,
+    objectFit: 'cover',
+  },
+}
+```
+
+## Notes
+
+- Use `imageOptions` to control size, shape, fitting, and behavior.
+
+## Related
+
+- Canonical contract: [Field Config](/core/reference/field-config)

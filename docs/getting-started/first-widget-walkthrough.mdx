@@ -1,0 +1,73 @@
+---
+title: First Widget Walkthrough
+---
+
+# First Widget Walkthrough
+
+This walkthrough gets you from install to a working Widgemo widget in one path.
+
+## Purpose
+
+Move from initial setup to a production-safe baseline widget using a constrained sequence.
+
+## Prerequisite
+
+Start from [Quick Start](/core/getting-started/quick-start) so dependencies and base setup are complete.
+
+## Core Example
+
+Use one dataset, one mode, and a small field list first.
+
+```tsx
+import { Widgemo } from '@widgemo/widgemo-core';
+
+const data = [
+  { id: 1, name: 'Aurora Chen', department: 'Engineering', status: 'active' },
+  { id: 2, name: 'Mateo Silva', department: 'Design', status: 'pending' },
+];
+
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'department', label: 'Department' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+      modeConfig: {
+        table: {
+          type: 'traditional',
+        },
+      },
+    },
+  },
+};
+
+export default function Example() {
+  return <Widgemo data={data} config={config} />;
+}
+```
+
+## Expand Safely
+
+After first render, extend in this order:
+
+1. Field rendering and layout: [Field Config](/core/reference/field-config)
+2. Shared content behavior: [Content Config](/core/reference/content-config)
+3. Mode-specific tuning: [Modes Overview](/core/concepts/modes-overview)
+
+## Validate Interactions Early
+
+If you add actions or gestures, wire `interactions.onEvent` early and verify payloads.
+
+See [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions).
+
+## Next Steps
+
+- Compare display modes in [Modes Overview](/core/concepts/modes-overview)
+- Pick one mode page for option-level tuning
+- Return to Reference pages for canonical API shape

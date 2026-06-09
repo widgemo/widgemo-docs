@@ -1,0 +1,67 @@
+---
+title: Common Setup Pitfalls
+---
+
+# Common Setup Pitfalls
+
+Use this checklist when Widgemo renders incorrectly or behavior is unexpected.
+
+## Purpose
+
+Catch common setup failures early and route directly to the canonical fix location.
+
+## Pitfall Checklist
+
+### Missing Required Content Config
+
+`zones.content`, `mode`, and `item.fields` are required for useful rendering.
+
+Reference: [Content Config: Shape](/core/reference/content-config#shape)
+
+### Mode and modeConfig Mismatch
+
+If `mode` is `chart`, configure `modeConfig.chart`; if `mode` is `board`, configure `modeConfig.board`, and so on.
+
+Reference: [Modes Overview](/core/concepts/modes-overview)
+
+### Field Key Mismatch With Data
+
+If a field key does not exist on entities, rendered output appears empty.
+
+Reference: [Field Config](/core/reference/field-config)
+
+### Overriding Host CSS in Table Scenarios
+
+Global host table styles can override Widgemo table appearance and interaction affordances.
+
+Reference: [Host CSS and Table Layout](/core/reference/host-css-table-layout)
+
+### Action Overflow Expectations
+
+If actions collapse into overflow unexpectedly, verify `actionOverflow.maxInline` values and viewport behavior.
+
+Reference: [Action Config: Action Overflow](/core/reference/action-config#action-overflow)
+
+### Responsive Breakpoints Not Applying
+
+Verify `content.responsive.breakpoints` keys and that each breakpoint override aligns with the target mode.
+
+Reference: [Responsive Switching](/core/concepts/modes/responsive-switching)
+
+### Gesture Handlers Not Firing
+
+If a local gesture `onTrigger` is absent, events fall back to `interactions.onEvent`.
+
+Reference: [Widgemo Config: Gestures](/core/reference/widgemo-config#gestures)
+
+## Quick Recovery Path
+
+1. Start from a minimal table config.
+2. Add one feature at a time.
+3. Validate each change before adding the next.
+
+## Next Steps
+
+1. Re-validate your base setup with [Installation](/core/getting-started/installation)
+2. Confirm a working baseline in [Quick Start](/core/getting-started/quick-start)
+3. Reapply changes in [First Widget Walkthrough](/core/getting-started/first-widget-walkthrough) order

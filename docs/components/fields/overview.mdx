@@ -1,0 +1,50 @@
+# Field Components Overview
+
+Field components are the field-level behavior and semantics that remain stable across modes.
+
+## Choose the Right Layer
+
+- Use `type` when the field is conceptually a known data category.
+- Use `renderAs` when you need specific visual presentation.
+- Use custom field types when domain behavior should be reusable and first-class.
+
+If both are present, `renderAs` controls display while `type` still communicates semantic intent.
+
+## Built-in Field Types
+
+### Core
+
+- [text](/core/components/fields/text)
+- [number](/core/components/fields/number)
+- [boolean](/core/components/fields/boolean)
+- [select](/core/components/fields/select)
+- [relation](/core/components/fields/relation)
+- [textarea](/core/components/fields/textarea)
+
+### Contact and Media
+
+- [email](/core/components/fields/email)
+- [url](/core/components/fields/url)
+- [image](/core/components/fields/image)
+- [swatch](/core/components/fields/swatch)
+
+### Temporal
+
+- [date](/core/components/fields/date)
+- [time](/core/components/fields/time)
+- [datetime](/core/components/fields/datetime)
+- [timestamp](/core/components/fields/timestamp)
+- [duration](/core/components/fields/duration)
+
+## Related Pages
+
+- Canonical field contract: [Field Config](/core/reference/field-config)
+- Built-in and custom renderer guidance: [Renderer Components Overview](/core/components/renderers/overview)
+- Custom field type extension workflow: [Custom Field Types](/core/extensions/custom-field-types)
+- Temporal behavior details: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+
+## Next Steps
+
+- Pick the matching built-in type page above for your target field.
+- If semantics are right but visuals are not, add a renderer from [Renderer Components Overview](/core/components/renderers/overview).
+- If behavior should be reusable at the domain level, implement [Custom Field Types](/core/extensions/custom-field-types).

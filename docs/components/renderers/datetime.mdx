@@ -1,0 +1,31 @@
+# datetime Renderer
+
+Use `renderAs: 'datetime'` for date-time values with absolute and relative display options.
+
+## Example
+
+```tsx
+{
+  key: 'postedAt',
+  type: 'datetime',
+  renderAs: 'datetime',
+  renderAsOptions: {
+    parseMode: 'iso-datetime',
+    locale: 'en-US',
+    timezone: 'utc',
+    formatPreset: 'short',
+    relativeTime: true,
+    relativeDisplay: 'both',
+  },
+}
+```
+
+## Required Contract
+
+- `renderAsOptions.parseMode` is required.
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Option interface: `DatetimeRenderAsOptions` in core types

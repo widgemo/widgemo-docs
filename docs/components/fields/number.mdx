@@ -1,0 +1,21 @@
+# number Field Type
+
+Use `type: 'number'` for raw numeric values when you do not need specialized renderer semantics.
+
+## Typical Use Cases
+
+- Counts and totals
+- Baseline metric columns
+- Numeric sorting fields
+
+## Example
+
+```tsx
+{ key: 'count', label: 'Count', type: 'number' }
+```
+
+## Related
+
+- Currency display: [currency Renderer](/core/components/renderers/currency)
+- Delta display: [deltaValue Renderer](/core/components/renderers/delta-value)
+- Canonical contract: [Field Config](/core/reference/field-config)

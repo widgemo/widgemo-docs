@@ -1,0 +1,32 @@
+# date Field Type
+
+Use `type: 'date'` for calendar-date values.
+
+## Typical Use Cases
+
+- Settlement dates
+- Due dates
+- Posting dates
+
+## Example
+
+```tsx
+{
+  key: 'settlementDate',
+  label: 'Settlement Date',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: { parseMode: 'iso-date', formatPreset: 'short' },
+}
+```
+
+## Contract
+
+- Pair with `renderAs: 'date'` for explicit temporal rendering.
+- `renderAsOptions.parseMode` is required in temporal renderer mode.
+
+## Related
+
+- Renderer page: [date Renderer](/core/components/renderers/date)
+- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Canonical contract: [Field Config](/core/reference/field-config)

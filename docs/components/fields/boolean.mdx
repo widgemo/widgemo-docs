@@ -1,0 +1,31 @@
+# boolean Field Type
+
+Use `type: 'boolean'` for true/false values with optional fallback labels.
+
+## Typical Use Cases
+
+- Feature flags
+- Active/inactive state
+- Binary checks
+
+## Example
+
+```tsx
+{
+  key: 'isActive',
+  label: 'Active',
+  type: 'boolean',
+  booleanTrueLabel: 'Yes',
+  booleanFalseLabel: 'No',
+}
+```
+
+## Notes
+
+- `booleanTrueLabel` and `booleanFalseLabel` apply to boolean fallback rendering.
+- For richer visual semantics, combine with a renderer.
+
+## Related
+
+- Status chips: [badge Renderer](/core/components/renderers/badge)
+- Canonical contract: [Field Config](/core/reference/field-config)

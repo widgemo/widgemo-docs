@@ -1,0 +1,29 @@
+# timestamp Renderer
+
+Use `renderAs: 'timestamp'` for Unix-style timestamp values with controlled parse mode.
+
+## Example
+
+```tsx
+{
+  key: 'updatedAtEpoch',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  renderAsOptions: {
+    parseMode: 'epoch-sec',
+    locale: 'en-US',
+    timezone: 'utc',
+    formatPreset: 'short',
+  },
+}
+```
+
+## Required Contract
+
+- `renderAsOptions.parseMode` is required.
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Option interface: `TimestampRenderAsOptions` in core types

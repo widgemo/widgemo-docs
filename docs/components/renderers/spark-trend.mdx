@@ -1,0 +1,37 @@
+# sparkTrend Renderer
+
+Use `renderAs: 'sparkTrend'` for compact trendline visuals in dense layouts.
+
+## Typical Use Cases
+
+- Small KPI trend charts in tables
+- Compact visual trend summaries
+- Side-by-side trend comparison columns
+
+## Example
+
+```tsx
+{
+  key: 'trend',
+  label: 'Trend',
+  renderAs: 'sparkTrend',
+  renderAsOptions: {
+    width: 108,
+    height: 34,
+    strokeWidth: 1.6,
+    showDeltaLabel: true,
+  },
+}
+```
+
+## Key Options
+
+- `width`, `height`
+- `strokeWidth`
+- `positiveColor`, `negativeColor`, `neutralColor`
+- `showDeltaLabel`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `SparkTrendRenderAsOptions` in core types

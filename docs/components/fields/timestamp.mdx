@@ -1,0 +1,32 @@
+# timestamp Field Type
+
+Use `type: 'timestamp'` for epoch-style timestamp values.
+
+## Typical Use Cases
+
+- Event ingestion times
+- Audit entries
+- Source-system Unix timestamp fields
+
+## Example
+
+```tsx
+{
+  key: 'updatedAtEpoch',
+  label: 'Updated',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  renderAsOptions: { parseMode: 'epoch-sec', formatPreset: 'short' },
+}
+```
+
+## Contract
+
+- Pair with `renderAs: 'timestamp'` for explicit temporal rendering.
+- `renderAsOptions.parseMode` is required in temporal renderer mode.
+
+## Related
+
+- Renderer page: [timestamp Renderer](/core/components/renderers/timestamp)
+- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Canonical contract: [Field Config](/core/reference/field-config)

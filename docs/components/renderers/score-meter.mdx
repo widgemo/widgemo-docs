@@ -1,0 +1,42 @@
+# scoreMeter Renderer
+
+Use `renderAs: 'scoreMeter'` for labeled 0-100 score bands with semantic status tags.
+
+## Typical Use Cases
+
+- Health or readiness scoring
+- Confidence scoring
+- Risk scoring with threshold bands
+
+## Example
+
+```tsx
+{
+  key: 'healthScore',
+  label: 'Health',
+  renderAs: 'scoreMeter',
+  renderAsOptions: {
+    showValue: true,
+    valueAsPercent: false,
+    bands: [
+      { max: 35, label: 'Critical', color: '#dc3545' },
+      { max: 65, label: 'Watch', color: '#fd7e14' },
+      { label: 'Healthy', color: '#198754' },
+    ],
+  },
+}
+```
+
+## Key Options
+
+- `density`
+- `showValue`
+- `valueAsPercent`
+- `decimals`
+- `tagPosition`, `tagAlign`, `valueAlign`
+- `bands`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `ScoreMeterRenderAsOptions` in core types

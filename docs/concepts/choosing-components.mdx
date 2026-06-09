@@ -1,0 +1,45 @@
+# Choosing Components
+
+Use this page to decide whether your use case should start with a mode, a field type, or a renderer.
+
+## Decision Flow
+
+1. Need a whole-surface layout change for a dataset?
+- Use a mode under [Components Overview](/core/components/overview).
+
+2. Need a domain-level data behavior contract reused across many configs?
+- Prefer field type semantics in [Field Components Overview](/core/components/fields/overview).
+
+3. Need a display-only visual treatment for an existing field?
+- Use a renderer from [Renderer Components Overview](/core/components/renderers/overview).
+
+## Modes vs Renderers
+
+- Modes control the full content surface (`table`, `grid`, `carousel`, `board`, `chart`, responsive switching).
+- Renderers control how one field value is displayed (`badge`, `currency`, `progress`, and more).
+
+## type vs renderAs
+
+- Choose `type` first to express domain semantics.
+- Add `renderAs` when you need a specific visual treatment.
+- When both are present, `renderAs` determines display output.
+
+Direct field-type pages:
+
+- [Field Components Overview](/core/components/fields/overview)
+- [date](/core/components/fields/date), [time](/core/components/fields/time), [datetime](/core/components/fields/datetime), [timestamp](/core/components/fields/timestamp), [duration](/core/components/fields/duration)
+
+Direct renderer pages:
+
+- [Renderer Components Overview](/core/components/renderers/overview)
+
+If you are uncertain, start with mode selection in [Modes Overview](/core/concepts/modes-overview), then refine field presentation with renderers.
+
+## Canonical Contracts
+
+Behavior contracts stay in Reference:
+
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [Action Config](/core/reference/action-config)
+- [Widgemo Config](/core/reference/widgemo-config)

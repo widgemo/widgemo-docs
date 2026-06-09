@@ -1,0 +1,32 @@
+# time Field Type
+
+Use `type: 'time'` for time-only values.
+
+## Typical Use Cases
+
+- Checkpoint times
+- Schedule times
+- Time-of-day logs
+
+## Example
+
+```tsx
+{
+  key: 'checkpointTime',
+  label: 'Checkpoint',
+  type: 'time',
+  renderAs: 'time',
+  renderAsOptions: { parseMode: 'iso-time', showSeconds: true },
+}
+```
+
+## Contract
+
+- Pair with `renderAs: 'time'` for explicit temporal rendering.
+- `renderAsOptions.parseMode` is required in temporal renderer mode.
+
+## Related
+
+- Renderer page: [time Renderer](/core/components/renderers/time)
+- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Canonical contract: [Field Config](/core/reference/field-config)

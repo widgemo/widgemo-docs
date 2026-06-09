@@ -1,0 +1,38 @@
+# progress Renderer
+
+Use `renderAs: 'progress'` to present bounded values as a visual completion bar.
+
+## Typical Use Cases
+
+- Task completion percentages
+- Processing progress indicators
+- SLA threshold visualization
+
+## Example
+
+```tsx
+{
+  key: 'progress',
+  label: 'Progress',
+  renderAs: 'progress',
+  renderAsOptions: {
+    height: 10,
+    showPercentage: true,
+    color: '#198754',
+    backgroundColor: '#e9ecef',
+  },
+}
+```
+
+## Key Options
+
+- `height`
+- `showPercentage`
+- `color`
+- `backgroundColor`
+- `textColor`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `ProgressRenderAsOptions` in core types

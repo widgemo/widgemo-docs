@@ -1,0 +1,40 @@
+# badge Renderer
+
+Use `renderAs: 'badge'` to display categorical values with semantic color treatment.
+
+## Typical Use Cases
+
+- Status chips (`active`, `pending`, `inactive`)
+- Lightweight inline labels for table cells
+- Icon plus text state markers
+
+## Example
+
+```tsx
+{
+  key: 'status',
+  label: 'Status',
+  renderAs: 'badge',
+  renderAsOptions: {
+    style: 'badge',
+    size: 'md',
+    colorMap: {
+      active: { background: '#198754', text: '#ffffff' },
+      pending: { background: '#ffc107', text: '#212529' },
+      inactive: { background: '#6c757d', text: '#ffffff', icon: 'close' },
+    },
+  },
+}
+```
+
+## Key Options
+
+- `style`: `badge` or `inline`
+- `size`: `sm`, `md`, `lg`
+- `colorMap`: map values to colors and optional icons
+- `defaultColor`: fallback when value is not mapped
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `BadgeRenderAsOptions` in core types

@@ -1,0 +1,36 @@
+# link Renderer
+
+Use `renderAs: 'link'` to render field values as navigable links.
+
+## Typical Use Cases
+
+- Detail-page navigation
+- External profile links
+- Email values converted to `mailto:` links
+
+## Example
+
+```tsx
+{
+  key: 'profileUrl',
+  label: 'Profile',
+  renderAs: 'link',
+  renderAsOptions: {
+    text: 'Open profile',
+    newTab: true,
+    externalWarning: true,
+  },
+}
+```
+
+## Key Options
+
+- `text`
+- `url`
+- `newTab`
+- `externalWarning`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `LinkRenderAsOptions` in core types

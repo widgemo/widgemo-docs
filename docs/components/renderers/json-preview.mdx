@@ -1,0 +1,38 @@
+# jsonPreview Renderer
+
+Use `renderAs: 'jsonPreview'` to show objects and arrays as collapsible structured JSON.
+
+## Typical Use Cases
+
+- Metadata or payload inspection
+- Diagnostic and debugging views
+- Nested object previews in compact tables
+
+## Example
+
+```tsx
+{
+  key: 'metadata',
+  label: 'Metadata',
+  renderAs: 'jsonPreview',
+  renderAsOptions: {
+    defaultCollapsed: true,
+    maxDepth: 2,
+  },
+}
+```
+
+## Key Options
+
+- `defaultCollapsed`
+- `maxDepth`
+
+## Behavior Notes
+
+- String values are parsed as JSON when possible.
+- Invalid JSON yields renderer fallback output, not runtime exceptions.
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `JsonPreviewRenderAsOptions` in core types

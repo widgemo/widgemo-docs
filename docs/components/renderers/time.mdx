@@ -1,0 +1,30 @@
+# time Renderer
+
+Use `renderAs: 'time'` for time-only values with explicit parsing and timezone control.
+
+## Example
+
+```tsx
+{
+  key: 'checkpointTime',
+  type: 'time',
+  renderAs: 'time',
+  renderAsOptions: {
+    parseMode: 'iso-time',
+    locale: 'en-US',
+    timezone: 'utc',
+    showSeconds: true,
+    hour12: false,
+  },
+}
+```
+
+## Required Contract
+
+- `renderAsOptions.parseMode` is required.
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
+- Option interface: `TimeRenderAsOptions` in core types

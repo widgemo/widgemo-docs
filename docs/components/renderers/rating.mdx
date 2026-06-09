@@ -1,0 +1,39 @@
+# rating Renderer
+
+Use `renderAs: 'rating'` for discrete score display with repeated icons.
+
+## Typical Use Cases
+
+- Product quality ratings
+- Reviewer confidence scores
+- Service quality indicators
+
+## Example
+
+```tsx
+{
+  key: 'rating',
+  label: 'Rating',
+  renderAs: 'rating',
+  renderAsOptions: {
+    max: 5,
+    size: 18,
+    icon: 'star',
+    color: '#ffd700',
+    emptyColor: '#dee2e6',
+  },
+}
+```
+
+## Key Options
+
+- `max`
+- `size`
+- `icon`
+- `color`
+- `emptyColor`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `RatingRenderAsOptions` in core types

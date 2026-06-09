@@ -1,0 +1,42 @@
+# compositionBar Renderer
+
+Use `renderAs: 'compositionBar'` to visualize part-to-whole segment distributions.
+
+## Typical Use Cases
+
+- Portfolio or budget composition
+- Resource allocation splits
+- Category contribution breakdowns
+
+## Example
+
+```tsx
+{
+  key: 'allocation',
+  label: 'Allocation',
+  renderAs: 'compositionBar',
+  renderAsOptions: {
+    legend: 'inline',
+    percentages: true,
+    barHeight: 12,
+    segments: (entity) => [
+      { label: 'Core', value: entity.core, color: '#4d94ff' },
+      { label: 'Growth', value: entity.growth, color: '#35d4a1' },
+      { label: 'Risk', value: entity.risk, color: '#f6ad55' },
+    ],
+  },
+}
+```
+
+## Key Options
+
+- `segments`
+- `style`, `segmentGap`, `cornerRadius`, `cornerScope`
+- `legend`, `percentages`, `totals`, `total`
+- `segmentColors` or `palette`
+- `barHeight`, `gap`
+
+## Canonical Reference
+
+- API contract: [Field Config](/core/reference/field-config)
+- Option interface: `CompositionBarRenderAsOptions` in core types
