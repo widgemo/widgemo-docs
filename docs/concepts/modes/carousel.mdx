@@ -6,9 +6,24 @@ import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
 # Carousel Mode
 
-`modeConfig.carousel` controls horizontal browsing behavior for featured content. Shared content controls such as search, pagination, filtering, and actions are documented in [Content Config](/core/reference/content-config).
+## Mode Purpose and When to Use
 
-## Fixed-Size Carousel
+`modeConfig.carousel` controls horizontal browsing behavior for featured content.
+Use carousel mode when items are best consumed as a swipeable sequence instead of a dense grid or table.
+
+## Shared-Feature Boundary
+
+Shared content behavior stays canonical in reference pages:
+
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
+- [Action Config](/core/reference/action-config) for action placement and overflow behavior
+
+## Core Examples
+
+### Fixed-Size Carousel
 
 This version uses fixed item sizing plus visible arrows and indicators.
 
@@ -52,7 +67,7 @@ const config = {
 };
 ```
 
-## Auto-Playing Carousel
+### Auto-Playing Carousel
 
 The controls below show the looping settings and automatic slide advance.
 
@@ -97,20 +112,46 @@ const config = {
 };
 ```
 
-## Carousel Options
+## Mode Option Reference
 
-| Option | What it changes |
-|---|---|
-| `itemWidth` | Sets the width of each card. |
-| `itemHeight` | Sets the item height, or lets items grow naturally with `auto`. |
-| `gap` | Sets spacing between carousel items. |
-| `showIndicators` | Shows or hides dot indicators. |
-| `showArrows` | Shows or hides navigation arrows. |
-| `infinite` | Enables looping at the ends. |
-| `revolving` | Changes how looping behaves when `infinite` is enabled. |
-| `autoPlay` | Enables automatic slide advance. |
-| `autoPlayInterval` | Sets the auto-play interval in milliseconds. |
-| `dragThreshold` | Sets the drag distance needed to change slides. |
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `itemWidth` | number | unset | Sets the width of each card. |
+| `itemHeight` | number, `auto` | `auto` | Sets the item height, or lets items grow naturally with `auto`. |
+| `gap` | number | unset | Sets spacing between carousel items. |
+| `showIndicators` | `true`, `false` | unset | Shows or hides dot indicators. |
+| `showArrows` | `true`, `false` | unset | Shows or hides navigation arrows. |
+| `infinite` | `true`, `false` | unset | Enables looping at the ends. |
+| `revolving` | `true`, `false` | `true` when `infinite` is enabled | Changes how looping behaves when `infinite` is enabled. |
+| `autoPlay` | `true`, `false` | unset | Enables automatic slide advance. |
+| `autoPlayInterval` | number (milliseconds) | unset | Sets the auto-play interval in milliseconds. |
+| `dragThreshold` | number | unset | Sets the drag distance needed to change slides. |
+
+## Mode-Specific Caveats
+
+- `revolving` only applies when `infinite` is enabled.
+- `itemHeight: 'auto'` can create variable card heights, which changes perceived slide rhythm.
+
+## Coverage Summary
+
+Every carousel option is represented by at least one example on this page:
+
+- `itemWidth`: Fixed-Size Carousel, Auto-Playing Carousel
+- `itemHeight`: Fixed-Size Carousel, Auto-Playing Carousel
+- `gap`: Fixed-Size Carousel, Auto-Playing Carousel
+- `showIndicators`: Fixed-Size Carousel, Auto-Playing Carousel
+- `showArrows`: Fixed-Size Carousel, Auto-Playing Carousel
+- `infinite`: Fixed-Size Carousel, Auto-Playing Carousel
+- `revolving`: Fixed-Size Carousel, Auto-Playing Carousel
+- `autoPlay`: Auto-Playing Carousel
+- `autoPlayInterval`: Auto-Playing Carousel
+- `dragThreshold`: Fixed-Size Carousel, Auto-Playing Carousel
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Action Config](/core/reference/action-config)
+- [Grid Mode](/core/concepts/modes/grid)
 
 export const carouselModeData = [
   { title: 'Release Notes', summary: 'Review the newest changes first.', status: 'new' },

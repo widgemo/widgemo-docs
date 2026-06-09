@@ -47,7 +47,6 @@ const sidebars: SidebarsConfig = {
         },
         'concepts/theming',
         'concepts/devmode',
-        'concepts/extension-architecture',
       ],
     },
     {
@@ -76,13 +75,32 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Extensions & Customizations',
+      label: 'Extensions',
       items: [
-        'reference/extension-api',
-        'extensions/renderas-customization',
-        'extensions/custom-field-types',
-        'guides/custom-modes',
-        'guides/custom-icons',
+        'concepts/extension-architecture',
+        {
+          type: 'category',
+          label: 'Task: Build Extension Foundation',
+          items: [
+            'reference/extension-api',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Task: Customize Field Rendering',
+          items: [
+            'extensions/renderas-customization',
+            'extensions/custom-field-types',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Task: Add Behavior and Icons',
+          items: [
+            'guides/custom-modes',
+            'guides/custom-icons',
+          ],
+        },
       ],
     },
     {

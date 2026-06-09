@@ -173,11 +173,25 @@ export const gridGroupingConfig = {
 
 # Grid Mode
 
+## Mode Purpose and When to Use
+
 `modeConfig.grid` controls how Widgemo tiles items into a responsive card grid.
+Use grid mode when card-based browsing and visual grouping are more important than dense row scanning.
 
-Shared item layout details live in [Field Config](/core/reference/field-config), while shared content behavior like search, pagination, filtering, sorting, grouping, actions, gestures, and responsive breakpoints lives in [Content Config](/core/reference/content-config).
+## Shared-Feature Boundary
 
-## Grid Layout Examples
+Shared behavior remains canonical in reference pages:
+
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Grouping](/core/reference/content-config#grouping)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
+- [Field Config](/core/reference/field-config) for item-level field rendering and layout rules
+
+## Core Examples
+
+### Grid Layout Examples
 
 ### Responsive Grid (Baseline)
 
@@ -219,7 +233,7 @@ Use the alignment controls when card width, spacing, or packing needs to be tune
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Grouping in Grid
+### Grouping in Grid
 
 `zones.content.groupings` also applies to grid mode. In grid, grouping controls are rendered as grouped sections (not table header controls).
 
@@ -232,22 +246,9 @@ Use the alignment controls when card width, spacing, or packing needs to be tune
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Shared Content Features
+## Mode Option Reference
 
-Grid mode supports all shared `zones.content` features, including search, pagination, filtering, sorting, actions, gestures, responsive breakpoints, loading, and error states.
-
-Canonical references:
-
-- [Actions and Interactions](/core/reference/content-config#actions-and-interactions)
-- [Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config](/core/reference/content-config)
-
-<div style={{ marginBottom: '1rem' }} />
-
-## Grid Option Reference
-
-| Option | Possible values | Default | Effect |
+| Option | Values | Default | Effect |
 |---|---|---|---|
 | `layoutMode` | `standard`, `masonry` | `standard` | Selects regular CSS grid or masonry layout strategy. |
 | `gap` | any CSS length | `1rem` | Sets spacing between cards. |
@@ -261,6 +262,11 @@ For grouping contract details and mode applicability, see [Content Config: Group
 
 For item-level card layout/field rendering details, see [Field Config](/core/reference/field-config).
 
+## Mode-Specific Caveats
+
+- `autoFlow: dense` can visually reorder packing to fill gaps; use with care if strict visual sequence matters.
+- Grouping in grid renders grouped sections, not table-style header controls.
+
 ## Coverage Summary
 
 Every grid setting is represented by at least one live example on this page:
@@ -270,4 +276,10 @@ Every grid setting is represented by at least one live example on this page:
 - `autoFlow`: documented in Grid Option Reference (best visualized when card footprints vary)
 - `justifyItems`, `alignItems`: Alignment Controls
 - `groupings` in grid mode: Grouped Grid
-- shared content settings with grid (`search`, `pagination`, `filtering`, `sorting`, `actions`, `gestures`): Shared Content Features links above
+- shared content settings with grid (`search`, `pagination`, `filtering`, `sorting`, `actions`, `gestures`): Shared-Feature Boundary links above
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [Table Mode](/core/concepts/modes/table)

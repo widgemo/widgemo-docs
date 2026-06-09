@@ -1,5 +1,4 @@
 ---
-sidebar_position: 5
 ---
 
 # Action Config
@@ -60,8 +59,25 @@ content: {
 actionOverflow: {
   maxInline: { mobile: 1, tablet: 2, desktop: 3 },
   menuLabel: 'More',
+  menuTooltip: 'More actions',
   indicator: 'pulse',  // 'pulse' | 'scale' | 'color-shift' | 'none'
 },
 ```
 
 `actionOverflow` is available on both zone configs and `ContentConfig`.
+
+Controls how zone and item actions behave when there are more actions than can fit inline.
+The overflow button (⋯) appears automatically when actions are tucked into a menu.
+When the overflow count *increases* (for example, after a container resize), the button plays
+an attention animation defined by `indicator`.
+
+### `indicator` values
+
+| Value | Effect |
+|---|---|
+| `'pulse'` | Scale pop + blue radial ripple. **Default.** |
+| `'scale'` | Clean scale-only pop with no color change. |
+| `'color-shift'` | Brief background and border tint flash toward the primary color with no movement. |
+| `'none'` | Animation disabled entirely. |
+
+The animation fires only when the overflow count **increases**, not on initial mount.
