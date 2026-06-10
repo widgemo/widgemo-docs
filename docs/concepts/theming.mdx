@@ -7,16 +7,23 @@ import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Theming
 
-widgemo-core supports multiple theming approaches so you can match your product vision or fit seamlessly into an existing app style.
+widgemo-core ships with a built-in default theme and supports three levels of customization — from zero-config presets to full brand control to targeted per-zone overrides.
 
-widgemo-core includes a built-in default theme out of the box, and then supports deeper theming when you need more control.
+| Approach | Best for | Scope |
+|---|---|---|
+| **1. Built-in preset** | Light, dark, or OS-aware mode with no setup | Entire subtree |
+| **2. Custom theme object** | Brand palette, spacing, and shared visual rules | Entire subtree |
+| **3. Per-zone `themeOverrides`** | Targeted header or footer styling without a global provider | Single zone |
 
-## Built-in Default Theme
+## 1. Built-in Presets
 
-If you do not provide a custom theme object, Widgemo uses built-in theme tokens and styles.
+Pass a preset string to `WidgemoThemeProvider` for instant theming with no additional configuration.
 
-- With `WidgemoThemeProvider`, the default is `theme="light"`.
-- With `theme="dark"`, the built-in dark preset is applied.
+- `theme="light"` — default; white surfaces and dark text
+- `theme="dark"` — dark surfaces and light text
+- `theme="auto"` — follows the OS preference at render time via `window.matchMedia('(prefers-color-scheme: dark)')`; does not subscribe to live changes
+
+`WidgemoThemeProvider` is optional if the default light theme is all you need — `<Widgemo>` renders with built-in light styles when no provider is present.
 
 ### Example Widget (Default Light)
 
@@ -48,15 +55,14 @@ If you do not provide a custom theme object, Widgemo uses built-in theme tokens 
 <WidgemoThemeProvider theme="dark">
   <Widgemo data={data} config={config} />
 </WidgemoThemeProvider>
+
+{/* Follow OS preference at render time */}
+<WidgemoThemeProvider theme="auto">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
 ```
 
-After the built-in defaults, you can customize theming in three ways:
-
-1. `WidgemoThemeProvider` preset (`light`, `dark`, `auto`)
-2. `WidgemoThemeProvider` custom theme object (`colors`, `spacing`, `zone`)
-3. Per-zone `themeOverrides` in `config`
-
-For full token lists, see [Theme API](/core/reference/theme-api) and [CSS Variables](/core/reference/css-variables).
+For branded customization, use a custom theme object (option 2) or per-zone `themeOverrides` (option 3). For full token lists, see [Theme API](/core/reference/theme-api) and [CSS Variables](/core/reference/css-variables).
 
 export const themingExampleData = [
   { id: 1, name: 'Alice', role: 'Engineer', status: 'active' },
@@ -84,42 +90,83 @@ export const baseThemeConfig = {
   },
 };
 
+export const customThemeConfig = {
+  devMode: { enabled: true, allowInProduction: true },
+  interactions: {
+    onEvent: (ctx) => console.log('[theme demo]', ctx.kind, ctx.interactionId),
+  },
+  zones: {
+    header: {
+      title: 'Team Directory',
+      subtitle: 'Branded with a custom theme',
+      themeOverrides: {
+        backgroundColor: '#1e1b4b',
+        titleColor: '#e0e7ff',
+        subtitleColor: '#a5b4fc',
+      },
+      actions: [
+        { id: 'invite', label: 'Invite', icon: 'plus', placement: 'pinned', variant: 'primary' },
+      ],
+    },
+    content: {
+      mode: 'table',
+      actions: [
+        { id: 'view', label: 'View', icon: 'view', placement: 'pinned' },
+      ],
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 export const customTheme = {
   colors: {
-    actionButtonBg: '#0f172a',
-    actionButtonColor: '#f8fafc',
-    actionButtonHoverBg: '#1e293b',
+    primary: '#6366f1',
+    btnPrimaryHoverBg: '#4f46e5',
+    tableHeaderBg: '#ede9fe',
+    tableHeaderHoverBg: '#ddd6fe',
   },
   spacing: {
-    'border-radius': '10px',
-    'card-padding': '1.25rem',
+    borderRadius: '8px',
   },
   zone: {
-    backgroundColor: '#1e293b',
-    titleColor: '#f8fafc',
-    subtitleColor: '#94a3b8',
-    padding: '1rem 1.25rem',
+    titleColor: '#3730a3',
+    subtitleColor: '#6366f1',
   },
 };
 
 export const zoneOverrideConfig = {
+  interactions: {
+    onEvent: (ctx) => console.log('[zone override]', ctx.kind, ctx.interactionId),
+  },
   zones: {
     header: {
-      title: 'Styled Header',
-      subtitle: 'Header and footer overrides from config',
+      title: 'Team Directory',
+      subtitle: 'Per-zone overrides applied',
+      actions: [
+        { id: 'export', label: 'Export', icon: 'export', placement: 'pinned', variant: 'primary' },
+      ],
       themeOverrides: {
-        backgroundColor: '#111827',
-        titleColor: '#f9fafb',
-        subtitleColor: '#9ca3af',
+        backgroundColor: '#0f172a',
+        titleColor: '#f1f5f9',
+        subtitleColor: '#94a3b8',
         padding: '1rem 1.25rem',
-        borderColor: '#374151',
-        borderWidth: '1px',
+        borderColor: '#3b82f6',
+        borderWidth: '0 0 2px 0',
         borderStyle: 'solid',
-        borderRadius: '8px 8px 0 0',
       },
     },
     content: {
       mode: 'table',
+      actions: [
+        { id: 'view', label: 'View', icon: 'view', placement: 'pinned' },
+      ],
       item: {
         fields: [
           { key: 'name', label: 'Name' },
@@ -131,58 +178,28 @@ export const zoneOverrideConfig = {
     },
     footer: {
       subtitle: 'Last synced just now',
+      actions: [
+        { id: 'view-all', label: 'View All', icon: 'external-link', placement: 'pinned' },
+      ],
       themeOverrides: {
-        backgroundColor: '#f3f4f6',
-        subtitleColor: '#374151',
+        subtitleColor: '#94a3b8',
         padding: '0.75rem 1.25rem',
       },
     },
   },
 };
 
-## 1. Theme Provider Presets
-
-Use preset themes when you want fast parity with your app mode (`light`, `dark`, `auto`) without defining custom tokens.
-
-This option keeps setup lightweight and works well when your app already supports light and dark modes.
-
-### Example Widget
-
-<WidgemoThemeProvider theme="dark">
-  <div className="widgemo-showcase__widget">
-    <Widgemo data={themingExampleData} config={baseThemeConfig} />
-  </div>
-</WidgemoThemeProvider>
-
-<div style={{ marginBottom: '1rem' }} />
-
-### Example Code
-
-```tsx
-import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
-
-<WidgemoThemeProvider theme="dark">
-  <Widgemo data={data} config={config} />
-</WidgemoThemeProvider>
-
-<WidgemoThemeProvider theme="auto">
-  <Widgemo data={data} config={config} />
-</WidgemoThemeProvider>
-```
-
-`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')` and does not subscribe to live OS preference changes.
-
 ## 2. Custom Theme Object
 
-Use a custom theme object when you want consistent branded tokens across all widgets.
+Use a custom theme object when you want consistent brand tokens applied across all widgets in a subtree. Pass the object to `WidgemoThemeProvider` — it can wrap your whole app or just one section of the page.
 
-This gives you one central place to apply brand colors, spacing, and shared visual rules across the entire widget surface.
+The example below uses an indigo brand palette.
 
 ### Example Widget
 
 <WidgemoThemeProvider theme={customTheme}>
   <div className="widgemo-showcase__widget">
-    <Widgemo data={themingExampleData} config={baseThemeConfig} />
+    <Widgemo data={themingExampleData} config={customThemeConfig} />
   </div>
 </WidgemoThemeProvider>
 
@@ -191,48 +208,110 @@ This gives you one central place to apply brand colors, spacing, and shared visu
 ### Example Code
 
 ```tsx
-<WidgemoThemeProvider theme={{
+// Provider theme — applies globally to all Widgemo widgets in the subtree
+const theme = {
   colors: {
-    actionButtonBg: '#0f172a',
-    actionButtonColor: '#f8fafc',
-    actionButtonHoverBg: '#1e293b',
+    primary: '#6366f1',           // drives variant:'primary' action buttons
+    btnPrimaryHoverBg: '#4f46e5',
+    tableHeaderBg: '#ede9fe',     // lavender tint on table column headers
+    tableHeaderHoverBg: '#ddd6fe',
   },
   spacing: {
-    'border-radius': '10px',
-    'card-padding': '1.25rem',
+    borderRadius: '8px',          // camelCase key → --widgemo-borderRadius
   },
   zone: {
-    backgroundColor: '#1e293b',
-    titleColor: '#f8fafc',
-    subtitleColor: '#94a3b8',
-    padding: '1rem 1.25rem',
+    titleColor: '#3730a3',        // applied to zones without themeOverrides
+    subtitleColor: '#6366f1',
   },
-}}>
+};
+
+// Zone-level config — header uses themeOverrides for an explicit dark background
+const config = {
+  zones: {
+    header: {
+      title: 'Team Directory',
+      subtitle: 'Branded with a custom theme',
+      themeOverrides: {
+        backgroundColor: '#1e1b4b',  // deep indigo — overrides provider zone tokens
+        titleColor: '#e0e7ff',
+        subtitleColor: '#a5b4fc',
+      },
+      actions: [
+        { id: 'invite', label: 'Invite', icon: 'plus', placement: 'pinned', variant: 'primary' },
+      ],
+    },
+    content: {
+      mode: 'table',
+      actions: [
+        { id: 'view', label: 'View', icon: 'view', placement: 'pinned' },
+      ],
+      item: {
+        fields: [
+          { key: 'name', label: 'Name' },
+          { key: 'role', label: 'Role' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+<WidgemoThemeProvider theme={theme}>
   <Widgemo data={data} config={config} />
 </WidgemoThemeProvider>
 ```
 
+`colors.primary` drives `variant: 'primary'` action buttons (background + white text). Ghost and DevMode Inspector buttons use separate tokens and are unaffected. `themeOverrides` on a zone config always wins over provider `zone` tokens — use it whenever you need a reliable zone-level background override.
+
 ## 3. Per-Zone Theme Overrides
 
-Use `themeOverrides` when you want targeted visual changes for a specific header/content/footer zone without introducing a full global theme object.
-
-Use this when only part of a widget needs special styling and the rest should continue using the current theme.
+Use `themeOverrides` when only part of a widget needs special styling — the header or footer — and you don't want to introduce a full global theme object.
 
 <WidgemoShowcase title="Example Widget" data={themingExampleData} config={zoneOverrideConfig} />
 
 <div style={{ marginBottom: '1rem' }} />
 
+The example uses a dark navy header (`#0f172a`) with a blue 2px accent bottom border — explicitly dark colors are intentional and read correctly in both light and dark modes. The footer's background is not overridden, so it adapts to whichever mode is active. Zone and item actions are wired via `interactions.onEvent` — click **Export** in the header, **View** on any row, or **View All** in the footer.
+
 ### Example Code
 
 ```tsx
 const config = {
+  interactions: {
+    onEvent: (ctx) => { /* route ctx.interactionId to your handler */ },
+  },
   zones: {
     header: {
-      title: 'Styled Header',
+      title: 'Team Directory',
+      actions: [
+        { id: 'export', label: 'Export', icon: 'export', placement: 'pinned', variant: 'primary' },
+      ],
       themeOverrides: {
-        backgroundColor: '#111827',
-        titleColor: '#f9fafb',
-        subtitleColor: '#9ca3af',
+        backgroundColor: '#0f172a',  // explicit dark — works in both light and dark modes
+        titleColor: '#f1f5f9',
+        subtitleColor: '#94a3b8',
+        // variant:'primary' on the action handles button readability — no color hack needed
+        borderColor: '#3b82f6',
+        borderWidth: '0 0 2px 0',    // bottom border only
+        borderStyle: 'solid',
+      },
+    },
+    content: {
+      mode: 'table',
+      actions: [
+        { id: 'view', label: 'View', icon: 'view', placement: 'pinned' },
+      ],
+      item: { /* ... */ },
+    },
+    footer: {
+      subtitle: 'Last synced just now',
+      actions: [
+        { id: 'view-all', label: 'View All', icon: 'external-link', placement: 'pinned' },
+      ],
+      themeOverrides: {
+        // no backgroundColor — adapts to the active light/dark mode
+        subtitleColor: '#94a3b8',
       },
     },
   },
@@ -241,16 +320,18 @@ const config = {
 
 ## Runtime Theme Precedence
 
-Theme values apply from highest to lowest priority:
+When multiple theming sources apply to the same element, higher-priority values win:
 
-1. Inline zone/content overrides (`config.style`, `zones.*.themeOverrides`, `zones.*.style`)
-2. Runtime zone theme merge (`registry theme` + provider `theme.zone`)
-3. Provider variables (`theme.colors`, `theme.spacing`)
-4. Root fallback CSS variables from library stylesheet
+1. **Per-zone `themeOverrides`** in config — inline styles applied directly to that zone; always wins
+2. **Provider `theme.zone`** — baseline zone styles shared across all zones in the subtree
+3. **Provider `theme.colors` / `theme.spacing`** — CSS variable tokens injected into the subtree
+4. **Built-in stylesheet defaults** — lowest priority; the fallback when nothing else is set
 
-Use `WidgemoThemeProvider` for global consistency and `themeOverrides` for local exceptions.
+Use `WidgemoThemeProvider` for global consistency and `themeOverrides` for zone-level exceptions.
 
 ## Accessing Theme in Custom Components
+
+If you're authoring a custom extension renderer, you can read the active provider theme using `useWidgemoTheme()`:
 
 ```tsx
 function MyModeHeader() {
