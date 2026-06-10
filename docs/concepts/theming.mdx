@@ -25,7 +25,7 @@ Pass a preset string to `WidgemoThemeProvider` for instant theming with no addit
 
 `WidgemoThemeProvider` is optional if the default light theme is all you need — `<Widgemo>` renders with built-in light styles when no provider is present.
 
-### Example Widget (Default Light)
+### Example Widgemo (Default Light)
 
 <WidgemoThemeProvider theme="light">
   <div className="widgemo-showcase__widget">
@@ -35,7 +35,7 @@ Pass a preset string to `WidgemoThemeProvider` for instant theming with no addit
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Example Widget (Default Dark)
+### Example Widgemo (Default Dark)
 
 <WidgemoThemeProvider theme="dark">
   <div className="widgemo-showcase__widget">
@@ -74,7 +74,7 @@ export const baseThemeConfig = {
   zones: {
     header: {
       title: 'Team Directory',
-      subtitle: 'Baseline themed widget',
+      subtitle: 'Baseline themed Widgemo',
     },
     content: {
       mode: 'table',
@@ -266,9 +266,9 @@ const config = {
 
 ## 3. Per-Zone Theme Overrides
 
-Use `themeOverrides` when only part of a widget needs special styling — the header or footer — and you don't want to introduce a full global theme object.
+Use `themeOverrides` when only part of a Widgemo needs special styling — the header or footer — and you don't want to introduce a full global theme object.
 
-<WidgemoShowcase title="Example Widget" data={themingExampleData} config={zoneOverrideConfig} />
+<WidgemoShowcase title="Example Widgemo" data={themingExampleData} config={zoneOverrideConfig} />
 
 <div style={{ marginBottom: '1rem' }} />
 

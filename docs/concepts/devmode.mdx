@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # DevMode
 
-DevMode is a development-time inspection feature built into `widgemo-core`. When active, a **Widgemo Inspector** button appears on your widget. Clicking it opens a modal showing your live rendered config as an interactive JSON tree, plus a summary of all detected interaction wiring — so you can verify exactly what Widgemo has received, see which defaults were applied, and confirm that your actions and event handlers are wired up correctly.
+DevMode is a development-time inspection feature built into `widgemo-core`. When active, a **Widgemo Inspector** button appears on your Widgemo. Clicking it opens a modal showing your live rendered config as an interactive JSON tree, plus a summary of all detected interaction wiring — so you can verify exactly what Widgemo has received, see which defaults were applied, and confirm that your actions and event handlers are wired up correctly.
 
 ## Enabling DevMode
 
@@ -77,7 +77,7 @@ Use this panel to confirm that your `interactions.onEvent` handler is registered
 ## Practical Debugging Tips
 
 - **Config not behaving as expected?** Open the Inspector and check whether the `zones` tree matches what you intended — in particular look for missing `mode`, missing `fields`, or unexpected defaults that were applied.
-- **Actions not firing?** Check Interaction Notes — if local callbacks show `0`, your `interactions.onEvent` is not reaching this widget instance.
+- **Actions not firing?** Check Interaction Notes — if local callbacks show `0`, your `interactions.onEvent` is not reaching this Widgemo.
 - **Defaults obscuring your config?** Toggle **Defaults: Off** to see only the keys you explicitly set; toggle **Defaults: On** to see the full merged shape with defaults highlighted.
 - **Sharing a bug report?** Use **Copy** to paste the exact config in your issue or team thread so others can reproduce the same state.
 

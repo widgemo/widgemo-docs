@@ -85,7 +85,7 @@ For apps with a strong existing visual identity, pass a theme object to override
 </WidgemoThemeProvider>
 ```
 
-You can also apply per-widget overrides via `config.zones.content.themeOverrides` when individual widgets need to deviate from the shared provider theme.
+You can also apply per-Widgemo overrides via `config.zones.content.themeOverrides` when individual Widgemos need to deviate from the shared provider theme.
 
 For teams with a design system or CSS custom property library, Widgemo's `--widgemo-*` CSS variables can be overridden globally:
 
@@ -111,7 +111,7 @@ Do not plan a big-bang migration. Pick the simplest existing table or card list 
 2. Keep your existing data fetching and state management entirely unchanged — pass the same data array to `<Widgemo>`.
 3. Start with `mode: 'table'` and `layout: { type: 'auto' }`. Widgemo will infer field labels from data keys.
 4. Declare explicit `fields` only when you need to control labels, types, or rendering.
-5. Once that widget is stable, move to the next surface.
+5. Once that Widgemo is stable, move to the next surface.
 
 ```tsx
 // Before: your existing component
@@ -243,7 +243,7 @@ const config = {
 
 ## 6. Progressive Discovery and Enrichment
 
-Once a widget is live and stable, you can progressively enrich it without risk:
+Once a Widgemo is live and stable, you can progressively enrich it without risk:
 
 - Add `renderAs` to fields for richer visual output (badges, progress bars, currency, links)
 - Add `sortable: true` to fields that should be user-sortable
@@ -262,7 +262,7 @@ Each of these is an additive config change. Nothing in your data layer or intera
 | `@widgemo/widgemo-core` installed | ☐ |
 | Peer dependencies (React 18+) verified | ☐ |
 | Stylesheet imported at app root | ☐ |
-| `WidgemoThemeProvider` wrapping each widget | ☐ |
+| `WidgemoThemeProvider` wrapping each Widgemo | ☐ |
 | Theme tokens reviewed against app brand | ☐ |
 | First surface replaced and validated | ☐ |
 | Actions wired to existing app handlers | ☐ |

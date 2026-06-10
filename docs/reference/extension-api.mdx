@@ -35,13 +35,13 @@ Widgemo exposes two complementary extension surfaces: registry-based lifecycle h
 
 | Use Case | Prefer | Why |
 |---|---|---|
-| Per-widget interaction behavior (click, drag start, drop) | Gestures (`zones.content.gestures`) | Gestures are config-driven interaction handlers intended for app/business behavior |
+| Per-Widgemo interaction behavior (click, drag start, drop) | Gestures (`zones.content.gestures`) | Gestures are config-driven interaction handlers intended for app/business behavior |
 | Global interaction fallback handling | `interactions.onEvent` | Receives interaction contexts when no local gesture/action handler is provided |
 | Runtime interception of render/mode/interaction lifecycle events | Lifecycle hooks (`registerWidgemoHook`) | Hooks run at explicit core lifecycle trigger points |
 
 Practical recommendation:
 
-- For most integrators, use gestures for per-widget interaction behavior.
+- For most integrators, use gestures for per-Widgemo interaction behavior.
 - Use lifecycle hooks when you need runtime interception behavior.
 - Lifecycle customization usually means overriding built-in lifecycle names.
 
@@ -87,7 +87,7 @@ They are separate mechanisms and should not be treated as the same API surface.
 
 ### Minimal Usage Examples
 
-1. Gesture use case: per-widget click business logic
+1. Gesture use case: per-Widgemo click business logic
 
 ```tsx
 const config = {

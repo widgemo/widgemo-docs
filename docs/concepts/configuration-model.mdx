@@ -9,7 +9,7 @@ import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 Widgemo configuration is four nested layers. Understanding the boundary between each layer is the core skill for working with the library.
 
 1. **Widgemo props** — runtime inputs: `data`, `config`, and optional sugar props (`loading`, `error`)
-2. **`zones`** — compose the widget surface into named structural regions: `header` chrome, `content` data area, `footer` chrome
+2. **`zones`** — compose the Widgemo surface into named structural regions: `header` chrome, `content` data area, `footer` chrome
 3. **`content`** — controls what the data does and how it renders: mode, sorting, filtering, grouping, gestures, actions
 4. **`item` and `fields`** — `item` controls how a single record is arranged; `fields` control how each value appears
 
@@ -99,7 +99,7 @@ const data = [
 </WidgemoThemeProvider>
 ```
 
-`data` is a plain array of objects — no special shape required. Notice that `id` is present in the data but will not appear in the widget because it is not declared in `fields`. `trend` is an array of numbers; `sparkTrend` reads it as a series and derives the delta from first to last value.
+`data` is a plain array of objects — no special shape required. Notice that `id` is present in the data but will not appear in the Widgemo because it is not declared in `fields`. `trend` is an array of numbers; `sparkTrend` reads it as a series and derives the delta from first to last value.
 
 `config` is a serialisable configuration object — no callbacks live in it except interaction handlers under `interactions.onEvent`.
 
@@ -107,7 +107,7 @@ const data = [
 
 ### 2. Zones
 
-Zones are the structural skeleton of the widget surface. There are three named slots:
+Zones are the structural skeleton of the Widgemo surface. There are three named slots:
 
 - `header` — title, subtitle, and zone-level actions above the data
 - `content` — the dataset region (required)
@@ -147,7 +147,7 @@ Zones are the structural skeleton of the widget surface. There are three named s
 
 Header and footer are optional. The content zone is always required. `interactions.onEvent` at the top level of config is the single event sink for all zone and item actions — both the Export and View All buttons above route through it.
 
-Zones do not control where in your page the widget lives. That is a hosting concern. Zones only control the internal structure of the widget surface itself.
+Zones do not control where in your page the Widgemo lives. That is a hosting concern. Zones only control the internal structure of the Widgemo surface itself.
 
 ---
 
@@ -195,7 +195,7 @@ item: {
 
 When you encounter an unfamiliar Widgemo config, use this order:
 
-1. **`zones`** — how many regions does the widget have? What titles and actions do they carry?
+1. **`zones`** — how many regions does the Widgemo have? What titles and actions do they carry?
 2. **`zones.content.mode`** — what is the primary rendering strategy?
 3. **`zones.content.item.layout`** — how are individual records arranged?
 4. **`zones.content.item.fields`** — what values are shown and how are they rendered?

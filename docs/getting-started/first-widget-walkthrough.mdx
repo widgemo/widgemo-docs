@@ -1,5 +1,5 @@
 ---
-title: First Widget Walkthrough
+title: First Widgemo Walkthrough
 sidebar_position: 3
 ---
 
@@ -43,7 +43,7 @@ export const walkthroughConfig = {
   },
 };
 
-# First Widget Walkthrough
+# First Widgemo Walkthrough
 
 Quick Start shows the minimum to get something on screen. This walkthrough explains the decisions behind that minimum — using a different mode and dataset — and extends it to field renderers, grid layout options, and item actions.
 
@@ -151,7 +151,7 @@ The three placement values and their responsive behavior:
 | `'onHover'` | visible on hover | overflow menu | overflow menu |
 | `'menu'` | overflow menu | overflow menu | overflow menu |
 
-Widgemo measures the nearest zone width via `ResizeObserver`, not the viewport. An action without an `icon` declared will be demoted to the overflow menu whenever the zone is narrower than 1024 px — which includes most docs page widgets and many embedded use cases. **Always provide an `icon` on pinned actions** if they must stay visible at all widths.
+Widgemo measures the nearest zone width via `ResizeObserver`, not the viewport. An action without an `icon` declared will be demoted to the overflow menu whenever the zone is narrower than 1024 px — which includes most docs page Widgemos and many embedded use cases. **Always provide an `icon` on pinned actions** if they must stay visible at all widths.
 
 Wire `interactions.onEvent` inside `config` to receive the payload:
 

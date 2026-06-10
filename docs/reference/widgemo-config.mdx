@@ -179,7 +179,7 @@ Shellless affects the outer container only; mode-level and zone-level spacing be
 
 ```tsx
 const config = {
-  // The widget has no visible card surface.
+  // The Widgemo has no visible card surface.
   // It floats inside the host surface with normal zone spacing.
   containerFrame: { shell: 'none' },
   zones: {
@@ -201,15 +201,15 @@ const config = {
 | **Outer overflow default** | Theme/container default behavior | `visible` (unless explicitly configured) |
 | **Zone padding** | Normal | Normal |
 | **Visual effect** | Card-like block, chrome stripped | Blends into host surface |
-| **Use when** | You want a flat card that fits inside a panel but keeps its own background | You want the widget to read as part of the page, with no card boundary at all |
+| **Use when** | You want a flat card that fits inside a panel but keeps its own background | You want the Widgemo to read as part of the page, with no card boundary at all |
 
-**Key rule:** if you can still see the widget's white/dark card rectangle after removing the border and shadow, you have borderless. If that rectangle is gone and the widget content floats on the host surface, you have shellless.
+**Key rule:** if you can still see the Widgemo's white/dark card rectangle after removing the border and shadow, you have borderless. If that rectangle is gone and the Widgemo content floats on the host surface, you have shellless.
 
 ### Validation Checklist
 
 - In borderless shells (`containerFrame.border: 'none'`), confirm header/footer spacing remains consistent with bordered shells unless you explicitly override zone padding.
-- In shellless widgets (`containerFrame.shell: 'none'`), confirm host background shows through the widget area.
-- In shellless widgets, confirm header/footer do not leave behind card-like background surfaces by default.
+- In shellless Widgemos (`containerFrame.shell: 'none'`), confirm host background shows through the Widgemo area.
+- In shellless Widgemos, confirm header/footer do not leave behind card-like background surfaces by default.
 - In shellless widgets, confirm no rounded outer card boundary remains unless radius is explicitly configured.
 
 ## Loading and Error States
