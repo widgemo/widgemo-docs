@@ -1,0 +1,84 @@
+---
+sidebar_position: 0
+slug: /
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Introduction
+
+**widgemo-core** is a React component library for rendering structured data as interactive widgets — tables, grids, carousels, boards, and charts — from a single declarative config object.
+
+You pass your data and a `config` that describes zones, mode, fields, and actions. Widgemo handles layout, sorting, filtering, rendering, theming, and responsive switching.
+
+## What it looks like
+
+<WidgemoShowcase
+  title="Simple Widgemo Example"
+  description="Table mode with field renderers, sorting, and a header zone — configured entirely via the config prop."
+  data={[
+    { name: 'Aurora Chen', department: 'Engineering', status: 'active', salary: 142000, score: 91 },
+    { name: 'Mateo Silva', department: 'Design', status: 'pending', salary: 119500, score: 74 },
+    { name: 'Priya Nair', department: 'Operations', status: 'active', salary: 134000, score: 88 },
+    { name: 'Samir Khan', department: 'Engineering', status: 'inactive', salary: 127000, score: 61 },
+  ]}
+  config={{
+    zones: {
+      header: { title: 'Team Directory', subtitle: 'Rendered with widgemo-core' },
+      content: {
+        mode: 'table',
+        sorting: [{ fieldKey: 'salary', direction: 'desc' }],
+        item: {
+          fields: [
+            { key: 'name', label: 'Name', sortable: true },
+            { key: 'department', label: 'Department', sortable: true },
+            { key: 'status', label: 'Status', renderAs: 'badge', renderAsOptions: {
+              colorMap: {
+                active: { background: '#d1fae5', text: '#065f46' },
+                pending: { background: '#fef9c3', text: '#854d0e' },
+                inactive: { background: '#f1f5f9', text: '#64748b' },
+              },
+            }},
+            { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD', compact: true }, sortable: true },
+            { key: 'score', label: 'Score', renderAs: 'scoreMeter', renderAsOptions: { density: 'compact', valueAsPercent: true } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## What widgemo-core gives you
+
+- **Five built-in modes** — `table`, `grid`, `carousel`, `board`, `chart`, with responsive switching between them.
+- **Field renderers** — `badge`, `currency`, `progress`, `rating`, `sparkTrend`, `scoreMeter`, `compositionBar`, temporal renderers, and more — applied per field via `renderAs`.
+- **Zone-based layout** — compose header, content, and footer zones independently.
+- **Sorting, filtering, grouping, and pagination** — declared in `config`; no event wiring needed.
+- **Gestures** — `item-click`, `item-drag-start`, and `item-drop` are declared in `config`; Widgemo fires an `InteractionContext` payload to your handler. What the host app does with that context is app logic.
+- **Theming** — CSS variables and a `WidgemoThemeProvider` for light/dark/custom themes.
+- **Extension points** — custom renderers, field types, modes, and icons via a registry API.
+
+## What it is not
+
+- Not a form library — widgemo-core renders and interacts with data, it does not manage form state.
+- Not a charting library — chart mode is a mode for data widgets, not a general-purpose charting toolkit.
+- Not an opinionated data-fetching layer — you bring your data; Widgemo renders it.
+
+## Stack requirements
+
+- React 18 or 19
+- React-DOM matching your React version
+- Any bundler: Vite, Next.js, CRA, custom Webpack
+
+## Start here
+
+1. [Installation](/core/getting-started/installation) — install the package and set up the stylesheet.
+2. [Quick Start](/core/getting-started/quick-start) — first widget in under five minutes.
+3. [First Widget Walkthrough](/core/getting-started/first-widget-walkthrough) — step-by-step path to a production-safe baseline.
+
+---
+
+- **[GitHub Repository](https://github.com/widgemo/widgemo-core)** — source, issues, discussions
+- **[widgemo-demo](https://demo.widgemo.com)** — live sandbox
+

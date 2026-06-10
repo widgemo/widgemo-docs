@@ -18,11 +18,11 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  */
 const sidebars: SidebarsConfig = {
   coreDocsSidebar: [
-    'intro',
     {
       type: 'category',
       label: 'Getting Started',
       items: [
+        'getting-started/introduction',
         'getting-started/installation',
         'getting-started/quick-start',
         'getting-started/first-widget-walkthrough',
