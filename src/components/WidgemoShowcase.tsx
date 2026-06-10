@@ -3,7 +3,8 @@ import { useColorMode } from '@docusaurus/theme-common';
 import { 
   Widgemo, 
   WidgemoThemeProvider, 
-  WidgemoConfig
+  WidgemoConfig,
+  InteractionEventHandler,
 } from '@widgemo/widgemo-core';
 
 export interface WidgemoShowcaseProps {
@@ -13,6 +14,7 @@ export interface WidgemoShowcaseProps {
   description?: string;
   children?: ReactNode;
   className?: string;
+  interactions?: { onEvent?: InteractionEventHandler };
 }
 
 /**
@@ -29,6 +31,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   description,
   children,
   className,
+  interactions,
 }) => {
   const { colorMode } = useColorMode();
   const rootClassName = className?.trim() || undefined;
@@ -39,6 +42,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
       enabled: true,
       allowInProduction: true,
     },
+    ...(interactions ? { interactions } : {}),
   };
 
   return (
