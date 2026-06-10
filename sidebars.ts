@@ -27,7 +27,7 @@ const sidebars: SidebarsConfig = {
         'getting-started/quick-start',
         'getting-started/first-widget-walkthrough',
         'getting-started/common-setup-pitfalls',
-        'guides/integrate-into-existing-app',
+        'guides/adopting-widgemo',
       ],
     },
     {
