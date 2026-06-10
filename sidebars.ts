@@ -27,6 +27,8 @@ const sidebars: SidebarsConfig = {
         'getting-started/quick-start',
         'getting-started/first-widget-walkthrough',
         'getting-started/common-setup-pitfalls',
+        'guides/integrate-into-existing-app',
+        'guides/adopting-widgemo',
       ],
     },
     {
@@ -49,7 +51,6 @@ const sidebars: SidebarsConfig = {
           type: 'category',
           label: 'Modes',
           items: [
-            'components/modes/overview',
             'concepts/modes-overview',
             'concepts/modes/table',
             'concepts/modes/grid',
@@ -132,15 +133,13 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Customization',
+      label: 'Extending Widgemo',
       items: [
         'customization/overview',
         'extensions/renderas-customization',
         'extensions/custom-field-types',
         'guides/custom-modes',
         'guides/custom-icons',
-        'guides/integrate-into-existing-app',
-        'guides/adopting-widgemo',
       ],
     },
     {
