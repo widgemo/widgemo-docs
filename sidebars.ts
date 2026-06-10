@@ -35,7 +35,6 @@ const sidebars: SidebarsConfig = {
       label: 'Concepts',
       items: [
         'concepts/configuration-model',
-        'concepts/choosing-components',
         'concepts/theming',
         'concepts/devmode',
         'concepts/extension-architecture',
