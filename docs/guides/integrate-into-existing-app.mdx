@@ -4,7 +4,7 @@ sidebar_position: 1
 
 import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
-# Integrate Widgemo Into an Existing App
+# Adopting Widgemo
 
 This guide is for teams adding `@widgemo/widgemo-core` to an already-running application — not a greenfield build. The goal is not a full rewrite. The goal is a controlled, incremental replacement of existing table, card, and list surfaces with Widgemo, one widget at a time, while keeping the rest of the app undisturbed.
 
@@ -276,5 +276,16 @@ Each of these is an additive config change. Nothing in your data layer or intera
 - [Theme API](/core/reference/theme-api) — `WidgemoThemeProvider`, `registerTheme`, `useWidgemoTheme`
 - [Content Config](/core/reference/content-config) — actions, gestures, sorting, filtering, grouping
 - [Field Config](/core/reference/field-config) — field types and `renderAs` options
-- [Adopting Widgemo](/core/guides/adopting-widgemo) — team-level adoption workflow and agent-ready prompts
+- [Migration and Compatibility](/core/release-notes/upgrading/migration-compatibility)
+
+## AI-Assisted Adoption
+
+The `docs/adoption/` folder in the [widgemo-core GitHub repo](https://github.com/widgemo/widgemo-core/tree/main/docs/adoption) contains copy-paste prompts for AI coding agents:
+
+| File | Purpose |
+|---|---|
+| `AGENT_PROMPTS_ADOPTION.md` | Discovery, refactor, and validation prompts |
+| `ADOPTION_DISCOVERY.md` | Read-only discovery instructions |
+| `ADOPTION_REFACTOR.md` | Refactor implementation rules |
+| `ADOPTION_BRIEF_TEMPLATE.md` | Source-of-truth brief template |
 

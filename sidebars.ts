@@ -28,7 +28,6 @@ const sidebars: SidebarsConfig = {
         'getting-started/first-widget-walkthrough',
         'getting-started/common-setup-pitfalls',
         'guides/integrate-into-existing-app',
-        'guides/adopting-widgemo',
       ],
     },
     {
