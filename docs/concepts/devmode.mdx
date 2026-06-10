@@ -4,123 +4,80 @@ sidebar_position: 4
 
 # DevMode
 
-## What DevMode Is
-
-DevMode is a development-time inspection feature in `widgemo-core`.
-
-When enabled, Widgemo exposes the **Widgemo Inspector** so you can inspect active config and interaction wiring while building your app.
-
-DevMode is active in development by default (`NODE_ENV === 'development'`).
-
-For controlled environments (like docs/sandbox hosts), you can opt in outside development with:
-
-```tsx
-const config = {
-  devMode: {
-    enabled: true,
-    allowInProduction: true,
-  },
-  zones: {
-    content: {
-      mode: 'table',
-      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
-    },
-  },
-};
-```
+DevMode is a development-time inspection feature built into `widgemo-core`. When active, a **Widgemo Inspector** button appears on your widget. Clicking it opens a modal showing your live rendered config as an interactive JSON tree, plus a summary of all detected interaction wiring — so you can verify exactly what Widgemo has received, see which defaults were applied, and confirm that your actions and event handlers are wired up correctly.
 
 ## Enabling DevMode
 
+DevMode activates automatically when `NODE_ENV === 'development'`, so no config change is needed during local development.
+
+For controlled environments outside development — such as a docs host, staging sandbox, or demo app — opt in explicitly:
+
 ```tsx
+// Shorthand — equivalent to { enabled: true }
 const config = {
   devMode: true,
-  zones: {
-    content: {
-      mode: 'table',
-      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
-    },
-  },
+  zones: { ... },
 };
 
-// Disable DevMode
+// Object form — required when opting in outside development
 const config = {
-  devMode: false,
-  zones: {
-    content: {
-      mode: 'table',
-      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
-    },
+  devMode: {
+    enabled: true,
+    allowInProduction: true,  // required to show Inspector on non-development builds
   },
+  zones: { ... },
 };
 ```
 
-## What Happens When Enabled
+Use `allowInProduction: true` only in trusted, non-public environments. It has no effect unless `enabled` is also true.
 
-- A **Widgemo Inspector** button appears on the widget.
-- Selecting it opens the Inspector modal.
-- The modal shows your active config in an expandable JSON tree.
-- DevMode behavior is development-only by default; use `allowInProduction: true` only in trusted environments.
+## Inspector Button Placement
 
-### Inspector Button Placement
+When DevMode is active, the **Widgemo Inspector** button appears automatically:
 
-By default, the **Widgemo Inspector** button placement follows this order:
+1. **Header zone present** — the Inspector button appears as the rightmost button in the header zone
+2. **Footer zone present, no header** — the Inspector button appears in the footer zone
+3. **No header or footer** — the Inspector button floats at the top-right above the content zone
 
-1. If a header zone is present, the Inspector button appears as the **rightmost button in the header zone**.
-2. If no header zone is present, but a footer zone is present, it appears as the **rightmost button in the footer zone**.
-3. If neither header nor footer is present, the Inspector button **floats at the top-right above the content zone**.
-
-## Inspector Modal Walkthrough
-
-1. Enable `devMode: true` in your config.
-2. Render your widget in development mode.
-3. Click the **Widgemo Inspector** button.
-4. Review the JSON tree and interaction notes.
-5. Copy the current inspected config when needed.
-
-## Inspector Components
-
-### Action buttons and what each does
-
-- **Defaults: On/Off**
-  - Toggles materialized defaults in the JSON view.
-  - When defaults are shown, keys that were added by defaults are emphasized.
-- **Expand all / Collapse all**
-  - Expands or collapses the full JSON tree.
-- **Copy**
-  - Copies the currently displayed Inspector JSON.
-- **Close (×)**
-  - Closes the Inspector modal.
-
-### Interaction notes and what they communicate
-
-- The bottom panel is labeled **Interaction Notes**.
-- It summarizes detected interaction wiring (for example global sink and configured handlers).
-- Use **Show/Hide** to expand or collapse the details panel.
-
-### JSON view and color coding meaning
-
-The JSON viewer uses token colors to make values easier to scan:
-
-- **Keys**: purple by default.
-- **Keys added by defaults toggle**: emphasized blue highlight.
-- **Strings**: green and quoted.
-- **Numbers**: blue.
-- **Booleans**: red.
-- **Null**: purple.
-- **Object/array brackets and structure markers**: neutral gray.
-
-Keys with metadata also show a dotted underline and tooltip details (type, defaults, and allowed values where available).
-
-### How to use it during development
-
-- Validate that the config currently rendered in your app matches your expectations.
-- Expand only the sections you are debugging (zones, interactions, mode config).
-- Toggle defaults to distinguish explicit config from implied defaults.
-- Use **Copy** to share or diff the inspected config during debugging.
-
-## Screenshot
+## The Inspector
 
 ![Widgemo Inspector sample modal](/img/devmode-inspector-sample.png)
 
-Sample Widgemo Inspector modal showing action buttons, JSON tree, and interaction notes.
+The Inspector modal has two panels: a **JSON tree** showing your active config, and an **Interaction Notes** panel below it.
+
+### JSON Tree
+
+The JSON tree shows the full config object Widgemo received, including any defaults that were merged in. Keys are color-coded for readability:
+
+| Color | Meaning |
+|---|---|
+| Purple | Keys |
+| Green | String values |
+| Blue | Number values |
+| Red | Boolean values |
+| Blue highlight | Keys added by default merge (visible when Defaults are toggled on) |
+
+Keys that have documented metadata show a dotted underline — hover for type, allowed values, and default information.
+
+### Action Buttons
+
+| Button | What it does |
+|---|---|
+| **Defaults: On / Off** | Toggles whether default-merged keys are shown and highlighted in the tree |
+| **Expand all / Collapse all** | Expands or collapses the full JSON tree |
+| **Copy** | Copies the currently displayed JSON to the clipboard |
+| **× (Close)** | Closes the Inspector modal |
+
+### Interaction Notes Panel
+
+The **Interaction Notes** panel summarizes how actions and event handlers are wired in the current config. For each zone that has actions, it lists the action IDs, the number of local `onEvent` callbacks detected, the interaction kind they emit (`zone-action`, `item-action`, etc.), and whether `entity` is defined for each kind.
+
+Use this panel to confirm that your `interactions.onEvent` handler is registered and that actions are firing the right kind with the right context shape.
+
+## Practical Debugging Tips
+
+- **Config not behaving as expected?** Open the Inspector and check whether the `zones` tree matches what you intended — in particular look for missing `mode`, missing `fields`, or unexpected defaults that were applied.
+- **Actions not firing?** Check Interaction Notes — if local callbacks show `0`, your `interactions.onEvent` is not reaching this widget instance.
+- **Defaults obscuring your config?** Toggle **Defaults: Off** to see only the keys you explicitly set; toggle **Defaults: On** to see the full merged shape with defaults highlighted.
+- **Sharing a bug report?** Use **Copy** to paste the exact config in your issue or team thread so others can reproduce the same state.
 
