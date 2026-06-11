@@ -67,7 +67,7 @@ const sidebars: SidebarsConfig = {
             'components/fields/number',
             'components/fields/boolean',
             'components/fields/select',
-            'components/fields/relation',
+            'components/fields/reference',
             'components/fields/textarea',
             'components/fields/email',
             'components/fields/url',

@@ -1,20 +1,181 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const relationData = [
+  { name: 'Task: API redesign',    assignee: 'user-2', project: 'proj-1', reviewer: 'user-1' },
+  { name: 'Task: Onboarding flow', assignee: 'user-3', project: 'proj-2', reviewer: 'user-2' },
+  { name: 'Task: Billing export',  assignee: 'user-1', project: 'proj-1', reviewer: null     },
+];
+
+export const userOptions = [
+  { value: 'user-1', label: 'Aurora Chen'  },
+  { value: 'user-2', label: 'Mateo Silva'  },
+  { value: 'user-3', label: 'Priya Nair'   },
+];
+
+export const projectOptions = [
+  { value: 'proj-1', label: 'Platform v2' },
+  { value: 'proj-2', label: 'Growth'      },
+];
+
+export const relationBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text'     },
+          { key: 'assignee', label: 'Assignee', type: 'relation', options: userOptions    },
+          { key: 'project',  label: 'Project',  type: 'relation', options: projectOptions },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const relationFallbackConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text'     },
+          { key: 'reviewer', label: 'Reviewer', type: 'relation', options: userOptions },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const relationConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',    type: 'text' },
+          { key: 'assignee', label: 'Assignee', type: 'relation', options: userOptions },
+          {
+            key: 'reviewer',
+            label: 'Reviewer',
+            type: 'relation',
+            options: userOptions,
+            condition: (entity) => entity.reviewer !== null && entity.reviewer !== undefined,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # relation Field Type
 
-Use `type: 'relation'` for values representing linked entities or references.
+`type: 'relation'` displays a reference to another entity by resolving its ID against an `options` array. The raw value (typically a foreign key or ID string) is matched with strict equality (`===`) against each option's `value` property, and the corresponding `label` is shown. If no match is found, the raw value is displayed as a plain string.
 
-## Typical Use Cases
+The rendering is identical to `type: 'select'`. The distinction is **semantic**: `relation` signals a cross-entity reference (a foreign key, an owner ID, a linked record), whereas `select` signals a constrained value from a fixed domain list.
 
-- Owner or assignee fields
-- Parent-child references
-- Entity linkage metadata
+## Core Examples
 
-## Example
+### Basic Relation Rendering
+
+<WidgemoShowcase
+  description="Assignee and Project columns resolve IDs to human-readable names via options arrays."
+  data={relationData}
+  config={relationBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ key: 'owner', label: 'Owner', type: 'relation' }
+const userOptions = [
+  { value: 'user-1', label: 'Aurora Chen' },
+  { value: 'user-2', label: 'Mateo Silva' },
+  { value: 'user-3', label: 'Priya Nair'  },
+];
+
+{ key: 'assignee', label: 'Assignee', type: 'relation', options: userOptions    },
+{ key: 'project',  label: 'Project',  type: 'relation', options: projectOptions },
 ```
 
-## Related
+<div style={{ marginBottom: '1rem' }} />
 
-- Clickable references: [link Renderer](/core/components/renderers/link)
-- Canonical contract: [Field Config](/core/reference/field-config)
+### Fallback for Unresolved References
+
+When the raw value is `null`, `undefined`, or an ID not present in `options`, it renders as a plain string. A `null` reviewer renders as the empty string `''`.
+
+<WidgemoShowcase
+  description="Billing export has no reviewer — the null value resolves to an empty string."
+  data={relationData}
+  config={relationFallbackConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'reviewer', label: 'Reviewer', type: 'relation', options: userOptions },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+Use `condition` to suppress the field entirely for rows where the relation is empty, rather than showing a blank cell.
+
+<WidgemoShowcase
+  description="Reviewer column only renders for rows where a reviewer is assigned. Billing export gets no Reviewer cell."
+  data={relationData}
+  config={relationConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'reviewer',
+  label: 'Reviewer',
+  type: 'relation',
+  options: userOptions,
+  condition: (entity) => entity.reviewer !== null && entity.reviewer !== undefined,
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property holding the foreign key or reference ID. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'relation'` | — | Resolves the raw value against `options`. Falls back to `String(value)` on no match. |
+| `options` | `{ value, label }[]` | unset | The resolution table. `value` is matched with `===` against the raw field value. |
+| `formatter` | `(value, entity) => unknown` | unset | Runs before the options lookup — use to normalise IDs before matching. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. Useful to suppress empty references. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `width` | CSS length or number | unset | Column width in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replace relation rendering. Use `link` to make the resolved label a clickable hyperlink. |
+
+## Why relation vs select?
+
+Both types use identical rendering logic today. The difference is intent:
+
+- **`select`** — a field constrained to a fixed domain list (status, priority, category). The `options` represent every valid value for that field.
+- **`relation`** — a reference to an external entity, identified by a key (user ID, project ID, record slug). The `options` are a local copy of a remote list, used only for display.
+
+Future Widgemo capabilities would treat these differently: `relation` fields would logically connect to external data sources for live lookups or navigation, while `select` fields would drive local filter menus.
+
+## Caveats
+
+- The match is strict (`===`). A string ID `'user-1'` will **not** match a numeric option `{ value: 1 }`.
+- `null` and `undefined` values render as the empty string `''` — use `condition` to hide those rows instead.
+- `formatter` output is what gets matched against `options.value` — not the original raw value.
+
+## See Also
+
+- [select Field Type](/core/components/fields/select)
+- [link Renderer](/core/components/renderers/link)
+- [Field Config](/core/reference/field-config)

@@ -288,8 +288,25 @@ Future versions of Widgemo — or add-on packages — may use `options` to drive
 
 Using `type: 'select'` now means your field config will be forward-compatible with those capabilities without changes. If the field is truly open-ended text, use `type: 'text'`. If it has a fixed set of values, use `type: 'select'`.
 
+## Performance
+
+:::tip Stable options reference
+widgemo-core builds an internal `Map` from your `options` array for O(1) lookups. This Map is only rebuilt when the `options` reference changes. Define your options array **outside your render function** — or memoize it with `useMemo` if constructed dynamically — so the Map is reused across renders.
+
+```ts
+// Good — stable reference, Map built once
+const statusOptions = [
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
+];
+
+// Avoid — new array every render, Map rebuilt every render
+// options={statuses.map(s => ({ value: s.id, label: s.name }))}
+```
+:::
+
 ## See Also
 
-- [relation Field Type](/core/components/fields/relation)
+- [reference Field Type](/core/components/fields/reference)
 - [badge Renderer](/core/components/renderers/badge)
 - [Field Config](/core/reference/field-config)
