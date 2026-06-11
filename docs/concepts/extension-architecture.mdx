@@ -3,19 +3,82 @@ sidebar_position: 4
 ---
 
 import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+{/* Register custom extensions used in the live demo below */}
+{(() => {
+  widgemoRegistry.registerWidgemoRenderAs({
+    name: 'gauge',
+    render: (value) => {
+      const cx = 30, cy = 32, r = 22, nLen = 18;
+      const score = Math.max(0, Math.min(100, Number(value) || 0));
+      const angle = Math.PI * (1 - score / 100);
+      const arcX = (cx + r * Math.cos(angle)).toFixed(2);
+      const arcY = (cy - r * Math.sin(angle)).toFixed(2);
+      const nx = (cx + nLen * Math.cos(angle)).toFixed(2);
+      const ny = (cy - nLen * Math.sin(angle)).toFixed(2);
+      const color = score >= 75 ? '#22c55e' : score >= 45 ? '#f59e0b' : '#ef4444';
+      return (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <svg width={60} height={36} viewBox="0 0 60 36">
+            <path d="M 8 32 A 22 22 0 0 1 52 32" stroke="#e5e7eb" strokeWidth={5} fill="none" strokeLinecap="round" />
+            {score > 0 && (
+              <path d={`M 8 32 A 22 22 0 0 1 ${arcX} ${arcY}`} stroke={color} strokeWidth={5} fill="none" strokeLinecap="round" />
+            )}
+            <line x1={cx} y1={cy} x2={nx} y2={ny} stroke="#374151" strokeWidth={1.5} strokeLinecap="round" />
+            <circle cx={cx} cy={cy} r={2.5} fill="#374151" />
+          </svg>
+          <span style={{ fontSize: '0.75rem', color: '#6b7280', minWidth: 28 }}>{score}</span>
+        </span>
+      );
+    },
+  });
+  widgemoRegistry.registerWidgemoIcon({
+    name: 'flag-risk',
+    component: ({ size = 16, color = 'currentColor' }) => (
+      <svg width={size} height={size} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 2v12M3 2h8l-2 3.5L11 9H3" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  });
+  return null;
+})()}
 
 # Extension Architecture
 
-Widgemo has multiple extension points, and they exist for different reasons.
+Widgemo's extension surface is built around a central registry — `widgemoRegistry` — that lets you register custom implementations before a Widgemo renders. There are five extension points, each scoped to a distinct concern:
 
-The main rule is:
+| Extension point | Registry function | Scope |
+|---|---|---|
+| `renderAs` renderer | `registerWidgemoRenderAs` | How a single field value is displayed |
+| Field type | `registerWidgemoFieldType` | A new value category with its own rendering rules |
+| Content mode | `registerWidgemoMode` | An entirely new content area layout strategy |
+| Icon | `registerWidgemoIcon` | A custom icon name resolvable in config |
+| Lifecycle hook | `registerWidgemoHook` | Runtime interception at named core lifecycle points |
 
-- use configuration first when built-in behavior is enough
-- use extensions when you need new behavior that config cannot express cleanly
+All registrations are resolved by name at render time. You can register before or after a Widgemo mounts — the registry is global and persistent for the lifetime of the page.
+
+## When to Extend vs When to Configure
+
+Use config first. Extensions add new behavior that config cannot express — they are not a shortcut for config-driven features.
+
+| Goal | Prefer | Reason |
+|---|---|---|
+| Display a field value differently | `renderAs` built-in or custom | Smallest surface; stays config-driven |
+| Reuse a new value type across many configs | custom field type | First-class field category with its own rendering and type identity |
+| Replace the entire content area layout | custom mode | table / grid / board / carousel don't fit the use case |
+| Reference your design system icons in config | custom icon | Keeps icon names consistent without hardcoding SVG inline |
+| Intercept renders, mode changes, or drag-drop | lifecycle hook | Runtime wiring without modifying layout or config |
+
+A good adoption sequence:
+
+1. Start with built-in `mode`, `fields`, `renderAs`, and theming
+2. Confirm the Widgemo shape and data contract
+3. Introduce custom extensions only when built-in surfaces cannot express the requirement cleanly
 
 <WidgemoShowcase
-  title="Built-In Surface vs Extension Surface"
-  description="This live example uses built-in renderers and actions. Extension points exist when you need to add new versions of these surfaces, not replace config-first usage by default."
+  title="Built-In Surface"
+  description="This Widgemo uses only built-in config — no custom extensions required."
   data={[
     { name: 'North Region', health: 92, status: 'healthy', budget: 420000 },
     { name: 'EMEA Region', health: 68, status: 'watch', budget: 315000 },
@@ -24,7 +87,7 @@ The main rule is:
     zones: {
       header: {
         title: 'Extension Architecture',
-        subtitle: 'Most integrations start with built-in config before moving to custom extensions',
+        subtitle: 'Built-in config handles the entire surface below',
       },
       content: {
         mode: 'table',
@@ -42,74 +105,232 @@ The main rule is:
   }}
 />
 
-## Decision Guide
+## Live Extension Demo
 
-| Need | Prefer | Why |
-|---|---|---|
-| Reformat one field value | `renderAs` | Smallest extension surface |
-| Create a reusable new field type | custom field type | Best when the new value type should behave like a first-class field |
-| Create a new content view | custom mode | Best when table/grid/board/carousel/chart are not enough |
-| Add custom iconography | custom icons | Keeps icon names consistent in config |
-| Intercept lifecycle behavior | hooks | Runtime interception rather than layout definition |
+The Widgemo below uses two custom extensions registered directly on this page — a `gauge` `renderAs` renderer and a `flag-risk` icon. Neither exists in `widgemo-core`; both are wired through `widgemoRegistry` before the Widgemo renders.
 
-## Config First, Extensions Second
+<WidgemoShowcase
+  title="Custom Extensions Live"
+  description="gauge renderAs (SVG speedometer) + flag-risk icon — both registered via widgemoRegistry on this page"
+  data={[
+    { region: 'North America', health: 88, status: 'healthy', alerts: 1 },
+    { region: 'EMEA', health: 54, status: 'watch', alerts: 4 },
+    { region: 'APAC', health: 31, status: 'critical', alerts: 9 },
+    { region: 'LATAM', health: 72, status: 'healthy', alerts: 2 },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Regional Health',
+        subtitle: 'Custom renderAs and icon in action',
+        actions: [
+          { id: 'flag', label: 'Flag', icon: 'flag-risk', placement: 'pinned' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        actions: [
+          { id: 'flag-region', label: 'Flag', icon: 'flag-risk', placement: 'pinned' },
+        ],
+        item: {
+          fields: [
+            { key: 'region', label: 'Region' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'health', label: 'Health', renderAs: 'gauge' },
+            { key: 'alerts', label: 'Alerts' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
 
-A good adoption pattern is:
+The registration code for this demo (runs at module scope in the MDX file):
 
-1. Start with built-in `mode`, `fields`, `renderAs`, and theming
-2. Confirm the Widgemo shape and data contract
-3. Introduce custom renderers, field types, or modes only when the built-in surface cannot express the requirement cleanly
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
 
-## Extension Points
+// Custom renderAs: SVG half-circle speed gauge
+// Background arc spans the full semicircle; value arc fills proportionally.
+// A needle rotates from left (0) to right (100). Color: green ≥75, amber ≥45, red <45.
+widgemoRegistry.registerWidgemoRenderAs({
+  name: 'gauge',
+  render: (value) => {
+    const cx = 30, cy = 32, r = 22, nLen = 18;
+    const score = Math.max(0, Math.min(100, Number(value) || 0));
+    // Angle in radians: π at score=0 (needle left), 0 at score=100 (needle right)
+    const angle = Math.PI * (1 - score / 100);
+    const arcX = (cx + r * Math.cos(angle)).toFixed(2);
+    const arcY = (cy - r * Math.sin(angle)).toFixed(2); // SVG y is inverted
+    const nx = (cx + nLen * Math.cos(angle)).toFixed(2);
+    const ny = (cy - nLen * Math.sin(angle)).toFixed(2);
+    const color = score >= 75 ? '#22c55e' : score >= 45 ? '#f59e0b' : '#ef4444';
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+        <svg width={60} height={36} viewBox="0 0 60 36">
+          {/* Background track */}
+          <path d="M 8 32 A 22 22 0 0 1 52 32"
+            stroke="#e5e7eb" strokeWidth={5} fill="none" strokeLinecap="round" />
+          {/* Value arc */}
+          {score > 0 && (
+            <path d={`M 8 32 A 22 22 0 0 1 ${arcX} ${arcY}`}
+              stroke={color} strokeWidth={5} fill="none" strokeLinecap="round" />
+          )}
+          {/* Needle */}
+          <line x1={cx} y1={cy} x2={nx} y2={ny}
+            stroke="#374151" strokeWidth={1.5} strokeLinecap="round" />
+          {/* Pivot dot */}
+          <circle cx={cx} cy={cy} r={2.5} fill="#374151" />
+        </svg>
+        <span style={{ fontSize: '0.75rem', color: '#6b7280', minWidth: 28 }}>{score}</span>
+      </span>
+    );
+  },
+});
+
+// Custom icon: a flag SVG referenced by name in config
+widgemoRegistry.registerWidgemoIcon({
+  name: 'flag-risk',
+  component: ({ size = 16, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <path d="M3 2v12M3 2h8l-2 3.5L11 9H3"
+        stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+});
+```
+
+In config the extensions are referenced by name just like built-ins:
+
+```tsx
+// renderAs
+{ key: 'health', label: 'Health', renderAs: 'gauge' }
+
+// icon in an action
+{ id: 'flag-region', label: 'Flag', icon: 'flag-risk', placement: 'pinned' }
+```
 
 ## Custom `renderAs`
 
-Use custom `renderAs` when you want to change how a single value is displayed inside an otherwise normal field.
+Register a custom `renderAs` when you want a field value to render in a new way while the rest of the field pipeline (label, layout, sorting) stays intact.
 
-Examples:
+**When to use:** domain-specific value formatting — status pills, compact sparkline variants, image thumbnails, risk scores.
 
-- status pills
-- compact sparkline variants
-- domain-specific formatting
+**When not to use:** if an existing `renderAs` type covers it, use config options rather than a new registration.
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+
+widgemoRegistry.registerWidgemoRenderAs({
+  name: 'riskBadge',
+  render: ({ value }) => (
+    <span className={`badge badge--${value}`}>{value}</span>
+  ),
+});
+```
+
+In config:
+```tsx
+{ key: 'risk', label: 'Risk', renderAs: 'riskBadge' }
+```
+
+See [Extension API](/core/reference/extension-api) for the full `RenderAsRegistryEntry` shape.
 
 ## Custom Field Types
 
-Use custom field types when the value behaves like a distinct field category and should be reused across many configs.
+Register a custom field type when the value behaves like a distinct category — not just a display variant — and you want that category to carry its own rendering rules and type identity across many configs.
 
-Examples:
+**When to use:** color swatches, avatar clusters, structured KPI tiles, composite values with their own internal layout.
 
-- color swatch
-- avatar cluster
-- structured KPI tile
+**When not to use:** if you only need a different visual for a standard value, use custom `renderAs` instead.
+
+```tsx
+widgemoRegistry.registerWidgemoFieldType({
+  name: 'colorSwatch',
+  render: ({ value }) => (
+    <span style={{ background: value, width: 16, height: 16, display: 'inline-block', borderRadius: 2 }} />
+  ),
+});
+```
+
+In config:
+```tsx
+{ key: 'brandColor', label: 'Color', type: 'colorSwatch' }
+```
+
+See [Extension API](/core/reference/extension-api) for the full `FieldTypeRegistryEntry` shape.
 
 ## Custom Modes
 
-Use custom modes when the entire content area needs a new layout strategy.
+Register a custom mode when the entire content area needs a layout strategy that none of the built-in modes (table, grid, board, carousel) can provide.
 
-Examples:
+**When to use:** timeline, radial planner, dependency map, org chart — anything where the data structure and spatial layout are fundamentally different from list-based rendering.
 
-- timeline
-- radial planner
-- dependency map
+**When not to use:** if you need a different arrangement of the same rows, use grid with layout options. Only register a mode when the layout *concept* itself is new.
+
+```tsx
+widgemoRegistry.registerWidgemoMode({
+  name: 'timeline',
+  render: ({ data, config }) => (
+    <TimelineRenderer data={data} config={config} />
+  ),
+});
+```
+
+In config:
+```tsx
+zones: { content: { mode: 'timeline', item: { ... } } }
+```
+
+See [Extension API](/core/reference/extension-api) for the full `ModeRegistryEntry` shape.
 
 ## Custom Icons
 
-Use custom icons when config should refer to your own icon names consistently.
+Register custom icons when your config should reference icon names from your own design system or icon pack rather than the built-in set.
 
-Examples:
+**When to use:** product-specific action icons, financial or operational domain icons, host design system icon packs.
 
-- product-specific actions
-- financial or operational domain icons
-- host design system icon packs
+```tsx
+widgemoRegistry.registerWidgemoIcon({
+  name: 'risk-flag',
+  render: () => <RiskFlagIcon />,
+});
+```
 
-## Hooks
+In config:
+```tsx
+{ id: 'flag', label: 'Flag', icon: 'risk-flag', placement: 'pinned' }
+```
 
-Use hooks when you need runtime interception or wrapping behavior rather than a new display primitive.
+See [Extension API](/core/reference/extension-api) for the full `IconRegistryEntry` shape.
 
-Examples:
+## Lifecycle Hooks
 
-- analytics on mode changes
-- wrapping rendered output
-- runtime logging or instrumentation
+Register a lifecycle hook when you need runtime interception or wrapping behavior — analytics on mode changes, wrapping rendered output, logging — rather than a new display primitive.
 
+Widgemo ships five built-in hook names: `preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`. Registering a custom name only creates a trigger point if your code explicitly calls `executeWidgemoHook('<name>', ...)`.
+
+**When to use:** analytics instrumentation, rendering wrappers (e.g. error boundaries around a mode), drag-drop side effects.
+
+**When not to use:** action and interaction handling — use `interactions.onEvent` and `zones.content.gestures` for those instead.
+
+```tsx
+widgemoRegistry.registerWidgemoHook({
+  name: 'onModeChange',
+  hook: (payload) => {
+    analytics.track('widgemo_mode_change', {
+      from: payload.previousMode,
+      to: payload.nextMode,
+    });
+  },
+});
+```
+
+See [Extension API](/core/reference/extension-api) for all five built-in hook signatures and payload shapes.
+
+## References
+
+- [Extension API](/core/reference/extension-api) — registry functions, entry shapes, and hook payload reference
+- [Widgemo Config](/core/reference/widgemo-config) — `interactions.onEvent` and gestures for config-driven interaction handling
 

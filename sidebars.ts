@@ -25,7 +25,7 @@ const sidebars: SidebarsConfig = {
         'getting-started/introduction',
         'getting-started/installation',
         'getting-started/quick-start',
-        'getting-started/first-widget-walkthrough',
+        'getting-started/your-first-widgemo',
         'getting-started/common-setup-pitfalls',
         'guides/adopting-widgemo',
       ],
