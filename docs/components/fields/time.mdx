@@ -1,14 +1,114 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const timeData = [
+  { operation: 'Payroll Sync', checkpointTime: '08:15:10', scheduledTime: '08:00:00' },
+  { operation: 'Reserve Sweep', checkpointTime: '11:42:33', scheduledTime: '11:30:00' },
+  { operation: 'Invoice Clear', checkpointTime: '14:05:01', scheduledTime: '14:00:00' },
+];
+
+export const timeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'checkpointTime',
+            label: 'Checkpoint',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: true, hour12: false },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timeFormattingConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'checkpointTime',
+            label: '24h with seconds',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: true, hour12: false },
+          },
+          {
+            key: 'checkpointTime',
+            label: '12h no seconds',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: true },
+          },
+          {
+            key: 'scheduledTime',
+            label: 'Scheduled',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timeConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'checkpointTime',
+            label: 'Checkpoint',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: true, hour12: false },
+          },
+          {
+            key: 'scheduledTime',
+            label: 'Scheduled',
+            type: 'time',
+            renderAs: 'time',
+            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
+            condition: (entity) => entity.operation !== 'Invoice Clear',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # time Field Type
 
-Use `type: 'time'` for time-only values.
+`type: 'time'` marks a field as a time-of-day value. Pair it with `renderAs: 'time'` and `parseMode: 'iso-time'` to render it in a locale-aware format. Use `showSeconds` and `hour12` to control display granularity.
 
-## Typical Use Cases
+## Core Examples
 
-- Checkpoint times
-- Schedule times
-- Time-of-day logs
+### Basic Time Rendering
 
-## Example
+<WidgemoShowcase
+  description="ISO time string rendered in 24-hour format with seconds."
+  data={timeData}
+  config={timeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
@@ -16,17 +116,91 @@ Use `type: 'time'` for time-only values.
   label: 'Checkpoint',
   type: 'time',
   renderAs: 'time',
-  renderAsOptions: { parseMode: 'iso-time', showSeconds: true },
+  renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: true, hour12: false },
 }
 ```
 
-## Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- Pair with `renderAs: 'time'` for explicit temporal rendering.
-- `renderAsOptions.parseMode` is required in temporal renderer mode.
+### 12h vs 24h and Seconds
 
-## Related
+`hour12` toggles 12h/24h format. `showSeconds` adds or removes the seconds component.
 
-- Renderer page: [time Renderer](/core/components/renderers/time)
-- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Canonical contract: [Field Config](/core/reference/field-config)
+<WidgemoShowcase
+  description="Same time value rendered in 24h with seconds, 12h without seconds, and a separate scheduled time field."
+  data={timeData}
+  config={timeFormattingConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// 24-hour with seconds
+{ renderAsOptions: { parseMode: 'iso-time', showSeconds: true, hour12: false } }
+// → 08:15:10
+
+// 12-hour without seconds
+{ renderAsOptions: { parseMode: 'iso-time', showSeconds: false, hour12: true } }
+// → 8:15 AM
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Scheduled time hidden for Invoice Clear."
+  data={timeData}
+  config={timeConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'scheduledTime',
+  label: 'Scheduled',
+  type: 'time',
+  renderAs: 'time',
+  renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
+  condition: (entity) => entity.operation !== 'Invoice Clear',
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the time value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'time'` | — | Marks the field as a time-of-day value. Pair with `renderAs: 'time'`. |
+| `renderAs` | `'time'` | unset | Required for formatted time output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'time'`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `'iso-time'` \| `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
+| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. |
+| `showSeconds` | `boolean` | `false` | Include seconds in the rendered time. |
+| `hour12` | `boolean` | locale default | `true` for 12-hour AM/PM, `false` for 24-hour. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with computed options, takes precedence. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'`.
+- `parseMode: 'iso-time'` expects `HH:mm:ss`. Values without seconds (`HH:mm`) may parse differently across environments — include seconds for reliability.
+- `type: 'time'` has no `relativeTime` option — relative time is not meaningful for time-of-day values. Use `type: 'datetime'` or `type: 'timestamp'` for relative display.
+- `timezone` affects display only. An `iso-time` value has no inherent timezone — the time is interpreted as-is in the requested timezone.
+
+## See Also
+
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [datetime Field Type](/core/components/fields/datetime)
+- [Field Config](/core/reference/field-config)

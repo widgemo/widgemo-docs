@@ -1,32 +1,282 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const dateData = [
+  { operation: 'Payroll Sync', dueDate: '2026-05-29', closedDate: '2026-06-02' },
+  { operation: 'Reserve Sweep', dueDate: '2026-06-05', closedDate: null },
+  { operation: 'Invoice Clear', dueDate: '2026-06-11', closedDate: null },
+];
+
+export const dateBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Due Date',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datePresetsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Short',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' },
+          },
+          {
+            key: 'dueDate',
+            label: 'Medium',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+          },
+          {
+            key: 'dueDate',
+            label: 'Long',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'long' },
+          },
+          {
+            key: 'dueDate',
+            label: 'Full',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'full' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const dateRelativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Relative',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: {
+              parseMode: 'iso-date',
+              locale: 'en-US',
+              relativeTime: true,
+              relativeDisplay: 'relative',
+            },
+          },
+          {
+            key: 'dueDate',
+            label: 'Abs + Relative',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: {
+              parseMode: 'iso-date',
+              locale: 'en-US',
+              formatPreset: 'medium',
+              relativeTime: true,
+              relativeDisplay: 'both',
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const dateConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Due Date',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+          },
+          {
+            key: 'closedDate',
+            label: 'Closed',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+            condition: (entity) => Boolean(entity.closedDate),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # date Field Type
 
-Use `type: 'date'` for calendar-date values.
+`type: 'date'` marks a field as a calendar date value. Pair it with `renderAs: 'date'` and a `parseMode` to render it in a locale-aware, human-readable format. Without `renderAs`, the raw value is displayed as plain text.
 
-## Typical Use Cases
+## Core Examples
 
-- Settlement dates
-- Due dates
-- Posting dates
+### Basic Date Rendering
 
-## Example
+<WidgemoShowcase
+  description="ISO date string rendered with parseMode: 'iso-date' and formatPreset: 'medium'."
+  data={dateData}
+  config={dateBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
-  key: 'settlementDate',
-  label: 'Settlement Date',
+  key: 'dueDate',
+  label: 'Due Date',
   type: 'date',
   renderAs: 'date',
-  renderAsOptions: { parseMode: 'iso-date', formatPreset: 'short' },
+  renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
 }
 ```
 
-## Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- Pair with `renderAs: 'date'` for explicit temporal rendering.
-- `renderAsOptions.parseMode` is required in temporal renderer mode.
+### Format Presets
 
-## Related
+`formatPreset` controls how much detail is shown. All presets use `Intl.DateTimeFormat` internally — output adapts to `locale`.
 
-- Renderer page: [date Renderer](/core/components/renderers/date)
-- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Canonical contract: [Field Config](/core/reference/field-config)
+<WidgemoShowcase
+  description="The same date rendered with short, medium, long, and full presets."
+  data={dateData}
+  config={datePresetsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' } }
+// → 5/29/26
+
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' } }
+// → May 29, 2026  (default when formatPreset is omitted)
+
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'long' } }
+// → May 29, 2026
+
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'full' } }
+// → Friday, May 29, 2026
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Relative Time
+
+`relativeTime: true` shows human-friendly relative output ("2 weeks ago"). `relativeDisplay: 'both'` stacks the absolute date above the relative label.
+
+<WidgemoShowcase
+  description="Relative-only and absolute+relative stacked display using the same due dates."
+  data={dateData}
+  config={dateRelativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Relative only
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', relativeTime: true, relativeDisplay: 'relative' } }
+
+// Absolute + relative stacked
+{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium', relativeTime: true, relativeDisplay: 'both' } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Closed date column only appears for Payroll Sync (the only row with a non-null closedDate)."
+  data={dateData}
+  config={dateConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'closedDate',
+  label: 'Closed',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+  condition: (entity) => Boolean(entity.closedDate),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the date value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'date'` | — | Marks the field as a calendar date. Pair with `renderAs: 'date'` for formatted output. |
+| `renderAs` | `'date'` | unset | Required for locale-aware date rendering. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting in table mode. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'date'`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `'iso-date'` \| `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
+| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. Does not affect the stored value. |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Controls date detail level. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with preset, takes precedence. |
+| `relativeTime` | `boolean` | `false` | Show relative time ("2 weeks ago") instead of absolute. |
+| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | When `relativeTime: true`: show only relative, or absolute+relative stacked. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'` regardless of the value.
+- `parseMode: 'iso-date'` expects `YYYY-MM-DD`. An ISO datetime string like `2026-05-29T08:00:00Z` will parse correctly with `'iso-datetime'` or `'any'`, not `'iso-date'`.
+- `timezone` controls the **display timezone**, not parsing. The underlying `Date` object is always UTC-based.
+- Table mode sorts chronologically when `parseMode` is declared and `sortable: true` is set. Without `parseMode`, sort falls back to generic string comparison.
+- `relativeTime` uses `Intl.RelativeTimeFormat` — output is locale-sensitive.
+
+## See Also
+
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [datetime Field Type](/core/components/fields/datetime)
+- [timestamp Field Type](/core/components/fields/timestamp)
+- [Field Config](/core/reference/field-config)

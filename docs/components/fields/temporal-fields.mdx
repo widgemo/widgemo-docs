@@ -6,27 +6,34 @@ import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
 # Temporal Fields Guide
 
-Widgemo temporal rendering is explicit-contract by design.
+Widgemo's temporal rendering is **explicit-contract by design**: you declare the source format (`parseMode` for dates, `unit` for durations) and the renderer uses it to parse and display the value correctly. There is no implicit fallback guessing.
 
-- `date`, `time`, `datetime`, and `timestamp` require `renderAsOptions.parseMode`.
-- `duration` requires `renderAsOptions.unit`.
-- There is no implicit source-format fallback contract.
+This guide covers the cross-cutting concerns that apply to all five temporal field types. For type-specific options and live demos, see the individual pages:
 
-## Why This Contract Exists
+- [date](/core/components/fields/date) — ISO date strings (`YYYY-MM-DD`)
+- [time](/core/components/fields/time) — time-of-day strings (`HH:mm:ss`)
+- [datetime](/core/components/fields/datetime) — ISO datetime strings (`YYYY-MM-DDTHH:mm:ssZ`)
+- [timestamp](/core/components/fields/timestamp) — Unix epoch values (seconds or milliseconds)
+- [duration](/core/components/fields/duration) — elapsed-time numeric values
 
-Different host systems store temporal values differently:
+## Why the Contract Exists
 
-- Unix epoch milliseconds
-- Unix epoch seconds
-- ISO date strings (`YYYY-MM-DD`)
-- ISO datetime strings (`YYYY-MM-DDTHH:mm:ssZ`)
-- ISO time strings (`HH:mm:ss`)
+Different backend systems store temporal values differently:
 
-Making the source format explicit prevents silent mis-parsing and sorting bugs.
+| Source | Example |
+|---|---|
+| ISO date | `"2026-05-29"` |
+| ISO datetime | `"2026-05-29T08:15:10Z"` |
+| ISO time | `"08:15:10"` |
+| Unix seconds | `1780042510` |
+| Unix milliseconds | `1780042810000` |
+
+Without an explicit `parseMode`, the renderer cannot reliably distinguish a Unix epoch-sec value (`1780042510`) from a Unix epoch-ms value (`1780042810000`) — they differ by a factor of 1000, and a wrong guess would display a date 30+ years off. Making the source format explicit prevents silent mis-parsing and incorrect sort order.
+
+## All Temporal Types in One Table
 
 <WidgemoShowcase
-  title="Temporal Contracts Live Example"
-  description="Live table showing mixed temporal contracts, including relative-only and absolute+relative modes."
+  description="All five temporal types in a single table — date, time, datetime, timestamp (epoch-sec and epoch-ms), and duration."
   data={[
     {
       operation: 'Payroll Sync',
@@ -36,7 +43,6 @@ Making the source format explicit prevents silent mis-parsing and sorting bugs.
       updatedAtEpochSec: 1780042510,
       ingestedAtEpochMs: 1780042810000,
       processingSec: 3661,
-      queueLagMs: 48250,
     },
     {
       operation: 'Reserve Sweep',
@@ -46,194 +52,59 @@ Making the source format explicit prevents silent mis-parsing and sorting bugs.
       updatedAtEpochSec: 1780141353,
       ingestedAtEpochMs: 1780141633000,
       processingSec: 915,
-      queueLagMs: 129000,
     },
     {
       operation: 'Invoice Clear',
-      settlementDate: '2026-05-31',
+      settlementDate: '2026-06-11',
       checkpointTime: '14:05:01',
-      postedAt: '2026-05-31T14:05:01Z',
+      postedAt: '2026-06-11T14:05:01Z',
       updatedAtEpochSec: 1780236301,
       ingestedAtEpochMs: 1780236541000,
       processingSec: 172,
-      queueLagMs: 7200,
     },
   ]}
   config={{
     zones: {
-      header: {
-        title: 'Temporal Contracts',
-        subtitle: 'Explicit parseMode/unit with relative display variants',
-      },
       content: {
         mode: 'table',
-        sorting: [{ fieldKey: 'updatedAtEpochSec', direction: 'desc' }],
+        modeConfig: { table: { showHeader: true, hover: true } },
         item: {
           fields: [
-            { key: 'operation', label: 'Operation', type: 'text', sortable: true },
+            { key: 'operation', label: 'Operation', type: 'text' },
             {
               key: 'settlementDate',
               label: 'Date',
               type: 'date',
               renderAs: 'date',
-              sortable: true,
-              renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', timezone: 'local', formatPreset: 'short' },
+              renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' },
             },
             {
               key: 'checkpointTime',
               label: 'Time',
               type: 'time',
               renderAs: 'time',
-              sortable: true,
-              renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', timezone: 'utc', showSeconds: true, hour12: false },
+              renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
             },
             {
               key: 'postedAt',
-              label: 'Posted (Relative)',
+              label: 'Datetime',
               type: 'datetime',
               renderAs: 'datetime',
-              sortable: true,
-              renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', relativeTime: true, relativeDisplay: 'relative' },
+              renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'short' },
             },
             {
-              key: 'ingestedAtEpochMs',
-              label: 'Ingested (Abs + Relative)',
-              type: 'timestamp',
-              renderAs: 'timestamp',
-              sortable: true,
-              renderAsOptions: {
-                parseMode: 'epoch-ms',
-                locale: 'en-US',
-                timezone: 'utc',
-                formatPreset: 'short',
-                relativeTime: true,
-                relativeDisplay: 'both',
-              },
-            },
-            {
-              key: 'processingSec',
-              label: 'Processing',
-              type: 'duration',
-              renderAs: 'duration',
-              sortable: true,
-              renderAsOptions: { unit: 'sec', format: 'clock' },
-            },
-            {
-              key: 'queueLagMs',
-              label: 'Queue Lag',
-              type: 'duration',
-              renderAs: 'duration',
-              sortable: true,
-              renderAsOptions: { unit: 'ms', format: 'humanized', precision: 2, showSign: false },
-            },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
-
-## Date and Timestamp Examples
-
-<WidgemoShowcase
-  title="Date and Timestamp Rendering"
-  description="Live comparison of date and timestamp contracts with explicit parse modes."
-  data={[
-    { operation: 'Payroll Sync', settlementDate: '2026-05-29', updatedAt: 1780042510 },
-    { operation: 'Reserve Sweep', settlementDate: '2026-05-30', updatedAt: 1780141353 },
-    { operation: 'Invoice Clear', settlementDate: '2026-05-31', updatedAt: 1780236301 },
-  ]}
-  config={{
-    zones: {
-      header: { title: 'Date + Timestamp', subtitle: 'iso-date and epoch-sec parse contracts' },
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'operation', label: 'Operation', type: 'text' },
-            {
-              key: 'settlementDate',
-              label: 'Settlement Date',
-              type: 'date',
-              renderAs: 'date',
-              renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', timezone: 'local', formatPreset: 'medium' },
-            },
-            {
-              key: 'updatedAt',
-              label: 'Updated',
+              key: 'updatedAtEpochSec',
+              label: 'Timestamp (sec)',
               type: 'timestamp',
               renderAs: 'timestamp',
               renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'short' },
             },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
-
-```tsx
-const fields: FieldConfig[] = [
-  {
-    key: 'settlementDate',
-    label: 'Settlement Date',
-    type: 'date',
-    renderAs: 'date',
-    renderAsOptions: {
-      parseMode: 'iso-date',
-      locale: 'en-US',
-      timezone: 'local',
-      formatPreset: 'medium',
-    },
-  },
-  {
-    key: 'updatedAt',
-    label: 'Updated',
-    type: 'timestamp',
-    renderAs: 'timestamp',
-    renderAsOptions: {
-      parseMode: 'epoch-sec',
-      locale: 'en-US',
-      timezone: 'utc',
-      formatPreset: 'short',
-    },
-  },
-];
-```
-
-## Time and Datetime Examples
-
-<WidgemoShowcase
-  title="Time and Datetime Rendering"
-  description="Live examples for iso-time and iso-datetime with formatting options."
-  data={[
-    { operation: 'Payroll Sync', checkpointTime: '08:15:10', postedAt: '2026-05-29T08:15:10Z' },
-    { operation: 'Reserve Sweep', checkpointTime: '11:42:33', postedAt: '2026-05-30T11:42:33Z' },
-    { operation: 'Invoice Clear', checkpointTime: '14:05:01', postedAt: '2026-05-31T14:05:01Z' },
-  ]}
-  config={{
-    zones: {
-      header: { title: 'Time + Datetime', subtitle: 'showSeconds/hour12 and datetime preset behavior' },
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'operation', label: 'Operation', type: 'text' },
             {
-              key: 'checkpointTime',
-              label: 'Checkpoint',
-              type: 'time',
-              renderAs: 'time',
-              renderAsOptions: { parseMode: 'iso-time', showSeconds: true, hour12: false, timezone: 'utc' },
-            },
-            {
-              key: 'postedAt',
-              label: 'Posted At',
-              type: 'datetime',
-              renderAs: 'datetime',
-              renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short', timezone: 'utc' },
+              key: 'processingSec',
+              label: 'Duration',
+              type: 'duration',
+              renderAs: 'duration',
+              renderAsOptions: { unit: 'sec', format: 'humanized', precision: 2 },
             },
           ],
           layout: { type: 'auto' },
@@ -242,364 +113,74 @@ const fields: FieldConfig[] = [
     },
   }}
 />
-
-```tsx
-const fields: FieldConfig[] = [
-  {
-    key: 'checkpointTime',
-    label: 'Checkpoint',
-    type: 'time',
-    renderAs: 'time',
-    renderAsOptions: {
-      parseMode: 'iso-time',
-      showSeconds: true,
-      hour12: false,
-      timezone: 'utc',
-    },
-  },
-  {
-    key: 'postedAt',
-    label: 'Posted At',
-    type: 'datetime',
-    renderAs: 'datetime',
-    renderAsOptions: {
-      parseMode: 'iso-datetime',
-      formatPreset: 'short',
-      timezone: 'utc',
-    },
-  },
-];
-```
-
-## Duration Formats
-
-<WidgemoShowcase
-  title="Duration Formats Live"
-  description="Clock, humanized, decimal, and signed duration output in one Widgemo."
-  data={[
-    { operation: 'Payroll Sync', latencySec: 3661, queueLagMs: 48250, reconciliationMin: 61.25, durationDeltaSec: 95.4 },
-    { operation: 'Reserve Sweep', latencySec: 915, queueLagMs: 129000, reconciliationMin: 15.4, durationDeltaSec: -45.7 },
-    { operation: 'Invoice Clear', latencySec: 172, queueLagMs: 7200, reconciliationMin: 2.86, durationDeltaSec: 12.1 },
-  ]}
-  config={{
-    zones: {
-      header: { title: 'Duration Format Matrix', subtitle: 'clock vs humanized vs decimal with sign behavior' },
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'operation', label: 'Operation', type: 'text' },
-            {
-              key: 'latencySec',
-              label: 'Latency (Clock)',
-              type: 'duration',
-              renderAs: 'duration',
-              renderAsOptions: { unit: 'sec', format: 'clock', showSign: true },
-            },
-            {
-              key: 'queueLagMs',
-              label: 'Queue Lag (Humanized)',
-              type: 'duration',
-              renderAs: 'duration',
-              renderAsOptions: {
-                unit: 'ms',
-                format: 'humanized',
-                humanizedUnits: ['day', 'hour', 'minute', 'second', 'millisecond'],
-                precision: 2,
-                showSign: false,
-              },
-            },
-            {
-              key: 'reconciliationMin',
-              label: 'Reconciliation (Decimal)',
-              type: 'duration',
-              renderAs: 'duration',
-              renderAsOptions: { unit: 'min', format: 'decimal', precision: 2, showSign: false },
-            },
-            {
-              key: 'durationDeltaSec',
-              label: 'Delta (Signed Decimal)',
-              type: 'duration',
-              renderAs: 'duration',
-              renderAsOptions: { unit: 'sec', format: 'decimal', precision: 1, showSign: true },
-            },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
-
-```tsx
-const fields: FieldConfig[] = [
-  {
-    key: 'latencySec',
-    label: 'Latency (Clock)',
-    type: 'duration',
-    renderAs: 'duration',
-    renderAsOptions: {
-      unit: 'sec',
-      format: 'clock',
-      showSign: true,
-    },
-  },
-  {
-    key: 'queueLagMs',
-    label: 'Queue Lag (Humanized)',
-    type: 'duration',
-    renderAs: 'duration',
-    renderAsOptions: {
-      unit: 'ms',
-      format: 'humanized',
-      humanizedUnits: ['day', 'hour', 'minute', 'second', 'millisecond'],
-      precision: 2,
-      showSign: false,
-    },
-  },
-  {
-    key: 'reconciliationMin',
-    label: 'Reconciliation (Decimal)',
-    type: 'duration',
-    renderAs: 'duration',
-    renderAsOptions: {
-      unit: 'min',
-      format: 'decimal',
-      precision: 2,
-      showSign: false,
-    },
-  },
-];
-```
-
-Clock formatting is useful for timer-like displays:
-
-```tsx
-{
-  key: 'processingSec',
-  label: 'Processing',
-  type: 'duration',
-  renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'sec',
-    format: 'clock',
-  },
-}
-```
-
-Humanized formatting is useful for readable operational metrics:
-
-```tsx
-{
-  key: 'queueLagMs',
-  label: 'Queue Lag',
-  type: 'duration',
-  renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'ms',
-    format: 'humanized',
-    humanizedUnits: ['day', 'hour', 'minute', 'second', 'millisecond'],
-    precision: 2,
-    showSign: false,
-  },
-}
-```
-
-You can choose the unit granularity explicitly, including extended units:
-
-```tsx
-{
-  key: 'elapsedMs',
-  label: 'Elapsed (Extended Humanized)',
-  type: 'duration',
-  renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'ms',
-    format: 'humanized',
-    humanizedUnits: ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'],
-    precision: 4,
-  },
-}
-```
-
-Decimal formatting is useful for compact dashboards and finance-style KPIs:
-
-```tsx
-{
-  key: 'reconciliationMin',
-  label: 'Reconciliation',
-  type: 'duration',
-  renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'min',
-    format: 'decimal',
-    precision: 2,
-    showSign: false,
-  },
-}
-```
-
-Signed output can be enabled for deltas:
-
-```tsx
-{
-  key: 'durationDeltaSec',
-  label: 'Duration Delta',
-  type: 'duration',
-  renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'sec',
-    format: 'decimal',
-    precision: 1,
-    showSign: true,
-  },
-}
-```
-
-## Relative Time Display Modes
-
-<WidgemoShowcase
-  title="Relative Display Modes"
-  description="Relative-only and absolute+relative output side by side."
-  data={[
-    { operation: 'Payroll Sync', updatedAt: 1780042510, postedAt: '2026-05-29T08:15:10Z' },
-    { operation: 'Reserve Sweep', updatedAt: 1780141353, postedAt: '2026-05-30T11:42:33Z' },
-    { operation: 'Invoice Clear', updatedAt: 1780236301, postedAt: '2026-05-31T14:05:01Z' },
-  ]}
-  config={{
-    zones: {
-      header: { title: 'Relative Time Modes', subtitle: 'relative-only and stacked absolute+relative variants' },
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'operation', label: 'Operation', type: 'text' },
-            {
-              key: 'updatedAt',
-              label: 'Updated (relative only)',
-              type: 'timestamp',
-              renderAs: 'timestamp',
-              renderAsOptions: { parseMode: 'epoch-sec', relativeTime: true, relativeDisplay: 'relative' },
-            },
-            {
-              key: 'postedAt',
-              label: 'Posted (absolute + relative)',
-              type: 'datetime',
-              renderAs: 'datetime',
-              renderAsOptions: {
-                parseMode: 'iso-datetime',
-                formatPreset: 'short',
-                timezone: 'utc',
-                relativeTime: true,
-                relativeDisplay: 'both',
-              },
-            },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
-
-```tsx
-const fields: FieldConfig[] = [
-  {
-    key: 'updatedAt',
-    label: 'Updated (relative only)',
-    type: 'timestamp',
-    renderAs: 'timestamp',
-    renderAsOptions: {
-      parseMode: 'epoch-sec',
-      relativeTime: true,
-      relativeDisplay: 'relative',
-    },
-  },
-  {
-    key: 'postedAt',
-    label: 'Posted (absolute + relative)',
-    type: 'datetime',
-    renderAs: 'datetime',
-    renderAsOptions: {
-      parseMode: 'iso-datetime',
-      formatPreset: 'short',
-      timezone: 'utc',
-      relativeTime: true,
-      relativeDisplay: 'both',
-    },
-  },
-];
-```
-
-- `relativeDisplay: 'relative'` shows only relative time text.
-- `relativeDisplay: 'both'` shows the absolute timestamp and a smaller relative line beneath it.
-
-## Complete Option Reference
-
-`date` / `time` / `datetime` / `timestamp` shared options:
-
-- `parseMode` (`epoch-ms` | `epoch-sec` | `iso-date` | `iso-datetime` | `iso-time` | `any`) is required for `date`/`time`/`datetime`/`timestamp`.
-- `locale` (`string`)
-- `timezone` (`local` | `utc` | IANA timezone string)
-- `formatPreset` (`short` | `medium` | `long` | `full`)
-- `formatOptions` (`Intl.DateTimeFormatOptions`)
-- `relativeTime` (`boolean`)
-- `relativeDisplay` (`relative` | `both`) when `relativeTime` is enabled
-- `fallbackText` (`string`)
-
-`time` / `datetime` / `timestamp` time-format options:
-
-- `showSeconds` (`boolean`)
-- `hour12` (`boolean`)
-
-`duration` options:
-
-- `unit` (`ms` | `sec` | `min` | `hour` | `day`) required
-- `format` (`clock` | `humanized` | `decimal`)
-- `humanizedUnits` (`year` | `month` | `day` | `hour` | `minute` | `second` | `millisecond`) for `humanized` output
-- `precision` (`number`)
-- `showSign` (`boolean`)
-- `fallbackText` (`string`)
-
-### Duration Best Practices
-
-- For elapsed-runtime UX, `humanizedUnits` is ideal because apps can choose readability level per surface.
-- `year` and `month` are approximation units in humanized duration output:
-  - `1 year = 365 days`
-  - `1 month = 30 days`
-- For calendar-accurate business intervals, prefer domain-level calendar calculations before passing values into `renderAs: 'duration'`.
-- For predictable UI, explicitly set `humanizedUnits` instead of relying on defaults.
-
-## Valid Contract Values
-
-`parseMode`:
-
-- `epoch-ms`
-- `epoch-sec`
-- `iso-date`
-- `iso-datetime`
-- `iso-time`
-- `any`
-
-`duration.unit`:
-
-- `ms`
-- `sec`
-- `min`
-- `hour`
-- `day`
 
 ## Sorting Behavior
 
-Table sorting for temporal fields is contract-aware.
+Table sorting for temporal fields is contract-aware:
 
-- Temporal columns sort chronologically only when a valid `parseMode` is declared.
-- Duration columns sort numerically only when `unit` is declared.
-- If no contract is declared, Widgemo falls back to generic comparison semantics.
+- **date, time, datetime, timestamp** — sort chronologically when a valid `parseMode` is declared and `sortable: true` is set on the field. Without `parseMode`, sort falls back to generic string/number comparison.
+- **duration** — sorts numerically when `unit` is declared and `sortable: true` is set.
+
+```tsx
+{
+  key: 'postedAt',
+  label: 'Posted At',
+  type: 'datetime',
+  renderAs: 'datetime',
+  sortable: true,  // enables column header click-to-sort
+  renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', formatPreset: 'short' },
+}
+```
+
+Pre-sort the table on initial load via `zones.content.sorting`:
+
+```tsx
+zones: {
+  content: {
+    mode: 'table',
+    sorting: [{ fieldKey: 'postedAt', direction: 'desc' }],
+    // ...
+  }
+}
+```
+
+## Duration Approximation Units
+
+`format: 'humanized'` with `year` or `month` in `humanizedUnits` uses fixed approximations:
+- `1 year = 365 days`
+- `1 month = 30 days`
+
+These are calendar approximations, not exact. For financial or legal intervals where calendar accuracy matters (e.g. "3 months from contract date"), compute the display string in the host app and render it as `type: 'text'`.
+
+## parseMode Quick Reference
+
+| parseMode | Accepts | Example value |
+|---|---|---|
+| `iso-date` | `YYYY-MM-DD` | `"2026-05-29"` |
+| `iso-time` | `HH:mm:ss` | `"08:15:10"` |
+| `iso-datetime` | ISO 8601 with time | `"2026-05-29T08:15:10Z"` |
+| `epoch-sec` | Unix timestamp in seconds | `1780042510` |
+| `epoch-ms` | Unix timestamp in milliseconds | `1780042810000` |
+| `any` | Tries formats in order | Use only when source format is unknown |
+
+:::caution
+`parseMode: 'any'` attempts multiple parse strategies and is less reliable than explicit modes. Use it only when the source format is genuinely variable.
+:::
+
+## duration unit Quick Reference
+
+| unit | Interprets raw value as |
+|---|---|
+| `ms` | milliseconds |
+| `sec` | seconds |
+| `min` | minutes |
+| `hour` | hours |
+| `day` | days |
 
 ## Migration Checklist
 
-1. Locate all `type: 'date'` fields and add `renderAs: 'date'` with `parseMode`.
-2. For epoch values, switch to `type: 'timestamp'` and set `parseMode` accordingly.
-3. Add `unit` for every `type: 'duration'` field.
-4. Validate sorting on each temporal column in table mode.
+1. For every `type: 'date'` field, add `renderAs: 'date'` and `renderAsOptions.parseMode`.
+2. For epoch-style values, use `type: 'timestamp'` and set `parseMode: 'epoch-sec'` or `'epoch-ms'` depending on the source.
+3. For every `type: 'duration'` field, add `renderAs: 'duration'` and `renderAsOptions.unit`.
+4. Validate sort order on each temporal column in table mode.
+5. If a temporal column sorts unexpectedly, confirm that `parseMode`/`unit` is set — sort falls back to generic comparison without it.

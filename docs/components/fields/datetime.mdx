@@ -1,14 +1,155 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const datetimeData = [
+  { operation: 'Payroll Sync', postedAt: '2026-05-29T08:15:10Z', confirmedAt: '2026-05-29T09:01:44Z' },
+  { operation: 'Reserve Sweep', postedAt: '2026-05-30T11:42:33Z', confirmedAt: null },
+  { operation: 'Invoice Clear', postedAt: '2026-06-11T14:05:01Z', confirmedAt: null },
+];
+
+export const datetimeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Posted At',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimePresetsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Short',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'short' },
+          },
+          {
+            key: 'postedAt',
+            label: 'Medium',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+          {
+            key: 'postedAt',
+            label: 'Long',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'long' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimeRelativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Relative only',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: {
+              parseMode: 'iso-datetime',
+              locale: 'en-US',
+              relativeTime: true,
+              relativeDisplay: 'relative',
+            },
+          },
+          {
+            key: 'postedAt',
+            label: 'Abs + Relative',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: {
+              parseMode: 'iso-datetime',
+              locale: 'en-US',
+              timezone: 'utc',
+              formatPreset: 'short',
+              relativeTime: true,
+              relativeDisplay: 'both',
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimeConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Posted At',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+          {
+            key: 'confirmedAt',
+            label: 'Confirmed',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+            condition: (entity) => Boolean(entity.confirmedAt),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # datetime Field Type
 
-Use `type: 'datetime'` for combined date and time values.
+`type: 'datetime'` marks a field as a combined date-and-time value. Pair it with `renderAs: 'datetime'` and `parseMode: 'iso-datetime'` (for ISO 8601 strings) to render locale-aware output. Supports relative time display and timezone control.
 
-## Typical Use Cases
+## Core Examples
 
-- Event timestamps
-- Posting times
-- Workflow activity times
+### Basic Datetime Rendering
 
-## Example
+<WidgemoShowcase
+  description="ISO datetime string rendered with parseMode: 'iso-datetime', timezone: 'utc', and formatPreset: 'medium'."
+  data={datetimeData}
+  config={datetimeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
@@ -16,17 +157,122 @@ Use `type: 'datetime'` for combined date and time values.
   label: 'Posted At',
   type: 'datetime',
   renderAs: 'datetime',
-  renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short' },
+  renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
 }
 ```
 
-## Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- Pair with `renderAs: 'datetime'` for explicit temporal rendering.
-- `renderAsOptions.parseMode` is required in temporal renderer mode.
+### Format Presets
 
-## Related
+<WidgemoShowcase
+  description="Short, medium, and long presets on the same datetime value. Full preset is also available — adds weekday and timezone abbreviation."
+  data={datetimeData}
+  config={datetimePresetsConfig}
+/>
 
-- Renderer page: [datetime Renderer](/core/components/renderers/datetime)
-- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Canonical contract: [Field Config](/core/reference/field-config)
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', formatPreset: 'short' } }
+// → 5/29/26, 08:15 AM
+
+{ renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', formatPreset: 'medium' } }
+// → May 29, 2026, 8:15 AM  (default)
+
+{ renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', formatPreset: 'long' } }
+// → May 29, 2026 at 8:15 AM UTC
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Relative Time
+
+<WidgemoShowcase
+  description="Relative-only and absolute+relative stacked display. The stacked variant shows the absolute datetime with a smaller relative label beneath."
+  data={datetimeData}
+  config={datetimeRelativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Relative only — "2 weeks ago"
+{ renderAsOptions: { parseMode: 'iso-datetime', relativeTime: true, relativeDisplay: 'relative' } }
+
+// Absolute + relative stacked
+{
+  renderAsOptions: {
+    parseMode: 'iso-datetime',
+    timezone: 'utc',
+    formatPreset: 'short',
+    relativeTime: true,
+    relativeDisplay: 'both',
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Confirmed column only appears for Payroll Sync — the only row with a non-null confirmedAt value."
+  data={datetimeData}
+  config={datetimeConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'confirmedAt',
+  label: 'Confirmed',
+  type: 'datetime',
+  renderAs: 'datetime',
+  renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+  condition: (entity) => Boolean(entity.confirmedAt),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the datetime value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'datetime'` | — | Marks the field as a combined date-time value. Pair with `renderAs: 'datetime'`. |
+| `renderAs` | `'datetime'` | unset | Required for formatted output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'datetime'`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `'iso-datetime'` \| `'epoch-ms'` \| `'epoch-sec'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
+| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. Does not affect the stored value. |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Controls date+time detail level. |
+| `showSeconds` | `boolean` | `false` | Include seconds in the time component. |
+| `hour12` | `boolean` | locale default | `true` for 12-hour AM/PM, `false` for 24-hour. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with preset, takes precedence. |
+| `relativeTime` | `boolean` | `false` | Show relative time ("2 weeks ago") instead of absolute. |
+| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | When `relativeTime: true`: relative only, or absolute+relative stacked. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'`.
+- `parseMode: 'iso-datetime'` expects a full ISO 8601 datetime string including time component (e.g. `2026-05-29T08:15:10Z`). A date-only string like `2026-05-29` will not parse — use `type: 'date'` for date-only values.
+- `timezone` controls the **display timezone** only — the value is always stored and parsed as UTC-relative.
+- The `full` preset includes a timezone abbreviation (e.g. `UTC`, `PDT`). This requires the `timezone` option to be set explicitly.
+
+## See Also
+
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [date Field Type](/core/components/fields/date)
+- [timestamp Field Type](/core/components/fields/timestamp)
+- [Field Config](/core/reference/field-config)

@@ -1,32 +1,240 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const timestampData = [
+  { operation: 'Payroll Sync', updatedAtEpochSec: 1780042510, ingestedAtEpochMs: 1780042810000 },
+  { operation: 'Reserve Sweep', updatedAtEpochSec: 1780141353, ingestedAtEpochMs: 1780141633000 },
+  { operation: 'Invoice Clear', updatedAtEpochSec: 1780236301, ingestedAtEpochMs: 1780236541000 },
+];
+
+export const timestampBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'updatedAtEpochSec',
+            label: 'Updated (epoch-sec)',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+          {
+            key: 'ingestedAtEpochMs',
+            label: 'Ingested (epoch-ms)',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: { parseMode: 'epoch-ms', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timestampRelativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'updatedAtEpochSec',
+            label: 'Relative only',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', relativeTime: true, relativeDisplay: 'relative' },
+          },
+          {
+            key: 'ingestedAtEpochMs',
+            label: 'Abs + Relative',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: {
+              parseMode: 'epoch-ms',
+              locale: 'en-US',
+              timezone: 'utc',
+              formatPreset: 'short',
+              relativeTime: true,
+              relativeDisplay: 'both',
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timestampSortConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      sorting: [{ fieldKey: 'updatedAtEpochSec', direction: 'desc' }],
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'updatedAtEpochSec',
+            label: 'Updated',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            sortable: true,
+            renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # timestamp Field Type
 
-Use `type: 'timestamp'` for epoch-style timestamp values.
+`type: 'timestamp'` marks a field as a machine-generated epoch timestamp — a numeric Unix value (seconds or milliseconds) or an ISO datetime string from a system log, audit trail, or event stream. Pair it with `renderAs: 'timestamp'` and the correct `parseMode` for the source format.
 
-## Typical Use Cases
+## Core Examples
 
-- Event ingestion times
-- Audit entries
-- Source-system Unix timestamp fields
+### epoch-sec and epoch-ms
 
-## Example
+The two most common timestamp formats in backend systems. `parseMode` tells the renderer how to interpret the raw number.
+
+<WidgemoShowcase
+  description="Two timestamp columns from the same dataset — one in Unix seconds, one in Unix milliseconds. Both render identically with the correct parseMode."
+  data={timestampData}
+  config={timestampBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
+// Unix seconds
 {
-  key: 'updatedAtEpoch',
+  key: 'updatedAtEpochSec',
   label: 'Updated',
   type: 'timestamp',
   renderAs: 'timestamp',
-  renderAsOptions: { parseMode: 'epoch-sec', formatPreset: 'short' },
+  renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+
+// Unix milliseconds
+{
+  key: 'ingestedAtEpochMs',
+  label: 'Ingested',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  renderAsOptions: { parseMode: 'epoch-ms', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
 }
 ```
 
-## Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- Pair with `renderAs: 'timestamp'` for explicit temporal rendering.
-- `renderAsOptions.parseMode` is required in temporal renderer mode.
+### Relative Time
 
-## Related
+Timestamps are the most natural candidate for relative display — event streams and audit logs are typically read as "how long ago did this happen?".
 
-- Renderer page: [timestamp Renderer](/core/components/renderers/timestamp)
-- Deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Canonical contract: [Field Config](/core/reference/field-config)
+<WidgemoShowcase
+  description="Relative-only and absolute+relative stacked display for epoch timestamps."
+  data={timestampData}
+  config={timestampRelativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Relative only
+{ renderAsOptions: { parseMode: 'epoch-sec', relativeTime: true, relativeDisplay: 'relative' } }
+
+// Absolute + relative stacked
+{
+  renderAsOptions: {
+    parseMode: 'epoch-ms',
+    timezone: 'utc',
+    formatPreset: 'short',
+    relativeTime: true,
+    relativeDisplay: 'both',
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Sorting
+
+Timestamps sort chronologically in table mode when `parseMode` is declared and `sortable: true` is set.
+
+<WidgemoShowcase
+  description="Table pre-sorted descending by epoch-sec timestamp. Click the column header to toggle sort direction."
+  data={timestampData}
+  config={timestampSortConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'updatedAtEpochSec',
+  label: 'Updated',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  sortable: true,
+  renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the timestamp value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'timestamp'` | — | Marks the field as a machine-generated epoch value. Pair with `renderAs: 'timestamp'`. |
+| `renderAs` | `'timestamp'` | unset | Required for formatted output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'timestamp'`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
+| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. Does not affect the stored value. |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Controls date+time detail level. |
+| `showSeconds` | `boolean` | `false` | Include seconds in the time component. |
+| `hour12` | `boolean` | locale default | `true` for 12-hour AM/PM, `false` for 24-hour. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with preset, takes precedence. |
+| `relativeTime` | `boolean` | `false` | Show relative time ("2 weeks ago") instead of absolute. |
+| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | When `relativeTime: true`: relative only, or absolute+relative stacked. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'`.
+- `epoch-sec` and `epoch-ms` are the two most common choices. Mixing them (e.g. passing milliseconds with `epoch-sec`) produces a date far in the future — verify your source format.
+- `type: 'timestamp'` and `type: 'datetime'` share the same renderer internally (`renderTemporal` with `kind: 'datetime'`). The distinction is **semantic**: timestamp signals a machine-generated epoch value; datetime signals a human-authored date+time.
+- `parseMode: 'any'` attempts multiple formats in order. Use it only when the source format is genuinely unknown — it is less reliable than explicit modes.
+
+## Why timestamp vs datetime?
+
+Both accept epoch values with `parseMode: 'epoch-ms'` or `'epoch-sec'` and render identically. The distinction is semantic:
+
+- `type: 'timestamp'` — the value comes from a system clock, audit log, or event stream. The epoch integer is the primary form.
+- `type: 'datetime'` — the value is a human-readable ISO string authored to represent a specific point in time.
+
+Using the correct type communicates intent clearly and will matter for future features like inline editing (timestamp fields would get a read-only display; datetime fields might get a datetime picker).
+
+## See Also
+
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [datetime Field Type](/core/components/fields/datetime)
+- [date Field Type](/core/components/fields/date)
+- [Field Config](/core/reference/field-config)
