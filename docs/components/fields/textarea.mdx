@@ -1,19 +1,271 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const textareaData = [
+  { name: 'Aurora Chen', status: 'active', notes: 'Completed onboarding review. Flagged three process gaps for Q2 follow-up. Recommend scheduling a retrospective with the UI guild before sprint 18 kicks off.' },
+  { name: 'Mateo Silva', status: 'active', notes: 'Monitoring API latency after the pipeline refactor. No regressions so far.' },
+  { name: 'Priya Nair', status: 'on-leave', notes: 'Out until end of month. Handoff notes sent to Jordan. Cross-team rollout postponed to Q3.' },
+];
+
+export const textareaBasicConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '260px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'status', label: 'Status', type: 'text' },
+          { key: 'notes', label: 'Notes', type: 'textarea', wrap: true },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textareaWrapFalseConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '220px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'notes', label: 'Notes', type: 'textarea', wrap: false },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textareaWrapTrueConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '220px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'notes', label: 'Notes', type: 'textarea', wrap: true },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textareaFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'notes',
+            label: 'Preview',
+            type: 'textarea',
+            wrap: true,
+            formatter: (value) => {
+              const s = String(value ?? '');
+              return s.length > 80 ? s.slice(0, 80) + '…' : s;
+            },
+          },
+          {
+            key: 'notes',
+            label: 'Word count',
+            type: 'textarea',
+            formatter: (value) => {
+              const words = String(value ?? '').trim().split(/\s+/).filter(Boolean);
+              return words.length + ' words';
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textareaConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'status', label: 'Status', type: 'text' },
+          {
+            key: 'notes',
+            label: 'Notes',
+            type: 'textarea',
+            wrap: true,
+            condition: (entity) => entity.status !== 'on-leave',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # textarea Field Type
 
-Use `type: 'textarea'` for longer text content where multi-line values are expected.
+`type: 'textarea'` renders a long-form text value as plain text, semantically indicating the value is multi-line or paragraph content such as notes, comments, or descriptions.
 
-## Typical Use Cases
+## Core Examples
 
-- Notes and comments
-- Summaries and descriptions
-- Internal audit annotations
+### Basic Textarea Field
 
-## Example
+<WidgemoShowcase
+  description="Name, status, and notes in grid mode. Notes uses wrap: true so long content flows across multiple lines within each card."
+  data={textareaData}
+  config={textareaBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ key: 'notes', label: 'Notes', type: 'textarea' }
+{ key: 'notes', label: 'Notes', type: 'textarea', wrap: true }
 ```
 
-## Related
+:::note
+`wrap: true` requires a bounded container to visually constrain the field. In **grid, carousel, and board modes**, each card's fixed width provides that boundary — long text flows across multiple lines. In **table mode**, the column cell expands to fit content instead, so wrapping has no visible effect unless you also set an explicit `width` on the field.
+:::
 
-- Canonical contract: [Field Config](/core/reference/field-config)
+<div style={{ marginBottom: '1rem' }} />
+
+### Wrap Control
+
+`wrap: false` clips content to a single line. In **card-based modes** (grid, carousel, board), the card's fixed boundary constrains the field — overflowing text is replaced with an ellipsis and the full value appears on hover. In **table mode**, the column cell expands to fit `nowrap` content rather than clipping, so text stays on one line but the table may scroll horizontally.
+
+`wrap: true` allows text to flow across multiple lines — the natural choice for textarea content.
+
+#### `wrap: false` — single line with ellipsis (grid)
+
+<WidgemoShowcase
+  description="Each card has a fixed width from the grid column. Notes clips to one line with ellipsis. Hover to see the full value."
+  data={textareaData}
+  config={textareaWrapFalseConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'notes', label: 'Notes', type: 'textarea', wrap: false }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+#### `wrap: true` — multi-line (grid)
+
+<WidgemoShowcase
+  description="Same fields. Notes wraps across as many lines as needed instead of clipping."
+  data={textareaData}
+  config={textareaWrapTrueConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'notes', label: 'Notes', type: 'textarea', wrap: true }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` transforms the raw value before display. It receives `(value, entity)` and must return the value to render — the entity is not mutated and the original data is unchanged.
+
+<WidgemoShowcase
+  description="Notes rendered twice: once as a truncated preview (first 80 characters), once as a word count."
+  data={textareaData}
+  config={textareaFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'notes',
+  label: 'Preview',
+  type: 'textarea',
+  wrap: true,
+  formatter: (value) => {
+    const s = String(value ?? '');
+    return s.length > 80 ? s.slice(0, 80) + '…' : s;
+  },
+},
+{
+  key: 'notes',
+  label: 'Word count',
+  type: 'textarea',
+  formatter: (value) => {
+    const words = String(value ?? '').trim().split(/\s+/).filter(Boolean);
+    return words.length + ' words';
+  },
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it entirely. Evaluated per row — different rows can show or hide the same field independently.
+
+<WidgemoShowcase
+  description="Notes is hidden for Priya (status: on-leave). Aurora and Mateo show their notes normally."
+  data={textareaData}
+  config={textareaConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'notes',
+  label: 'Notes',
+  type: 'textarea',
+  wrap: true,
+  condition: (entity) => entity.status !== 'on-leave',
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'textarea'` | — | Renders the value as plain text. Semantically signals long-form content. |
+| `wrap` | `true`, `false` | inherited from `ItemConfig.wrap` | `false`: single line. In card modes, clips with ellipsis + hover tooltip. In table mode, column expands instead. `true`: multi-line wrapping (recommended for textarea). |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before display. Does not mutate the entity. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replaces text rendering with a named renderer. `type` is bypassed when set. |
+
+## Caveats
+
+- `textarea` and `text` share the same renderer — both output `<span className="field-text">`. The distinction is **semantic**, not visual.
+- `wrap: true` is the natural default for textarea since content is typically long. Without it, the parent `ItemConfig.wrap` default applies.
+- `wrap: false` in table mode keeps content on one line but the column expands instead of clipping — use grid mode if you want ellipsis truncation.
+- Unlike `email` and `url`, textarea does **not** use forced word-breaking. Text wraps at natural word boundaries only.
+
+## Why textarea vs text?
+
+They render identically today. The distinction matters for two reasons:
+
+**Semantic intent** — `type: 'textarea'` communicates to the host app, other developers, and future tooling that the field contains long-form content. A `type: 'text'` field is expected to be a short string like a name or tag.
+
+**Forward compatibility** — future widgemo features like inline editing will use the field type to decide what input widget to render. A `textarea` field will get a `<textarea>` element; a `text` field will get an `<input type="text">`. Typing the field correctly now means no config changes when those features ship.
+
+## See Also
+
+- [text Field Type](/core/components/fields/text)
+- [email Field Type](/core/components/fields/email)
+- [Field Config](/core/reference/field-config)
