@@ -4,268 +4,6 @@ sidebar_position: 5
 
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
-# Chart Mode
-
-## Mode Purpose and When to Use
-
-Chart mode owns the full content area as a chart.
-Use it when the visualization itself is the primary surface, not a small field renderer.
-For inline composition bars, see [compositionBar vs Chart Mode](/core/components/renderers/composition-bar-guide#when-to-use-compositionbar-vs-chart-mode).
-
-`modeConfig.chart` accepts five series types: `bar`, `line`, `area`, `pie`, and `donut`. The chart can also control legend placement, grid lines, labels, size, colors, tooltip behavior, and line/area/polar tuning.
-
-## Shared-Feature Boundary
-
-Shared content behavior stays canonical in reference pages:
-
-- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
-- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
-- [Field Config](/core/reference/field-config) for field-level rendering rules outside chart-only concerns
-
-## Core Examples
-
-### Bar Chart
-
-Use bar charts for direct comparisons across categories.
-
-<WidgemoShowcase
-  title="Bar Chart"
-  description="A basic vertical bar chart with two series."
-  data={barChartData}
-  config={barChartConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'chart',
-      modeConfig: {
-        chart: {
-          xAxis: 'month',
-          height: 320,
-          showLegend: true,
-          showGrid: true,
-          series: [
-            { key: 'revenue', label: 'Revenue', type: 'bar' },
-            { key: 'visits', label: 'Visits', type: 'bar' },
-          ],
-        },
-      },
-    },
-  },
-};
-```
-
-### Line Chart
-
-Use line charts when the main story is the change over time.
-
-<WidgemoShowcase
-  title="Line Chart"
-  description="A multi-series line chart with dots enabled for easier reading."
-  data={lineChartData}
-  config={lineChartConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'chart',
-      modeConfig: {
-        chart: {
-          xAxis: 'month',
-          height: 320,
-          showLegend: true,
-          showGrid: true,
-          showDots: true,
-          series: [
-            { key: 'revenue', label: 'Revenue', type: 'line' },
-            { key: 'visits', label: 'Visits', type: 'line' },
-          ],
-        },
-      },
-    },
-  },
-};
-```
-
-### Area Chart
-
-Use area charts when you want the same trend view with more visual weight.
-
-<WidgemoShowcase
-  title="Area Chart"
-  description="A stacked-feeling view with area fills and a slightly higher emphasis on volume."
-  data={areaChartData}
-  config={areaChartConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'chart',
-      modeConfig: {
-        chart: {
-          xAxis: 'month',
-          height: 320,
-          showLegend: true,
-          showGrid: true,
-          showDots: false,
-          areaGradient: true,
-          series: [
-            { key: 'revenue', label: 'Revenue', type: 'area' },
-            { key: 'visits', label: 'Visits', type: 'area' },
-          ],
-        },
-      },
-    },
-  },
-};
-```
-
-### Pie Chart
-
-Use pie charts when a single category breakdown is easier to read than a cartesian chart.
-
-<WidgemoShowcase
-  title="Pie Chart"
-  description="A single polar series with category labels and a visible legend."
-  data={pieChartData}
-  config={pieChartConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'chart',
-      modeConfig: {
-        chart: {
-          xAxis: 'segment',
-          height: 320,
-          showLegend: true,
-          showGrid: false,
-          series: [
-            { key: 'value', label: 'Share', type: 'pie' },
-          ],
-        },
-      },
-    },
-  },
-};
-```
-
-### Donut Chart
-
-Use donut charts when you want the same category breakdown with more center breathing room.
-
-<WidgemoShowcase
-  title="Donut Chart"
-  description="The same polar data rendered as a donut with a slightly smaller inner hole."
-  data={donutChartData}
-  config={donutChartConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'chart',
-      modeConfig: {
-        chart: {
-          xAxis: 'segment',
-          height: 320,
-          showLegend: true,
-          showGrid: false,
-          donutInnerRadiusRatio: 0.68,
-          series: [
-            { key: 'value', label: 'Share', type: 'donut' },
-          ],
-        },
-      },
-    },
-  },
-};
-```
-
-## Mode Option Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| `xAxis` | string | unset | Selects the label field used for chart categories. |
-| `height` | number | `300` | Sets the chart height. |
-| `showLegend` | `true`, `false` | unset | Shows or hides the legend. |
-| `legendAlign` | `left`, `center`, `right` | `center` | Aligns the legend left, center, or right. |
-| `showGrid` | `true`, `false` | unset | Shows or hides the cartesian grid. |
-| `showLabels` | `true`, `false` | unset | Shows or hides data labels. |
-| `colors` | string array | unset | Overrides the default series color palette. |
-| `orientation` | `vertical`, `horizontal` | `vertical` | Flips bar charts to horizontal when set to `horizontal`. |
-| `lineThickness` | number | `3.5` | Sets the default thickness for line and area series. |
-| `showDots` | `true`, `false` | `false` | Shows or hides line/area data points. |
-| `areaGradient` | `true`, `false` | `true` | Enables or disables gradient fills for area series. |
-| `showTooltip` | `true`, `false` | `true` | Enables or disables hover tooltips. |
-| `donutInnerRadiusRatio` | number (`0.2` to `0.9`) | `0.58` | Controls the donut hole size. |
-| `tooltip.position` | `top`, `bottom`, `left`, `right`, `top-right`, `top-left`, `bottom-right`, `bottom-left` | `top-right` | Sets tooltip placement. |
-| `tooltip.render` | `(context) => ReactNode` | unset | Replaces the built-in tooltip content. |
-
-### Example: Horizontal Bars
-
-If you want a horizontal bar chart, keep the series type as `bar` and set `orientation: 'horizontal'`.
-
-```tsx
-chart: {
-  xAxis: 'month',
-  orientation: 'horizontal',
-  series: [{ key: 'revenue', type: 'bar' }],
-}
-```
-
-## Mode-Specific Caveats
-
-- `orientation` applies only to bar series.
-- `donutInnerRadiusRatio` applies only to donut series.
-
-## Coverage Summary
-
-Every chart option is mapped to at least one example or subsection on this page:
-
-- `xAxis`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
-- `height`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
-- `showLegend`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
-- `legendAlign`: Chart Options reference
-- `showGrid`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
-- `showLabels`: Chart Options reference
-- `colors`: Chart Options reference
-- `orientation`: Example: Horizontal Bars
-- `lineThickness`: Chart Options reference
-- `showDots`: Line Chart, Area Chart
-- `areaGradient`: Area Chart
-- `showTooltip`: Chart Options reference
-- `donutInnerRadiusRatio`: Donut Chart
-- `tooltip.position`: Chart Options reference
-- `tooltip.render`: Chart Options reference
-
-## See Also
-
-- [Content Config](/core/reference/content-config)
-- [Field Config](/core/reference/field-config)
-- [compositionBar vs Chart Mode](/core/components/renderers/composition-bar-guide#when-to-use-compositionbar-vs-chart-mode)
-
 export const barChartData = [
   { month: 'Jan', revenue: 120, visits: 180 },
   { month: 'Feb', revenue: 150, visits: 210 },
@@ -401,3 +139,285 @@ export const donutChartConfig = {
     },
   },
 };
+
+export const horizontalBarChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 280,
+          orientation: 'horizontal',
+          showLegend: true,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'bar' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+export const perSeriesChartConfig = {
+  zones: {
+    content: {
+      mode: 'chart',
+      modeConfig: {
+        chart: {
+          xAxis: 'month',
+          height: 300,
+          showDots: false,
+          lineThickness: 1.5,
+          series: [
+            { key: 'revenue', label: 'Revenue', type: 'line', showDots: true, color: '#6366f1', lineThickness: 3 },
+            { key: 'visits', label: 'Visits', type: 'line' },
+          ],
+        },
+      },
+    },
+  },
+};
+
+# Chart Mode
+
+`modeConfig.chart` owns the full content area as a chart. Use it when the visualization itself is the primary surface, not a small field renderer. For inline composition bars, see [compositionBar vs Chart Mode](/core/components/renderers/composition-bar-guide#when-to-use-compositionbar-vs-chart-mode).
+
+Five series types are supported: `bar`, `line`, `area`, `pie`, and `donut`. Several options (`color`, `lineThickness`, `showDots`, `areaGradient`, `donutInnerRadiusRatio`) can be set at the top-level chart config as a default, or overridden per series.
+
+## Shared Behavior
+
+Search, static filtering, pagination, actions, and gestures work the same as other modes — see the reference pages:
+
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
+- [Field Config](/core/reference/field-config) for field-level rendering rules outside chart-only concerns
+
+## Core Examples
+
+### Bar Chart
+
+Use bar charts for direct comparisons across categories.
+
+<WidgemoShowcase
+  description="A vertical bar chart with two series, grid lines, and a legend."
+  data={barChartData}
+  config={barChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  chart: {
+    xAxis: 'month',
+    height: 320,
+    series: [
+      { key: 'revenue', label: 'Revenue', type: 'bar' },
+      { key: 'visits', label: 'Visits', type: 'bar' },
+    ],
+  },
+}
+```
+
+### Line Chart
+
+Use line charts when the main story is the change over time.
+
+<WidgemoShowcase
+  description="A multi-series line chart with data points enabled."
+  data={lineChartData}
+  config={lineChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  chart: {
+    xAxis: 'month',
+    height: 320,
+    showDots: true,
+    series: [
+      { key: 'revenue', label: 'Revenue', type: 'line' },
+      { key: 'visits', label: 'Visits', type: 'line' },
+    ],
+  },
+}
+```
+
+### Area Chart
+
+Use area charts when you want the same trend view with more visual weight.
+
+<WidgemoShowcase
+  description="A multi-series area chart with gradient fills."
+  data={areaChartData}
+  config={areaChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  chart: {
+    xAxis: 'month',
+    height: 320,
+    areaGradient: true,
+    series: [
+      { key: 'revenue', label: 'Revenue', type: 'area' },
+      { key: 'visits', label: 'Visits', type: 'area' },
+    ],
+  },
+}
+```
+
+### Pie Chart
+
+Use pie charts when a single category breakdown is easier to read than a cartesian chart.
+
+<WidgemoShowcase
+  description="A single polar series with category labels and a visible legend."
+  data={pieChartData}
+  config={pieChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  chart: {
+    xAxis: 'segment',
+    height: 320,
+    showGrid: false,
+    series: [
+      { key: 'value', label: 'Share', type: 'pie' },
+    ],
+  },
+}
+```
+
+### Donut Chart
+
+Use donut charts when you want the same category breakdown with more center breathing room.
+
+<WidgemoShowcase
+  description="The same polar data rendered as a donut with a custom inner radius."
+  data={donutChartData}
+  config={donutChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  chart: {
+    xAxis: 'segment',
+    height: 320,
+    showGrid: false,
+    donutInnerRadiusRatio: 0.68,
+    series: [
+      { key: 'value', label: 'Share', type: 'donut' },
+    ],
+  },
+}
+```
+
+## Chart Options Reference
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `xAxis` | string | `'name'` | Selects the label field used for chart categories. |
+| `height` | number | `300` | Sets the chart height in pixels. |
+| `showLegend` | `true`, `false` | `true` | Shows or hides the legend. |
+| `legendAlign` | `left`, `center`, `right` | `center` | Aligns the legend left, center, or right. |
+| `showGrid` | `true`, `false` | `true` | Shows or hides the cartesian grid. |
+| `showLabels` | `true`, `false` | `false` | Shows or hides data labels on bars, lines, and polar segments. |
+| `colors` | string array | theme tokens | Overrides the default series color palette. |
+| `orientation` | `vertical`, `horizontal` | `vertical` | Flips bar charts to horizontal. Only applies when all series are `bar`. |
+| `lineThickness` | number (`0.5`–`20`) | `3.5` | Sets the default stroke width for line and area series. Can be overridden per series. |
+| `showDots` | `true`, `false` | `false` | Shows or hides line/area data points. Can be overridden per series. |
+| `areaGradient` | `true`, `false` | `true` | Enables or disables gradient fills for area series. Can be overridden per series. |
+| `showTooltip` | `true`, `false` | `true` | Enables or disables hover tooltips. |
+| `donutInnerRadiusRatio` | number (`0.2`–0.9`) | `0.58` | Controls the donut hole size. Can be overridden per series. |
+| `tooltip.position` | `top`, `bottom`, `left`, `right`, `top-right`, `top-left`, `bottom-right`, `bottom-left` | `top-right` | Sets tooltip placement. |
+| `tooltip.render` | `(context) => ReactNode` | unset | Replaces the built-in tooltip content. |
+
+### Example: Horizontal Bars
+
+Set `orientation: 'horizontal'` with all `bar` series to flip axes.
+
+<WidgemoShowcase
+  description="Bar chart with orientation set to horizontal."
+  data={barChartData}
+  config={horizontalBarChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+chart: {
+  xAxis: 'month',
+  orientation: 'horizontal',
+  series: [{ key: 'revenue', type: 'bar' }],
+}
+```
+
+### Per-Series Overrides
+
+`color`, `lineThickness`, `showDots`, `areaGradient`, and `donutInnerRadiusRatio` can be set on each individual series item to override the chart-level default for that series only. Here the Revenue series overrides color, thickness, and dots while Visits inherits the chart defaults.
+
+<WidgemoShowcase
+  description="Revenue series overrides color, lineThickness, and showDots. Visits inherits the chart-level defaults."
+  data={lineChartData}
+  config={perSeriesChartConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+chart: {
+  showDots: false,           // default for all series
+  lineThickness: 1.5,        // default for all series
+  series: [
+    { key: 'revenue', type: 'line', showDots: true, color: '#6366f1', lineThickness: 3 },  // overrides
+    { key: 'visits', type: 'line' },  // inherits chart defaults
+  ],
+}
+```
+
+## Mode-Specific Caveats
+
+- `orientation` applies only when all series are `bar`.
+- `donutInnerRadiusRatio` applies only to donut series.
+- Only one `pie` or `donut` series is supported per chart.
+- Mixing polar (`pie`, `donut`) and cartesian (`bar`, `line`, `area`) series in the same chart is not supported.
+- Sorting (`config.sorting`) is not supported in chart mode. Pre-sort your data before passing it in if a specific order is needed.
+
+## Coverage Summary
+
+Every chart option is mapped to at least one example or subsection on this page:
+
+- `xAxis`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
+- `height`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
+- `showLegend`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
+- `legendAlign`: Chart Options Reference
+- `showGrid`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
+- `showLabels`: Chart Options Reference
+- `colors`: Chart Options Reference
+- `orientation`: Example: Horizontal Bars
+- `lineThickness`: Per-Series Overrides, Chart Options Reference
+- `showDots`: Line Chart, Per-Series Overrides
+- `areaGradient`: Area Chart, Per-Series Overrides
+- `showTooltip`: Chart Options Reference
+- `donutInnerRadiusRatio`: Donut Chart, Per-Series Overrides
+- `tooltip.position`: Chart Options Reference
+- `tooltip.render`: Chart Options Reference
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [compositionBar vs Chart Mode](/core/components/renderers/composition-bar-guide#when-to-use-compositionbar-vs-chart-mode)
