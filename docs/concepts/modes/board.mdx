@@ -4,159 +4,6 @@ sidebar_position: 4
 
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
-# Board Mode
-
-## Mode Purpose and When to Use
-
-`modeConfig.board` controls Kanban-style routing, column metadata, swimlanes, and drag behavior.
-Use board mode when work needs lane-based grouping with optional drag-and-drop movement.
-
-## Shared-Feature Boundary
-
-Shared content behavior stays canonical in reference pages:
-
-- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
-- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
-- [Action Config](/core/reference/action-config) for action placement and overflow behavior
-
-## Core Examples
-
-### Column Routing
-
-Use column routing when the board is shaped by one field, such as status or phase.
-
-<WidgemoShowcase
-  title="Board Columns"
-  description="A simple board with column routing, widths, colors, and WIP limits."
-  data={boardModeData}
-  config={boardColumnsConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'board',
-      modeConfig: {
-        board: {
-          columns: {
-            field: 'status',
-            items: [
-              { id: 'active', label: 'Active', value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
-              { id: 'pending', label: 'Pending', value: 'pending', color: '#f59e0b', wipLimit: 5 },
-              { id: 'inactive', label: 'Inactive', value: 'inactive', color: '#6b7280' },
-            ],
-          },
-          dragEnabled: true,
-        },
-      },
-      item: {
-        fields: [{ key: 'name', label: 'Name' }],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-```
-
-### Swimlanes
-
-Use swimlanes when you need a second axis, such as department, region, or team.
-
-<WidgemoShowcase
-  title="Board Swimlanes"
-  description="The same board routed through columns and swimlanes, using a matrix layout."
-  data={boardSwimlaneData}
-  config={boardSwimlaneConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'board',
-      modeConfig: {
-        board: {
-          columns: {
-            field: 'status',
-            items: [
-              { id: 'active', label: 'Active', value: 'active' },
-              { id: 'pending', label: 'Pending', value: 'pending' },
-              { id: 'inactive', label: 'Inactive', value: 'inactive' },
-            ],
-          },
-          swimlanes: {
-            field: 'department',
-            items: [
-              { id: 'engineering', label: 'Engineering', value: 'Engineering' },
-              { id: 'design', label: 'Design', filter: (entity) => entity.department === 'Design' },
-            ],
-            layout: { type: 'matrix' },
-            repeatingHeaders: false,
-          },
-          dragEnabled: true,
-        },
-      },
-      item: {
-        fields: [{ key: 'name', label: 'Name' }],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-```
-
-## Mode Option Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| `columns.field` | string | required | Selects the entity field used to route cards into columns. |
-| `columns.items` | `BoardColumnConfig[]` | required | Declares the visible columns and their order. |
-| `columns.items[].value` | string, number, boolean | item `id` | Overrides the value used for routing. |
-| `columns.items[].filter` | `(entity) => boolean` | unset | Replaces value matching with a predicate. |
-| `columns.items[].width` | CSS length | unset | Sets the width of a column. |
-| `columns.items[].color` | CSS color | unset | Sets the accent color for a column. |
-| `columns.items[].wipLimit` | number | unset | Adds a work-in-progress limit to a column. |
-| `swimlanes.field` | string | required when `swimlanes` is set | Selects the entity field used to route rows into swimlanes. |
-| `swimlanes.items` | `BoardSwimlaneConfig[]` | required when `swimlanes` is set | Declares the swimlanes and their order. |
-| `swimlanes.layout.type` | `collapsible`, `matrix` | `collapsible` | Switches between collapsible sections and matrix layout. |
-| `swimlanes.repeatingHeaders` | `true`, `false` | `true` | Chooses whether column headers repeat for each swimlane. |
-| `dragEnabled` | `true`, `false` | unset | Enables or disables board dragging. |
-
-## Mode-Specific Caveats
-
-- `columns.items[].filter` overrides simple field-value matching for that axis item.
-- `swimlanes` adds a second routing axis and changes board layout semantics.
-
-## Coverage Summary
-
-Every board option is mapped to at least one example or reference subsection on this page:
-
-- `columns.field`: Column Routing, Swimlanes
-- `columns.items`: Column Routing, Swimlanes
-- `columns.items[].value`: Column Routing, Swimlanes
-- `columns.items[].filter`: Board Options reference (documented for predicate-based column routing)
-- `columns.items[].width`: Column Routing
-- `columns.items[].color`: Column Routing
-- `columns.items[].wipLimit`: Column Routing
-- `swimlanes.field`: Swimlanes
-- `swimlanes.items`: Swimlanes
-- `swimlanes.layout.type`: Swimlanes
-- `swimlanes.repeatingHeaders`: Swimlanes
-- `dragEnabled`: Column Routing, Swimlanes
-
-## See Also
-
-- [Content Config](/core/reference/content-config)
-- [Action Config](/core/reference/action-config)
-- [Table Mode](/core/concepts/modes/table)
-
 export const boardModeData = [
   { name: 'Aurora Chen', status: 'active' },
   { name: 'Mateo Silva', status: 'pending' },
@@ -229,3 +76,129 @@ export const boardSwimlaneConfig = {
     },
   },
 };
+
+# Board Mode
+
+`modeConfig.board` controls Kanban-style column routing, swimlanes, and drag behavior. Use board mode when work needs lane-based grouping with optional drag-and-drop movement.
+
+## Shared Behavior
+
+Search, static filtering, sorting, pagination, actions, and gestures work the same as other modes — see the reference pages:
+
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
+- [Action Config](/core/reference/action-config) for action placement and overflow behavior
+
+## Core Examples
+
+### Column Routing
+
+Use column routing when the board is shaped by one field, such as status or phase.
+
+<WidgemoShowcase
+  description="A simple board with column routing, widths, colors, and WIP limits."
+  data={boardModeData}
+  config={boardColumnsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  board: {
+    columns: {
+      field: 'status',
+      items: [
+        { id: 'active', label: 'Active', value: 'active', color: '#10b981', width: '280px', wipLimit: 8 },
+        { id: 'pending', label: 'Pending', value: 'pending', color: '#f59e0b', wipLimit: 5 },
+        { id: 'inactive', label: 'Inactive', value: 'inactive', color: '#6b7280' },
+      ],
+    },
+    dragEnabled: true,
+  },
+}
+```
+
+### Swimlanes
+
+Use swimlanes when you need a second axis, such as department, region, or team.
+
+<WidgemoShowcase
+  description="The same board routed through columns and swimlanes, using a matrix layout."
+  data={boardSwimlaneData}
+  config={boardSwimlaneConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  board: {
+    columns: {
+      field: 'status',
+      items: [
+        { id: 'active', label: 'Active', value: 'active' },
+        { id: 'pending', label: 'Pending', value: 'pending' },
+        { id: 'inactive', label: 'Inactive', value: 'inactive' },
+      ],
+    },
+    swimlanes: {
+      field: 'department',
+      items: [
+        { id: 'engineering', label: 'Engineering', value: 'Engineering' },
+        { id: 'design', label: 'Design', filter: (entity) => entity.department === 'Design' },
+      ],
+      layout: { type: 'matrix' },
+      repeatingHeaders: false,
+    },
+    dragEnabled: true,
+  },
+}
+```
+
+## Board Options Reference
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `columns.field` | string | required | Selects the entity field used to route cards into columns. |
+| `columns.items` | `BoardColumnConfig[]` | required | Declares the visible columns and their order. |
+| `columns.items[].value` | string, number, boolean | item `id` | Overrides the value used for routing. |
+| `columns.items[].filter` | `(entity) => boolean` | unset | Replaces value matching with a predicate. |
+| `columns.items[].width` | CSS length | unset | Sets the width of a column. |
+| `columns.items[].color` | CSS color | unset | Sets the accent color for a column. |
+| `columns.items[].wipLimit` | number | unset | Adds a work-in-progress limit to a column. |
+| `swimlanes.field` | string | required when `swimlanes` is set | Selects the entity field used to route rows into swimlanes. |
+| `swimlanes.items` | `BoardSwimlaneConfig[]` | required when `swimlanes` is set | Declares the swimlanes and their order. |
+| `swimlanes.layout.type` | `collapsible`, `matrix` | `collapsible` | Switches between collapsible sections and matrix layout. |
+| `swimlanes.repeatingHeaders` | `true`, `false` | `true` | Chooses whether column headers repeat for each swimlane. |
+| `dragEnabled` | `true`, `false` | unset | Enables or disables board dragging. |
+
+## Mode-Specific Caveats
+
+- `columns.items[].filter` overrides simple field-value matching for that axis item.
+- `swimlanes` adds a second routing axis and changes board layout semantics.
+
+## Coverage Summary
+
+Every board option is mapped to at least one example or reference subsection on this page:
+
+- `columns.field`: Column Routing, Swimlanes
+- `columns.items`: Column Routing, Swimlanes
+- `columns.items[].value`: Column Routing, Swimlanes
+- `columns.items[].filter`: Board Options Reference (documented for predicate-based column routing)
+- `columns.items[].width`: Column Routing
+- `columns.items[].color`: Column Routing
+- `columns.items[].wipLimit`: Column Routing
+- `swimlanes.field`: Swimlanes
+- `swimlanes.items`: Swimlanes
+- `swimlanes.layout.type`: Swimlanes
+- `swimlanes.repeatingHeaders`: Swimlanes
+- `dragEnabled`: Column Routing, Swimlanes
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Action Config](/core/reference/action-config)
+- [Table Mode](/core/concepts/modes/table)

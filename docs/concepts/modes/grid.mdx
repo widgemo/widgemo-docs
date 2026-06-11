@@ -184,16 +184,43 @@ export const gridGroupingConfig = {
   },
 };
 
+export const gridSearchConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      search: {
+        enabled: true,
+        fields: ['name', 'role', 'team'],
+        placeholder: 'Search members...',
+      },
+      filtering: [
+        { fieldKey: 'status', operator: 'ne', value: 'inactive' },
+      ],
+      modeConfig: {
+        grid: {
+          minItemWidth: '230px',
+          maxColumns: 4,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: gridFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # Grid Mode
 
 `modeConfig.grid` tiles items into a responsive card grid. Use grid when card-based browsing matters more than dense row scanning.
 
 ## Shared Behavior
 
-Pagination, search, filtering, sorting, actions, and grouping are shared across modes — see the reference pages:
+Pagination, search, static filtering, actions, gestures, and groupings work the same as other modes — see the reference pages:
 
 - [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Static Filtering](/core/reference/content-config#static-filtering-and-sorting)
 - [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
 - [Content Config: Grouping](/core/reference/content-config#grouping)
 - [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
@@ -320,6 +347,35 @@ zones: {
 
 <div style={{ marginBottom: '1rem' }} />
 
+### Search and Filtering
+
+A search bar renders above the grid when `config.search` is enabled. Static filtering pre-excludes records before render — the grid simply shows fewer cards. This example pre-excludes inactive members and adds a live search over name, role, and team.
+
+<WidgemoShowcase
+  description="Search bar above the card grid with a static filter pre-applied to exclude inactive members."
+  data={gridModeData}
+  config={gridSearchConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+zones: {
+  content: {
+    search: {
+      enabled: true,
+      fields: ['name', 'role', 'team'],
+      placeholder: 'Search members...',
+    },
+    filtering: [
+      { fieldKey: 'status', operator: 'ne', value: 'inactive' },
+    ],
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ## Grid Options Reference
 
 | Option | Values | Default | Effect |
@@ -340,6 +396,7 @@ For item-level card layout/field rendering details, see [Field Config](/core/ref
 
 - `autoFlow: dense` can visually reorder packing to fill gaps; use with care if strict visual sequence matters.
 - Grouping in grid renders grouped sections, not table-style header controls.
+- Sorting (`config.sorting`) is not supported in grid mode. Pre-sort your data before passing it in if a specific order is needed.
 
 ## Coverage Summary
 
@@ -347,10 +404,11 @@ Every grid setting is represented by at least one live example on this page:
 
 - `minItemWidth`, `maxColumns`, `gap`: Responsive Grid (Baseline)
 - `layoutMode`: Masonry Layout
-- `autoFlow`: documented in Grid Option Reference (best visualized when card footprints vary)
+- `autoFlow`: documented in Grid Options Reference (best visualized when card footprints vary)
 - `justifyItems`, `alignItems`: Alignment Controls
-- `groupings` in grid mode: Grouped Grid
-- shared content settings with grid (`search`, `pagination`, `filtering`, `sorting`, `actions`, `gestures`): Shared-Feature Boundary links above
+- `groupings` in grid mode: Grouping in Grid
+- `search`, `filtering`: Search and Filtering
+- pagination, actions, gestures: Shared Behavior links above
 
 ## See Also
 
