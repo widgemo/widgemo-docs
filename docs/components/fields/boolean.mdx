@@ -1,31 +1,228 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const booleanData = [
+  { name: 'Aurora Chen',  active: true,  verified: true,  admin: false },
+  { name: 'Mateo Silva',  active: false, verified: true,  admin: false },
+  { name: 'Priya Nair',   active: true,  verified: false, admin: true  },
+];
+
+export const booleanBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',     type: 'text'    },
+          { key: 'active',   label: 'Active',   type: 'boolean' },
+          { key: 'verified', label: 'Verified', type: 'boolean' },
+          { key: 'admin',    label: 'Admin',    type: 'boolean' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const booleanLabelsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',     type: 'text' },
+          {
+            key: 'active',
+            label: 'Status',
+            type: 'boolean',
+            booleanTrueLabel: 'Active',
+            booleanFalseLabel: 'Inactive',
+          },
+          {
+            key: 'verified',
+            label: 'Verified',
+            type: 'boolean',
+            booleanTrueLabel: '✓ Verified',
+            booleanFalseLabel: '✗ Unverified',
+          },
+          {
+            key: 'admin',
+            label: 'Role',
+            type: 'boolean',
+            booleanTrueLabel: 'Admin',
+            booleanFalseLabel: 'Member',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const booleanFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'active',
+            label: 'Active',
+            type: 'boolean',
+            formatter: (value) => Boolean(value),
+          },
+          {
+            key: 'admin',
+            label: 'Admin flag',
+            type: 'boolean',
+            booleanTrueLabel: 'Yes',
+            booleanFalseLabel: 'No',
+            formatter: (value, entity) =>
+              entity.verified ? Boolean(value) : null,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const booleanConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',   label: 'Name',   type: 'text'    },
+          { key: 'active', label: 'Active', type: 'boolean', booleanTrueLabel: 'Active', booleanFalseLabel: 'Inactive' },
+          {
+            key: 'admin',
+            label: 'Admin (active users only)',
+            type: 'boolean',
+            booleanTrueLabel: 'Admin',
+            booleanFalseLabel: 'Member',
+            condition: (entity) => entity.active === true,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # boolean Field Type
 
-Use `type: 'boolean'` for true/false values with optional fallback labels.
+`type: 'boolean'` casts the field value with `Boolean()` and displays `booleanTrueLabel` or `booleanFalseLabel`. Defaults are `'Yes'` and `'No'`. Any truthy value renders as true; any falsy value renders as false.
 
-## Typical Use Cases
+## Core Examples
 
-- Feature flags
-- Active/inactive state
-- Binary checks
+### Default Labels
 
-## Example
+<WidgemoShowcase
+  description="Three boolean fields with no custom labels. True → 'Yes', false → 'No'."
+  data={booleanData}
+  config={booleanBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+fields: [
+  { key: 'active',   label: 'Active',   type: 'boolean' },
+  { key: 'verified', label: 'Verified', type: 'boolean' },
+  { key: 'admin',    label: 'Admin',    type: 'boolean' },
+]
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Custom Labels
+
+`booleanTrueLabel` and `booleanFalseLabel` replace the default `Yes`/`No` text. Any string is accepted — including emoji or symbols.
+
+<WidgemoShowcase
+  description="Each boolean field uses domain-specific labels instead of Yes/No."
+  data={booleanData}
+  config={booleanLabelsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
-  key: 'isActive',
-  label: 'Active',
+  key: 'active',
+  label: 'Status',
   type: 'boolean',
-  booleanTrueLabel: 'Yes',
-  booleanFalseLabel: 'No',
-}
+  booleanTrueLabel: 'Active',
+  booleanFalseLabel: 'Inactive',
+},
+{
+  key: 'verified',
+  label: 'Verified',
+  type: 'boolean',
+  booleanTrueLabel: '✓ Verified',
+  booleanFalseLabel: '✗ Unverified',
+},
+{
+  key: 'admin',
+  label: 'Role',
+  type: 'boolean',
+  booleanTrueLabel: 'Admin',
+  booleanFalseLabel: 'Member',
+},
 ```
 
-## Notes
+<div style={{ marginBottom: '1rem' }} />
 
-- `booleanTrueLabel` and `booleanFalseLabel` apply to boolean fallback rendering.
-- For richer visual semantics, combine with a renderer.
+### Condition
 
-## Related
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it. Evaluated per row.
 
-- Status chips: [badge Renderer](/core/components/renderers/badge)
-- Canonical contract: [Field Config](/core/reference/field-config)
+<WidgemoShowcase
+  description="Admin column only renders for rows where active is true. Mateo (inactive) gets no Admin cell."
+  data={booleanData}
+  config={booleanConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'admin',
+  label: 'Admin (active users only)',
+  type: 'boolean',
+  booleanTrueLabel: 'Admin',
+  booleanFalseLabel: 'Member',
+  condition: (entity) => entity.active === true,
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'boolean'` | — | Casts value with `Boolean()` and displays true/false label. |
+| `booleanTrueLabel` | string | `'Yes'` | Text shown when the value is truthy. |
+| `booleanFalseLabel` | string | `'No'` | Text shown when the value is falsy. |
+| `formatter` | `(value, entity) => unknown` | unset | Transform before the boolean cast and label lookup. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `width` | CSS length or number | unset | Column width in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replace boolean rendering. Use `badge` for colour-coded status chips. |
+
+## Caveats
+
+- The cast is `Boolean(value)` — `0`, `''`, `null`, `undefined`, and `false` all render as the false label. `'false'` (the string) renders as **true** because it is a non-empty string.
+- There is no built-in icon or colour on the boolean type itself. Use `renderAs: 'badge'` with a `colorMap` for visual status indicators.
+
+## See Also
+
+- [badge Renderer](/core/components/renderers/badge)
+- [Field Config](/core/reference/field-config)
