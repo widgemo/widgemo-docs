@@ -145,15 +145,23 @@ export const modesOverviewPieChartConfig = {
 
 # Modes Overview
 
-Use this page as a gateway:
+Mode controls the entire content area layout strategy. The same data array, the same fields, and the same actions work across all modes — only `zones.content.mode` and `modeConfig.<mode>` change.
 
-- First, compare how the same data looks in each mode.
-- Then, open the mode guide for mode-specific settings.
-- Finally, use Reference pages for shared `zones.content` behavior that applies across modes.
+## When to Use Each Mode
 
-## Quick Look
+| Mode | Best for | Key characteristic |
+|---|---|---|
+| **table** | Structured records with many fields, sorting, grouping | Column headers; rows scan horizontally |
+| **grid** | Visual card layouts; equal-weight items | Responsive tile grid; no column headers |
+| **carousel** | Sequential browsing; spotlight one item at a time | Horizontal scroll; arrows and indicators |
+| **board** | Status-grouped items; kanban-style workflows | Columns defined by a field value; optional drag |
+| **chart** | Aggregated numeric data; trend and composition views | bar, line, area, pie, donut series types |
 
-The same dataset below is shown as a table, grid, carousel, board, and two chart types.
+For automatically switching between modes at different breakpoints, see [Responsive Switching](/core/concepts/modes/responsive-switching).
+
+## Same Data, Six Modes
+
+The demos below use the same dataset rendered in each mode.
 
 <div className="modes-overview-grid">
 	<WidgemoShowcase className="modes-overview-preview" title="Table" data={modesOverviewData} config={modesOverviewTableConfig} />
@@ -164,34 +172,22 @@ The same dataset below is shown as a table, grid, carousel, board, and two chart
 	<WidgemoShowcase className="modes-overview-preview" title="Pie Chart" data={modesOverviewData} config={modesOverviewPieChartConfig} />
 </div>
 
-## Shared vs Mode-Specific
+## Shared vs Mode-Specific Config
 
-Mode guides are intentionally mode-specific: they cover settings under `modeConfig.<mode>` and mode-only caveats.
+Mode guides cover settings under `modeConfig.<mode>` and mode-specific caveats.
 
-Shared behavior is canonical in Reference and should be treated as the source of truth:
+Behavior shared across all modes lives in Reference and applies regardless of which mode is active:
 
-- [Content Config](/core/reference/content-config): search, pagination, filtering, sorting, grouping, gestures, responsive breakpoints, loading, and error handling
-- [Action Config](/core/reference/action-config): action shape, placement, and overflow behavior
-- [Field Config](/core/reference/field-config): item field rendering and layout contract
-- [Widgemo Config](/core/reference/widgemo-config): top-level Widgemo configuration surface
-- [Content Config: Shape](/core/reference/content-config#shape): canonical location for shared `zones.content` contract fields
+- [Content Config](/core/reference/content-config) — sorting, filtering, grouping, pagination, search, gestures, responsive breakpoints, loading, and error handling
+- [Action Config](/core/reference/action-config) — action shape, placement, and overflow behavior
+- [Field Config](/core/reference/field-config) — item field rendering and layout contract
+- [Widgemo Config](/core/reference/widgemo-config) — top-level Widgemo configuration surface
 
-## Choose a Mode Guide
+## Mode Guides
 
-- [Chart Mode](/core/concepts/modes/chart)
 - [Table Mode](/core/concepts/modes/table)
 - [Grid Mode](/core/concepts/modes/grid)
 - [Carousel Mode](/core/concepts/modes/carousel)
 - [Board Mode](/core/concepts/modes/board)
+- [Chart Mode](/core/concepts/modes/chart)
 - [Responsive Switching](/core/concepts/modes/responsive-switching)
-
-## Progression Paths
-
-Follow one of these newcomer flows from overview to mode to canonical reference anchors:
-
-- Table-first flow: [Table Mode](/core/concepts/modes/table) -> [Content Config: Grouping](/core/reference/content-config#grouping) -> [Field Config](/core/reference/field-config)
-- Grid-first flow: [Grid Mode](/core/concepts/modes/grid) -> [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting) -> [Field Config](/core/reference/field-config)
-- Carousel-first flow: [Carousel Mode](/core/concepts/modes/carousel) -> [Action Config: Action Overflow](/core/reference/action-config#action-overflow) -> [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- Board-first flow: [Board Mode](/core/concepts/modes/board) -> [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions) -> [Action Config](/core/reference/action-config)
-- Chart-first flow: [Chart Mode](/core/concepts/modes/chart) -> [Content Config: Shape](/core/reference/content-config#shape) -> [Field Config](/core/reference/field-config)
-- Responsive flow: [Responsive Switching](/core/concepts/modes/responsive-switching) -> [Content Config: Shape](/core/reference/content-config#shape) -> [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
