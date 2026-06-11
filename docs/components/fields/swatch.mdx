@@ -1,20 +1,209 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const swatchData = [
+  { name: 'Primary', token: '--color-primary', hex: '#6d28d9', rgb: 'rgb(109, 40, 217)', usage: 'Buttons, links, focus rings' },
+  { name: 'Success', token: '--color-success', hex: '#059669', rgb: 'rgb(5, 150, 105)', usage: 'Confirmations, active states' },
+  { name: 'Warning', token: '--color-warning', hex: '#d97706', rgb: 'rgb(217, 119, 6)', usage: 'Alerts, degraded states' },
+  { name: 'Danger', token: '--color-danger', hex: '#dc2626', rgb: 'rgb(220, 38, 38)', usage: 'Errors, destructive actions' },
+  { name: 'Neutral', token: '--color-neutral', hex: '#6b7280', rgb: 'rgb(107, 114, 128)', usage: 'Borders, muted labels' },
+];
+
+export const swatchBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'hex', label: 'Swatch', type: 'swatch' },
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'token', label: 'Token', type: 'text' },
+          { key: 'hex', label: 'Hex', type: 'text' },
+          { key: 'usage', label: 'Usage', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const swatchGridConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '160px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'hex', label: 'Color', type: 'swatch' },
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'token', label: 'Token', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const swatchFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          {
+            key: 'rgb',
+            label: 'Swatch (from RGB)',
+            type: 'swatch',
+          },
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'rgb', label: 'RGB Value', type: 'text' },
+          {
+            key: 'hex',
+            label: 'Hex (uppercase)',
+            type: 'text',
+            formatter: (value) => String(value ?? '').toUpperCase(),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const swatchConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'hex', label: 'Swatch', type: 'swatch' },
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'usage',
+            label: 'Usage',
+            type: 'text',
+            condition: (entity) => entity.name !== 'Neutral',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # swatch Field Type
 
-Use `type: 'swatch'` for color-like field values.
+`type: 'swatch'` renders a color value as a small filled square — useful for design token tables, category color coding, and any dataset where a color is part of the record. The field value is used directly as the CSS `background-color`.
 
-## Typical Use Cases
+## Core Examples
 
-- Brand color tokens
-- Category color coding
-- Theme preview values
+### Basic Swatch Table
 
-## Example
+<WidgemoShowcase
+  description="Design token table with hex value used as both the swatch color and a plain text column."
+  data={swatchData}
+  config={swatchBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ key: 'brandColor', label: 'Brand Color', type: 'swatch' }
+{ key: 'hex', label: 'Swatch', type: 'swatch' },
+{ key: 'hex', label: 'Hex', type: 'text' },
 ```
 
-## Related
+<div style={{ marginBottom: '1rem' }} />
 
-- Extend behavior: [Custom Field Types](/core/extensions/custom-field-types)
-- Canonical contract: [Field Config](/core/reference/field-config)
+### Swatch in Grid Mode
+
+<WidgemoShowcase
+  description="Same data in grid mode — each card shows the color swatch, name, and token."
+  data={swatchData}
+  config={swatchGridConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'hex', label: 'Color', type: 'swatch' },
+{ key: 'name', label: 'Name', type: 'text' },
+{ key: 'token', label: 'Token', type: 'text' },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter — any valid CSS color string
+
+The swatch renderer passes the field value directly to `background-color`. Any valid CSS color format works: hex, `rgb()`, `hsl()`, named colors, CSS variables. Use `formatter` to normalize or transform the value before it reaches the swatch.
+
+<WidgemoShowcase
+  description="Swatch rendered from the rgb column rather than hex — any CSS color value is accepted."
+  data={swatchData}
+  config={swatchFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// rgb() values work just as well as hex
+{ key: 'rgb', label: 'Swatch (from RGB)', type: 'swatch' },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Usage notes hidden for Neutral — only colors with semantic meaning show usage context."
+  data={swatchData}
+  config={swatchConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'usage',
+  label: 'Usage',
+  type: 'text',
+  condition: (entity) => entity.name !== 'Neutral',
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property whose value is used as the CSS `background-color`. |
+| `label` | string | unset | Column header or card label. Also used as the swatch `title` tooltip. |
+| `type` | `'swatch'` | — | Renders a 20×20px colored square with a light border. |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before it is used as `background-color`. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+
+## Caveats
+
+- The swatch is a **registered built-in field type**, not a switch case in FieldRenderer. This means it goes through the registry path (`getWidgemoFieldType`) rather than the direct type switch — behavior is identical but the rendering is defined in `registries.tsx`.
+- The swatch dimensions (20×20px) and border are hardcoded in the renderer. They cannot be configured via `imageOptions` or any other field option today.
+- An invalid or empty color value falls back to `#ccc` (light grey). No error is thrown.
+- `wrap` has no visual effect on a swatch since it renders a block div, not text.
+- To display both the swatch and the raw color value, reference the same `key` twice — once as `type: 'swatch'` and once as `type: 'text'`.
+
+## Why swatch vs image?
+
+Both render a visual element rather than text. The distinction:
+
+- `type: 'swatch'` takes a CSS color string and renders a fixed-size colored square. Lightweight, no external request.
+- `type: 'image'` takes a URL and renders a full `<img>` element with configurable dimensions, shape, and lightbox support.
+
+Use `swatch` for color metadata. Use `image` for photos, avatars, or thumbnails.
+
+## See Also
+
+- [image Field Type](/core/components/fields/image)
+- [badge Renderer](/core/components/renderers/badge)
+- [Field Config](/core/reference/field-config)
