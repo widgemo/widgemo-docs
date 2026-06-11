@@ -1,33 +1,256 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const imageData = [
+  { name: 'Aurora Chen', role: 'Design Lead', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Aurora+Chen&backgroundColor=7c3aed&fontFamily=Helvetica', thumbnail: 'https://picsum.photos/seed/aurora-design/320/200' },
+  { name: 'Mateo Silva', role: 'Platform Engineer', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Mateo+Silva&backgroundColor=0891b2&fontFamily=Helvetica', thumbnail: 'https://picsum.photos/seed/mateo-platform/320/200' },
+  { name: 'Priya Nair', role: 'Operations', avatar: null, thumbnail: 'https://picsum.photos/seed/priya-ops/320/200' },
+];
+
+export const imageBasicConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '200px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          {
+            key: 'avatar',
+            label: 'Avatar',
+            type: 'image',
+            imageOptions: { width: 48, height: 48, circular: true },
+          },
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const imageSizingConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '220px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'thumbnail',
+            label: 'Thumbnail',
+            type: 'image',
+            imageOptions: {
+              width: 160,
+              height: 100,
+              objectFit: 'cover',
+              borderRadius: 8,
+              shadow: '0 2px 6px rgba(0,0,0,0.25)',
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const imageLightboxConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          {
+            key: 'thumbnail',
+            label: 'Preview',
+            type: 'image',
+            imageOptions: {
+              width: 64,
+              height: 40,
+              objectFit: 'cover',
+              borderRadius: 4,
+              lightbox: true,
+              zoom: true,
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const imageConditionConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '200px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          {
+            key: 'avatar',
+            label: 'Avatar',
+            type: 'image',
+            imageOptions: { width: 48, height: 48, circular: true },
+            condition: (entity) => Boolean(entity.avatar),
+          },
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # image Field Type
 
-Use `type: 'image'` for image and avatar-like field values.
+`type: 'image'` renders an image URL as an `<img>` element. Use `imageOptions` to control dimensions, shape, fit, decorative styles, and lightbox behaviour.
 
-## Typical Use Cases
+## Core Examples
 
-- User avatars
-- Product thumbnails
-- Brand image references
+### Basic Avatar
 
-## Example
+<WidgemoShowcase
+  description="Circular avatar alongside name and role in grid mode. Priya's null avatar is still rendered — use condition to suppress null values."
+  data={imageData}
+  config={imageBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
   key: 'avatar',
   label: 'Avatar',
   type: 'image',
+  imageOptions: { width: 48, height: 48, circular: true },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Sizing, Shape, and Shadow
+
+`width` and `height` accept numbers (px) or any CSS length string. `borderRadius` rounds corners. `shadow` accepts any CSS `box-shadow` value.
+
+<WidgemoShowcase
+  description="Rectangular thumbnails with rounded corners and a drop shadow."
+  data={imageData}
+  config={imageSizingConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'thumbnail',
+  label: 'Thumbnail',
+  type: 'image',
   imageOptions: {
-    circular: true,
-    width: 40,
-    height: 40,
+    width: 160,
+    height: 100,
     objectFit: 'cover',
+    borderRadius: 8,
+    shadow: '0 2px 6px rgba(0,0,0,0.25)',
   },
 }
 ```
 
-## Notes
+<div style={{ marginBottom: '1rem' }} />
 
-- Use `imageOptions` to control size, shape, fitting, and behavior.
+### Lightbox
 
-## Related
+`lightbox: true` makes the image clickable — clicking opens a modal overlay with the full image. `zoom: true` enables zoom-on-hover inside the lightbox.
 
-- Canonical contract: [Field Config](/core/reference/field-config)
+<WidgemoShowcase
+  description="Small thumbnails in table mode. Click any image to open the lightbox modal."
+  data={imageData}
+  config={imageLightboxConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'thumbnail',
+  label: 'Preview',
+  type: 'image',
+  imageOptions: {
+    width: 64,
+    height: 40,
+    objectFit: 'cover',
+    borderRadius: 4,
+    lightbox: true,
+    zoom: true,
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+Use `condition` to suppress the image field entirely for rows where the value is null or missing.
+
+<WidgemoShowcase
+  description="Avatar is hidden for Priya (null value). Aurora and Mateo show their circular avatars."
+  data={imageData}
+  config={imageConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'avatar',
+  label: 'Avatar',
+  type: 'image',
+  imageOptions: { width: 48, height: 48, circular: true },
+  condition: (entity) => Boolean(entity.avatar),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the image URL from. |
+| `label` | string | unset | Column header or card label. Also used as `alt` text fallback. |
+| `type` | `'image'` | — | Renders the value as an `<img>` element. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before use as `src`. |
+| `imageOptions` | object | see below | Controls image dimensions, shape, fit, decoration, and behaviour. |
+
+### `imageOptions`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `width` | `number` or CSS string | `100` | Image width. Numbers are interpreted as px. |
+| `height` | `number` or CSS string | `100` | Image height. Numbers are interpreted as px. |
+| `objectFit` | `'cover'`, `'contain'`, `'fill'`, `'none'`, `'scale-down'` | `'cover'` | CSS `object-fit` — controls how the image fills its box. |
+| `circular` | `boolean` | `false` | Sets `border-radius: 50%`. Overrides `borderRadius`. |
+| `borderRadius` | `number` or CSS string | `0` | Rounded corners. Numbers are interpreted as px. Ignored when `circular: true`. |
+| `border` | CSS string | unset | CSS `border` shorthand (e.g. `'2px solid #ccc'`). |
+| `shadow` | CSS string | unset | CSS `box-shadow` value. |
+| `backgroundColor` | CSS string | unset | Background color — useful for transparent PNGs. |
+| `alt` | string | `label` or `key` | Alt text for accessibility. |
+| `lazy` | `boolean` | `true` | Uses `loading="lazy"` for deferred loading. |
+| `lightbox` | `boolean` | `false` | Makes the image clickable — opens a full-size modal overlay on click. |
+| `zoom` | `boolean` | `false` | Enables zoom-on-hover inside the lightbox. Requires `lightbox: true`. |
+
+## Caveats
+
+- `wrap` has no effect on image fields — the wrap logic in FieldRenderer explicitly skips `type: 'image'`.
+- Passing a `null` or empty value renders a broken `<img>` element. Use `condition: (entity) => Boolean(entity.fieldKey)` to suppress null rows.
+- `formatter` output is used as the `src` value — useful for constructing URLs from IDs or path fragments.
+- The lightbox modal is rendered inline in the DOM via `ModalRenderer`. It is not portalled — z-index layering in deeply nested layouts may require CSS overrides.
+
+## See Also
+
+- [swatch Field Type](/core/components/fields/swatch)
+- [Field Config](/core/reference/field-config)
