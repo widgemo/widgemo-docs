@@ -1,20 +1,295 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const selectData = [
+  { name: 'Aurora Chen',  status: 'active',   priority: 2, tier: 'gold'   },
+  { name: 'Mateo Silva',  status: 'inactive', priority: 1, tier: 'silver' },
+  { name: 'Priya Nair',   status: 'pending',  priority: 3, tier: 'gold'   },
+];
+
+export const selectBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: [
+              { value: 'active',   label: 'Active'   },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'pending',  label: 'Pending'  },
+            ],
+          },
+          {
+            key: 'priority',
+            label: 'Priority',
+            type: 'select',
+            options: [
+              { value: 1, label: 'Low'    },
+              { value: 2, label: 'Medium' },
+              { value: 3, label: 'High'   },
+            ],
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const selectFallbackConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'tier',
+            label: 'Tier (partial options)',
+            type: 'select',
+            options: [
+              { value: 'gold', label: 'Gold' },
+              // 'silver' intentionally omitted — will fall back to raw value
+            ],
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const selectFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'Status (normalised)',
+            type: 'select',
+            options: [
+              { value: 'active',   label: 'Active'   },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'pending',  label: 'Pending'  },
+            ],
+            formatter: (value) => String(value ?? '').toLowerCase().trim(),
+          },
+          {
+            key: 'priority',
+            label: 'Priority',
+            type: 'select',
+            options: [
+              { value: 1, label: 'Low'    },
+              { value: 2, label: 'Medium' },
+              { value: 3, label: 'High'   },
+            ],
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const selectConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: [
+              { value: 'active',   label: 'Active'   },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'pending',  label: 'Pending'  },
+            ],
+          },
+          {
+            key: 'tier',
+            label: 'Tier (active only)',
+            type: 'select',
+            options: [
+              { value: 'gold',   label: 'Gold'   },
+              { value: 'silver', label: 'Silver' },
+            ],
+            condition: (entity) => entity.status === 'active',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # select Field Type
 
-Use `type: 'select'` for constrained categorical values.
+`type: 'select'` maps a raw field value to a human-readable label via the `options` array. The raw value is matched with strict equality (`===`) against each option's `value` property. If no match is found, the raw value is displayed as a string.
 
-## Typical Use Cases
+## Core Examples
 
-- Lifecycle states
-- Priority levels
-- Enumerated options from business rules
+### Basic Select Rendering
 
-## Example
+<WidgemoShowcase
+  description="Status mapped from string values; Priority mapped from numeric values."
+  data={selectData}
+  config={selectBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ key: 'status', label: 'Status', type: 'select' }
+{
+  key: 'status',
+  label: 'Status',
+  type: 'select',
+  options: [
+    { value: 'active',   label: 'Active'   },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'pending',  label: 'Pending'  },
+  ],
+},
+{
+  key: 'priority',
+  label: 'Priority',
+  type: 'select',
+  options: [
+    { value: 1, label: 'Low'    },
+    { value: 2, label: 'Medium' },
+    { value: 3, label: 'High'   },
+  ],
+},
 ```
 
-## Related
+<div style={{ marginBottom: '1rem' }} />
 
-- Visual category treatment: [badge Renderer](/core/components/renderers/badge)
-- Canonical contract: [Field Config](/core/reference/field-config)
+### Fallback for Unmatched Values
+
+When no option matches the raw value, the raw value is rendered as a plain string. This makes gaps in your `options` list immediately visible.
+
+<WidgemoShowcase
+  description="'silver' is not in the options list — Mateo's tier renders as the raw string 'silver'."
+  data={selectData}
+  config={selectFallbackConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'tier',
+  label: 'Tier (partial options)',
+  type: 'select',
+  options: [
+    { value: 'gold', label: 'Gold' },
+    // 'silver' intentionally omitted — falls back to raw string
+  ],
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` runs before the options lookup. Use it to normalise raw values (e.g. trim whitespace, lowercase) so they reliably match your `options`.
+
+<WidgemoShowcase
+  description="formatter lowercases and trims the status value before the options lookup fires."
+  data={selectData}
+  config={selectFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'status',
+  label: 'Status (normalised)',
+  type: 'select',
+  options: [
+    { value: 'active',   label: 'Active'   },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'pending',  label: 'Pending'  },
+  ],
+  formatter: (value) => String(value ?? '').toLowerCase().trim(),
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it. Evaluated per row.
+
+<WidgemoShowcase
+  description="Tier column only renders for active users. Mateo (inactive) gets no Tier cell."
+  data={selectData}
+  config={selectConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'tier',
+  label: 'Tier (active only)',
+  type: 'select',
+  options: [
+    { value: 'gold',   label: 'Gold'   },
+    { value: 'silver', label: 'Silver' },
+  ],
+  condition: (entity) => entity.status === 'active',
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'select'` | — | Maps raw value to a label via `options`. Falls back to `String(value)` on no match. |
+| `options` | `{ value, label }[]` | unset | The lookup table. `value` can be `string`, `number`, or `boolean`; matched with `===`. |
+| `formatter` | `(value, entity) => unknown` | unset | Runs before the options lookup — use to normalise raw values before matching. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `width` | CSS length or number | unset | Column width in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replace select rendering. Use `badge` for colour-coded labels. |
+
+## Caveats
+
+- The match is strict (`===`). A numeric value `1` will **not** match a string option `{ value: '1' }`.
+- There is no built-in colour or styling on `type: 'select'`. Use `renderAs: 'badge'` with a `colorMap` for visual category indicators.
+- `formatter` output is what gets matched against `options.value` — not the original raw value.
+
+## Why select vs text + formatter?
+
+`type: 'select'` and `type: 'text'` with a `formatter` produce identical rendered output today. The distinction is **semantic**: `select` declares that a field has a finite, enumerable set of valid values, and the `options` array is the canonical definition of that set.
+
+Future versions of Widgemo — or add-on packages — may use `options` to drive:
+- Filter dropdowns that enumerate the known values for a column
+- Inline editing inputs (a `<select>` element pre-populated with your options)
+- GroupBy controls that label groups using the option labels rather than raw values
+
+Using `type: 'select'` now means your field config will be forward-compatible with those capabilities without changes. If the field is truly open-ended text, use `type: 'text'`. If it has a fixed set of values, use `type: 'select'`.
+
+## See Also
+
+- [relation Field Type](/core/components/fields/relation)
+- [badge Renderer](/core/components/renderers/badge)
+- [Field Config](/core/reference/field-config)
