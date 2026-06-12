@@ -6,6 +6,28 @@ export const jsonData = [
   { name: 'Priya Nair', meta: { team: 'ops', region: 'Americas', tags: ['platform', 'data'], quota: { q1: 70, q2: 91 } } },
 ];
 
+export const jsonInvalidData = [
+  { name: 'Aurora Chen', raw: '{"team": "platform", "region": "APAC"}' },
+  { name: 'Mateo Silva', raw: '{broken json' },
+  { name: 'Priya Nair', raw: 'not json at all' },
+];
+
+export const jsonInvalidConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'raw', label: 'Raw Value', renderAs: 'jsonPreview' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 export const jsonBasicConfig = {
   zones: {
     content: {
@@ -62,10 +84,10 @@ export const jsonCollapsedConfig = {
 
 ### Collapsed with Depth Limit
 
-`defaultCollapsed: true` folds nested nodes on initial render. `maxDepth` truncates structures deeper than the given level.
+`defaultCollapsed: true` folds nested nodes on initial render. The root object always stays expanded — only children at depth > 0 are collapsed. `maxDepth` truncates structures deeper than the given level.
 
 <WidgemoShowcase
-  description="Same metadata, collapsed by default with a maxDepth of 2."
+  description="Same metadata with nested nodes collapsed on load and a maxDepth of 2. The root object remains open; click ▶ to expand deeper nodes."
   data={jsonData}
   config={jsonCollapsedConfig}
 />
@@ -74,6 +96,28 @@ export const jsonCollapsedConfig = {
 
 ```tsx
 { key: 'meta', renderAs: 'jsonPreview', renderAsOptions: { defaultCollapsed: true, maxDepth: 2 } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### String Values and Invalid JSON
+
+When the field value is a string, the renderer attempts to parse it as JSON. A valid JSON string is expanded into a tree. A string that fails to parse renders as a styled error block — it does not throw.
+
+<WidgemoShowcase
+  description="Aurora's value is a valid JSON string — rendered as a tree. Mateo and Priya have invalid strings — each renders a red error block showing the raw value."
+  data={jsonInvalidData}
+  config={jsonInvalidConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Valid JSON string — parsed and rendered as an interactive tree
+{ key: 'raw', renderAs: 'jsonPreview' }  // value: '{"team": "platform"}'
+
+// Invalid JSON string — renders a red error block, does not throw
+{ key: 'raw', renderAs: 'jsonPreview' }  // value: '{broken json'
 ```
 
 ## Options Reference
@@ -86,12 +130,14 @@ export const jsonCollapsedConfig = {
 
 ## Caveats
 
-- String values are attempted to be parsed as JSON. If parsing succeeds, the parsed structure is rendered as a tree. If it fails, the raw string is shown.
-- Invalid JSON does not throw — the renderer falls back to a text representation.
-- `maxDepth` uses the default of `3` if the value is negative (clamped to `0`).
+- String values are attempted to be parsed as JSON. A successful parse renders the structure as an interactive tree. A failed parse renders a styled red error block (`Invalid JSON: <raw value>`) — it does not throw.
+- The root object or array is always expanded regardless of `defaultCollapsed`. Only nodes at depth > 0 are affected.
+- Negative `maxDepth` values are clamped to 0, which renders only the root level with all children truncated as `[...]` or `{...}`.
+- `formatter` can pre-process the value before rendering. Use it to extract a sub-field from an object, or to normalize a raw string before JSON parsing.
 - The JSON tree is read-only — values are not editable in-place.
 
 ## See Also
 
 - [Renderer Components Overview](/core/components/renderers/overview)
+- [text Field Type](/core/components/fields/text)
 - [Field Config](/core/reference/field-config)
