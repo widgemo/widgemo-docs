@@ -60,7 +60,114 @@ export const badgeStyleConfig = {
         fields: [
           { key: 'name', label: 'Name', type: 'text' },
           { key: 'status', label: 'badge style', renderAs: 'badge', renderAsOptions: { style: 'badge', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
-          { key: 'status', label: 'inline style', renderAs: 'badge', renderAsOptions: { style: 'inline', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+          { key: 'status', label: 'inline style', renderAs: 'badge', renderAsOptions: { style: 'inline', colorMap: { active: { textColor: '#16a34a' }, pending: { textColor: '#d97706' }, inactive: { textColor: '#6b7280' } } } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeIconConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'icon left (default)',
+            renderAs: 'badge',
+            renderAsOptions: {
+              colorMap: {
+                active:   { background: '#16a34a', text: '#ffffff', icon: 'check-circle', iconPosition: 'left' },
+                pending:  { background: '#d97706', text: '#ffffff', icon: 'clock',        iconPosition: 'left' },
+                inactive: { background: '#6b7280', text: '#ffffff', icon: 'close',        iconPosition: 'left' },
+              },
+            },
+          },
+          {
+            key: 'status',
+            label: 'icon right',
+            renderAs: 'badge',
+            renderAsOptions: {
+              colorMap: {
+                active:   { background: '#16a34a', text: '#ffffff', icon: 'check-circle', iconPosition: 'right' },
+                pending:  { background: '#d97706', text: '#ffffff', icon: 'clock',        iconPosition: 'right' },
+                inactive: { background: '#6b7280', text: '#ffffff', icon: 'close',        iconPosition: 'right' },
+              },
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeIconOnlyConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'icon only (badge)',
+            renderAs: 'badge',
+            renderAsOptions: {
+              colorMap: {
+                active:   { background: '#dcfce7', iconColor: '#16a34a', icon: 'check-circle', iconPosition: 'only' },
+                pending:  { background: '#fef3c7', iconColor: '#d97706', icon: 'clock',        iconPosition: 'only' },
+                inactive: { background: '#f3f4f6', iconColor: '#6b7280', icon: 'close',        iconPosition: 'only' },
+              },
+            },
+          },
+          {
+            key: 'status',
+            label: 'icon only (inline)',
+            renderAs: 'badge',
+            renderAsOptions: {
+              style: 'inline',
+              colorMap: {
+                active:   { iconColor: '#16a34a', icon: 'check-circle', iconPosition: 'only' },
+                pending:  { iconColor: '#d97706', icon: 'clock',        iconPosition: 'only' },
+                inactive: { iconColor: '#6b7280', icon: 'close',        iconPosition: 'only' },
+              },
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeInlineIconConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'inline + icon',
+            renderAs: 'badge',
+            renderAsOptions: {
+              style: 'inline',
+              colorMap: {
+                active:   { textColor: '#16a34a', icon: 'check-circle', iconColor: '#16a34a', iconPosition: 'left' },
+                pending:  { textColor: '#d97706', icon: 'clock',        iconColor: '#d97706', iconPosition: 'left' },
+                inactive: { textColor: '#6b7280', icon: 'close',        iconColor: '#6b7280', iconPosition: 'left' },
+              },
+            },
+          },
         ],
         layout: { type: 'auto' },
       },
@@ -151,8 +258,12 @@ export const badgeFallbackConfig = {
 
 `'badge'` renders a filled pill. `'inline'` renders colored text without a background chip.
 
+:::tip Inline style and color
+For `style: 'inline'`, use `textColor` in the `ColorConfig` (not a plain hex string) to set the text color. Plain strings are treated as background colors and auto-contrasted to white — which is invisible on a white page.
+:::
+
 <WidgemoShowcase
-  description="Badge style (filled pill) vs inline style (colored text)."
+  description="Badge style (filled pill) vs inline style (colored text). The inline column uses textColor."
   data={badgeData}
   config={badgeStyleConfig}
 />
@@ -160,8 +271,97 @@ export const badgeFallbackConfig = {
 <div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ renderAsOptions: { style: 'badge' } }   // filled pill
-{ renderAsOptions: { style: 'inline' } }  // colored text only
+// filled pill — colorMap value can be a plain string or ColorConfig
+{ renderAsOptions: { style: 'badge', colorMap: { active: '#16a34a' } } }
+
+// inline — must use textColor so the text is visible
+{ renderAsOptions: { style: 'inline', colorMap: { active: { textColor: '#16a34a' } } } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Icons in Badges
+
+Add an `icon` name to any `ColorConfig` entry. `iconPosition` controls whether the icon appears `'left'` (default), `'right'`, or `'only'` (hiding the text label).
+
+<WidgemoShowcase
+  description="Same status column with icon on the left vs the right."
+  data={badgeData}
+  config={badgeIconConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// icon on the left (default)
+colorMap: {
+  active:   { background: '#16a34a', text: '#ffffff', icon: 'check-circle', iconPosition: 'left' },
+  pending:  { background: '#d97706', text: '#ffffff', icon: 'clock',        iconPosition: 'left' },
+  inactive: { background: '#6b7280', text: '#ffffff', icon: 'close',        iconPosition: 'left' },
+}
+
+// icon on the right
+colorMap: {
+  active:   { background: '#16a34a', text: '#ffffff', icon: 'check-circle', iconPosition: 'right' },
+  ...
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Icon-Only Badges
+
+`iconPosition: 'only'` hides the text label entirely — useful for compact status indicators. Works with both `'badge'` and `'inline'` styles. Use `iconColor` to set the icon's stroke color independently of `text`.
+
+<WidgemoShowcase
+  description="Icon-only in badge style (tinted pill) and inline style (bare icon)."
+  data={badgeData}
+  config={badgeIconOnlyConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// icon-only badge — tinted background, no label
+colorMap: {
+  active:   { background: '#dcfce7', iconColor: '#16a34a', icon: 'check-circle', iconPosition: 'only' },
+  pending:  { background: '#fef3c7', iconColor: '#d97706', icon: 'clock',        iconPosition: 'only' },
+  inactive: { background: '#f3f4f6', iconColor: '#6b7280', icon: 'close',        iconPosition: 'only' },
+}
+
+// icon-only inline — bare icon, no background, no label
+{
+  style: 'inline',
+  colorMap: {
+    active:   { iconColor: '#16a34a', icon: 'check-circle', iconPosition: 'only' },
+    ...
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Inline Style with Icon and Color
+
+Combine `textColor` and `icon` in an inline badge for a compact, no-background status label with a leading icon.
+
+<WidgemoShowcase
+  description="Inline style: colored text and icon side by side, no background chip."
+  data={badgeData}
+  config={badgeInlineIconConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  style: 'inline',
+  colorMap: {
+    active:   { textColor: '#16a34a', icon: 'check-circle', iconColor: '#16a34a', iconPosition: 'left' },
+    pending:  { textColor: '#d97706', icon: 'clock',        iconColor: '#d97706', iconPosition: 'left' },
+    inactive: { textColor: '#6b7280', icon: 'close',        iconColor: '#6b7280', iconPosition: 'left' },
+  },
+}
 ```
 
 <div style={{ marginBottom: '1rem' }} />
@@ -204,19 +404,27 @@ export const badgeFallbackConfig = {
 
 ```ts
 {
-  background?: string;  // pill background color
-  text?: string;        // label text color (auto-contrasted if omitted)
-  icon?: string;        // icon name to prepend/append
-  iconPosition?: 'left' | 'right' | 'only';  // default: 'left'
-  iconColor?: string;   // icon color override
+  background?: string;   // pill background color
+  text?: string;         // label text color — auto-contrasted against background if omitted
+  textColor?: string;    // explicit label text color; takes priority over `text` for inline style
+  icon?: string;         // icon name from the Widgemo icon registry
+  iconPosition?: 'left' | 'right' | 'only';  // default: 'left'; 'only' hides the text label
+  iconColor?: string;    // icon stroke/fill color; falls back to `text` if omitted
+  displayText?: string;  // overrides the field value as the visible label text
 }
 ```
+
+:::note `text` vs `textColor`
+- **`text`** is computed for badge-style contrast: if omitted it is auto-contrasted against `background`. It also acts as the `iconColor` fallback.
+- **`textColor`** overrides the label color for inline style and takes priority over `text` for the label. Use `textColor` whenever you need a specific foreground color without influencing icon contrast.
+:::
 
 ## Caveats
 
 - An empty or nullish value renders a `-` placeholder — it does not throw.
-- When `colorMap` maps a value to a plain string (e.g. `active: '#16a34a'`), text color is auto-contrasted against the background.
-- `icon` within a `ColorConfig` expects an icon name registered with the Widgemo icon registry. Unrecognized names render nothing.
+- When `colorMap` maps a value to a plain hex string (`active: '#16a34a'`), the text color is **auto-contrasted for badge backgrounds** (typically white). For `style: 'inline'`, this produces white text on a white page — use `{ textColor: '#16a34a' }` instead.
+- `icon` expects a name registered with the Widgemo icon registry. Unrecognized names render nothing silently.
+- `iconPosition: 'only'` hides the label but the field value is still used for `colorMap` lookup and accessibility semantics.
 
 ## See Also
 
