@@ -1,9 +1,9 @@
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
 export const linkData = [
-  { name: 'Aurora Chen', profile: 'https://profiles.example.com/aurora-chen', email: 'aurora@example.com' },
-  { name: 'Mateo Silva', profile: 'https://profiles.example.com/mateo-silva', email: 'mateo@example.com' },
-  { name: 'Priya Nair', profile: 'https://profiles.example.com/priya-nair', email: 'priya@example.com' },
+  { name: 'Aurora Chen', profile: 'https://profiles.example.com/aurora-chen', email: 'aurora@example.com', phone: '+15550000001' },
+  { name: 'Mateo Silva', profile: 'https://profiles.example.com/mateo-silva', email: 'mateo@example.com', phone: '+15550000002' },
+  { name: 'Priya Nair', profile: 'https://profiles.example.com/priya-nair', email: 'priya@example.com', phone: '+15550000003' },
 ];
 
 export const linkBasicConfig = {
@@ -54,13 +54,29 @@ export const linkEmailConfig = {
       item: {
         fields: [
           { key: 'name', label: 'Name', type: 'text' },
+          { key: 'email', label: 'Email', type: 'email', renderAs: 'link' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const linkTelConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
           {
             key: 'name',
-            label: 'Send Email',
+            label: 'Call',
             renderAs: 'link',
             renderAsOptions: {
-              url: (entity) => `mailto:${entity.email}`,
-              text: (entity) => entity.email,
+              url: (entity) => `tel:${entity.phone}`,
+              text: (entity) => entity.phone,
             },
           },
         ],
@@ -121,12 +137,12 @@ export const linkEmailConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Custom URL (e.g. mailto)
+### Auto-Detection
 
-`url` overrides the href independently of the field value. Use it to construct `mailto:`, `tel:`, or internal app routes from row data.
+When the field is declared `type: 'email'` and no explicit `url` is provided, the renderer automatically prefixes `mailto:` — provided the value passes email format validation. No `url` option is required.
 
 <WidgemoShowcase
-  description="Link href is built from entity.email while the visible text is the email address."
+  description="Email addresses rendered as clickable mailto links with no url option required."
   data={linkData}
   config={linkEmailConfig}
 />
@@ -134,12 +150,32 @@ export const linkEmailConfig = {
 <div style={{ marginBottom: '1rem' }} />
 
 ```tsx
+{ key: 'email', type: 'email', renderAs: 'link' }
+```
+
+Auto-detection is gated on two conditions: `type: 'email'` must be declared **and** the value must be a valid email address. A `type: 'text'` field whose value happens to contain `@` does not get auto-prefixed. Providing an explicit `url` option always bypasses auto-detection entirely.
+
+<div style={{ marginBottom: '1rem' }} />
+
+### URL Override
+
+`url` sets the `href` independently of the field value. Use it when the URL must be derived from other fields, or when you need a scheme like `tel:`, `sms:`, or an internal app route.
+
+<WidgemoShowcase
+  description="Call link built from a separate phone field; the key field is only used for row identity."
+  data={linkData}
+  config={linkTelConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
 {
-  key: 'name',  // field value drives the display
+  key: 'name',
   renderAs: 'link',
   renderAsOptions: {
-    url: (entity) => `mailto:${entity.email}`,
-    text: (entity) => entity.email,
+    url: (entity) => `tel:${entity.phone}`,
+    text: (entity) => entity.phone,
   },
 }
 ```
@@ -159,6 +195,9 @@ export const linkEmailConfig = {
 - If both `text` and `url` are omitted, the raw field value is used as both the label and the href.
 - `newTab: true` automatically adds `rel="noopener noreferrer"` to mitigate reverse tabnapping.
 - Function forms of `text` and `url` receive the full entity object. Keep the functions pure — avoid side effects.
+- If the resolved `href` fails internal URL validation, the renderer falls back to plain text rather than rendering a broken link.
+- `type: 'email'` fields get automatic `mailto:` construction when `renderAs: 'link'` is applied — provided the value passes email format validation. Values that fail validation render as plain text.
+- `type: 'url'` fields use the raw value as `href` as-is; ensure values include the full scheme (`https://`). No automatic scheme is added.
 
 ## See Also
 
