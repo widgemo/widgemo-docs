@@ -1,42 +1,295 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
 # compositionBar Renderer
 
-Use `renderAs: 'compositionBar'` to visualize part-to-whole segment distributions.
+`renderAs: 'compositionBar'` renders proportional segmented bars with an optional inline legend. Use it for part-to-whole distributions — portfolio mixes, resource splits, category breakdowns — displayed compactly inside a table cell or card field.
 
-## Typical Use Cases
+## Core Examples
 
-- Portfolio or budget composition
-- Resource allocation splits
-- Category contribution breakdowns
+### Pattern 1: Row Data Contains Full Segments
 
-## Example
+Each row provides its own segment objects with labels, values, and colors. Config controls only presentation.
+
+<WidgemoShowcase
+  description="Each row supplies its own segment objects. Config only sets legend and presentation options."
+  data={[
+    { portfolio: 'Operating Reserve', mix: { segments: [{ label: 'Cash', value: 52, color: '#22c55e' }, { label: 'Bonds', value: 33, color: '#3b82f6' }, { label: 'Other', value: 15, color: '#a855f7' }] } },
+    { portfolio: 'Growth Fund',       mix: { segments: [{ label: 'Equity', value: 68, color: '#f59e0b' }, { label: 'Bonds', value: 20, color: '#3b82f6' }, { label: 'Cash', value: 12, color: '#22c55e' }] } },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'portfolio', label: 'Portfolio' },
+            { key: 'mix', label: 'Composition', renderAs: 'compositionBar', renderAsOptions: { legend: 'inline', percentages: true } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{
-  key: 'allocation',
-  label: 'Allocation',
-  renderAs: 'compositionBar',
-  renderAsOptions: {
-    legend: 'inline',
-    percentages: true,
-    barHeight: 12,
-    segments: (entity) => [
-      { label: 'Core', value: entity.core, color: '#4d94ff' },
-      { label: 'Growth', value: entity.growth, color: '#35d4a1' },
-      { label: 'Risk', value: entity.risk, color: '#f6ad55' },
-    ],
+// Data shape — segments live in the row:
+{ portfolio: 'Operating Reserve', mix: { segments: [
+  { label: 'Cash',  value: 52, color: '#22c55e' },
+  { label: 'Bonds', value: 33, color: '#3b82f6' },
+  { label: 'Other', value: 15, color: '#a855f7' },
+]}}
+
+// Field config — no segments option needed:
+{ key: 'mix', renderAs: 'compositionBar', renderAsOptions: { legend: 'inline', percentages: true } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Pattern 2: Row Values + Config Mapping
+
+Each row stores only numeric values. A `segments` function in config maps those into shared labels and colors — best when all rows share the same segment schema but values differ.
+
+<WidgemoShowcase
+  description="Rows store plain value arrays. Config segments function applies shared labels and colors."
+  data={[
+    { team: 'North America', values: [48, 37, 15] },
+    { team: 'EMEA',          values: [31, 52, 17] },
+    { team: 'APAC',          values: [55, 28, 17] },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'team', label: 'Team' },
+            {
+              key: 'values',
+              label: 'Allocation',
+              renderAs: 'compositionBar',
+              renderAsOptions: {
+                legend: 'inline',
+                percentages: true,
+                segments: (entity) => {
+                  const v = Array.isArray(entity.values) ? entity.values : [];
+                  return [
+                    { label: 'Cash',   value: Number(v[0] ?? 0), color: '#22c55e' },
+                    { label: 'Equity', value: Number(v[1] ?? 0), color: '#3b82f6' },
+                    { label: 'Debt',   value: Number(v[2] ?? 0), color: '#ef4444' },
+                  ];
+                },
+              },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'values', renderAs: 'compositionBar', renderAsOptions: {
+  legend: 'inline',
+  segments: (entity) => {
+    const v = Array.isArray(entity.values) ? entity.values : [];
+    return [
+      { label: 'Cash',   value: Number(v[0] ?? 0), color: '#22c55e' },
+      { label: 'Equity', value: Number(v[1] ?? 0), color: '#3b82f6' },
+      { label: 'Debt',   value: Number(v[2] ?? 0), color: '#ef4444' },
+    ];
   },
+}}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Pattern 3: Static Reference Composition
+
+`segments` is a static array in config. Every row displays the same composition — useful for target mixes, policy baselines, or benchmark overlays.
+
+<WidgemoShowcase
+  description="Every row renders the same benchmark composition from config. Row data is not the segment source."
+  data={[
+    { account: 'Ops Budget' },
+    { account: 'Reserve Fund' },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'account', label: 'Account' },
+            {
+              key: 'account',
+              label: 'Target Mix',
+              renderAs: 'compositionBar',
+              renderAsOptions: {
+                legend: 'inline',
+                percentages: false,
+                segments: [
+                  { label: 'Cash',   value: 40, color: '#22c55e' },
+                  { label: 'Equity', value: 45, color: '#3b82f6' },
+                  { label: 'Debt',   value: 15, color: '#ef4444' },
+                ],
+              },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'account', renderAs: 'compositionBar', renderAsOptions: {
+  legend: 'inline',
+  segments: [
+    { label: 'Cash',   value: 40, color: '#22c55e' },
+    { label: 'Equity', value: 45, color: '#3b82f6' },
+    { label: 'Debt',   value: 15, color: '#ef4444' },
+  ],
+}}
+```
+
+## Which Pattern Should I Use?
+
+| Pattern | Segment values come from | Labels/colors come from | Best when |
+|---|---|---|---|
+| Row full segments | Row data (`fieldValue.segments`) | Same row objects | Every row has a distinct composition |
+| Row values + config mapping | Row data (numeric array or fields) | Config `segments` function | All rows share the same schema, values differ |
+| Static reference | Config only | Config only | Same reference mix shown for every row |
+
+## Segment Input Resolution
+
+The renderer resolves the segment source in this exact order:
+
+1. `renderAsOptions.segments` — if provided (static array or `(entity) => segment[]`)
+2. `fieldValue.segments` — if the field value is an object with a `segments` array
+3. `fieldValue` directly — numeric array or object array
+
+Once sourced, each segment is normalized:
+
+- **Value**: looked up as `value` → `amount` → `total` on the object; plain numbers used directly
+- **Label**: looked up as `label` → `name` → `key` → `Segment N`
+- **Color**: `segment.color` → `segmentColors[index]` → `palette[index]` → built-in palette
+
+Segments with zero, negative, or non-numeric values are **filtered out**. If no valid segments remain, the renderer outputs `Invalid`.
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `segments` | `CompositionBarSegment[]` \| `(entity) => segment[]` | field value | Explicit segment source. When provided, overrides field value segment resolution. |
+| `legend` | `'inline'` \| `'none'` | `'inline'` | `'inline'` renders a legend row per segment below the bar. `'none'` hides it. |
+| `percentages` | boolean | `true` | Show per-segment percentage in the inline legend. Does not affect segment widths. |
+| `totals` | boolean | `false` | Render a total row below the legend. |
+| `total` | number \| `(entity) => number` | derived sum | Override the denominator for percent calculations. Falls back to sum of valid segment values if not positive. |
+| `style` | `'segmented'` \| `'continuous'` \| `(entity) => ...` | `'segmented'` | `'segmented'` adds gaps between segments; `'continuous'` renders one uninterrupted band. |
+| `palette` | `string[]` | 6-color built-in | Fallback color palette applied by segment index. |
+| `segmentColors` | `string[]` | unset | Alias for `palette`. Takes precedence over `palette` when both are set. |
+| `barHeight` | number \| string | `'12px'` | Bar height. Numbers are treated as px. |
+| `segmentGap` | number \| string | `'2px'` | Gap between segments in `segmented` style. Numbers are treated as px. |
+| `cornerRadius` | number \| string | `'999px'` | Corner radius applied to track and/or segment elements per `cornerScope`. |
+| `cornerScope` | `'track'` \| `'segment'` \| `'both'` \| `'none'` \| `(entity) => ...` | `'segment'` | Where corner rounding is applied. `'segment'` rounds individual segments; `'track'` rounds the outer bar. |
+| `gap` | number \| string | `'0.4rem'` | Gap between the bar and the legend block. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `CompositionBarSegment` shape
+
+```ts
+{
+  label?: string;          // display name (fallback: 'Segment N')
+  value:  number | string; // magnitude — parsed to a number; zero/negative/invalid are filtered out
+  color?: string;          // explicit segment color (overrides palette)
 }
 ```
 
-## Key Options
+### Built-in default palette
 
-- `segments`
-- `style`, `segmentGap`, `cornerRadius`, `cornerScope`
-- `legend`, `percentages`, `totals`, `total`
-- `segmentColors` or `palette`
-- `barHeight`, `gap`
+`['#4d94ff', '#35d4a1', '#f6ad55', '#b794f4', '#f687b3', '#63b3ed']`
 
-## Canonical Reference
+Applied by index when no explicit `segment.color`, `segmentColors`, or `palette` is provided.
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `CompositionBarRenderAsOptions` in core types
+## Style and Corner Controls
+
+`style: 'segmented'` (default) renders visible gaps between segments, each with independent corner rounding. `style: 'continuous'` renders one uninterrupted band — corner rounding is applied to the first and last segments only.
+
+`cornerScope` determines where `cornerRadius` is applied:
+
+| Value | Effect |
+|---|---|
+| `'segment'` | Rounds individual segment blocks (default) |
+| `'track'` | Rounds the outer bar container |
+| `'both'` | Rounds both |
+| `'none'` | No rounding anywhere |
+
+## Recipes
+
+### Compact strip — no legend
+
+```tsx
+{ key: 'usage', renderAs: 'compositionBar', renderAsOptions: {
+  legend: 'none',
+  barHeight: 8,
+  gap: '0.25rem',
+  segments: (entity) => [
+    { label: 'Focus',    value: entity.focusHours,   color: '#4d94ff' },
+    { label: 'Messages', value: entity.messageHours, color: '#35d4a1' },
+    { label: 'Media',    value: entity.mediaHours,   color: '#f6ad55' },
+  ],
+}}
+```
+
+### Summary card with totals row
+
+```tsx
+{ key: 'capitalMix', renderAs: 'compositionBar', renderAsOptions: {
+  legend: 'inline',
+  percentages: true,
+  totals: true,
+  segments: (entity) => [
+    { label: 'Cash',        value: entity.cash,        color: '#35d4a1' },
+    { label: 'Equities',    value: entity.equities,    color: '#4d94ff' },
+    { label: 'Liabilities', value: entity.liabilities, color: '#f56565' },
+  ],
+  total: (entity) => entity.cash + entity.equities + entity.liabilities,
+}}
+```
+
+### Continuous bar (no gaps)
+
+```tsx
+{ key: 'mix', renderAs: 'compositionBar', renderAsOptions: {
+  style: 'continuous',
+  cornerScope: 'track',
+  cornerRadius: '4px',
+  legend: 'none',
+  segments: (entity) => entity.mixSegments,
+}}
+```
+
+## Caveats
+
+- Segments with zero, negative, or non-parseable values are silently filtered out. If all segments are filtered, the renderer outputs the plain text `Invalid`.
+- `percentages: true` only affects legend display text — it does not change segment widths.
+- `total` override is only used when it resolves to a positive number. If zero or negative, the derived sum is used instead.
+- `segmentColors` and `palette` are aliases — `segmentColors` takes precedence when both are set.
+- `segmentGap` has no effect when `style: 'continuous'`.
+- In `continuous` style, `cornerScope: 'segment'` only rounds the first and last segments.
+- Segment tooltips (visible on hover) always include percentages regardless of the `percentages` option.
+
+## See Also
+
+- [scoreMeter Renderer](/core/components/renderers/score-meter) — 0–100 score with banded label chip
+- [progress Renderer](/core/components/renderers/progress) — single filled bar (0–100)
+- [Field Config](/core/reference/field-config)

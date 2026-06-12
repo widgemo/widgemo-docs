@@ -101,7 +101,6 @@ const sidebars: SidebarsConfig = {
             'components/renderers/datetime',
             'components/renderers/timestamp',
             'components/renderers/duration',
-            'components/renderers/composition-bar-guide',
           ],
         },
         'components/icons',
