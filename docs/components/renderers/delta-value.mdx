@@ -6,6 +6,23 @@ export const deltaData = [
   { name: 'Priya Nair', change: 3.1, pct: 1.7, yoy: 14.5 },
 ];
 
+export const deltaZeroConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'yoy', label: 'YoY (with label)', renderAs: 'deltaValue', renderAsOptions: { trendIndicator: true, fractionDigits: 1 } },
+          { key: 'yoy', label: 'YoY (no label)', renderAs: 'deltaValue', renderAsOptions: { trendIndicator: false, fractionDigits: 1 } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 export const deltaBasicConfig = {
   zones: {
     content: {
@@ -90,6 +107,30 @@ export const deltaPaletteConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
+### Zero and Label Control
+
+Zero values render as `FLAT` with no sign prefix. `trendIndicator: false` removes the label entirely, leaving only the signed number — useful when space is tight or when the color alone is sufficient.
+
+<WidgemoShowcase
+  description="Aurora is zero: shows 'FLAT 0.0' with label, '0.0' without. Mateo is negative: 'DOWN -22.0' vs '-22.0'. Priya is positive: 'UP +14.5' vs '+14.5'."
+  data={deltaData}
+  config={deltaZeroConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// With trend label
+{ renderAs: 'deltaValue', renderAsOptions: { trendIndicator: true,  fractionDigits: 1 } }
+// Zero → 'FLAT 0.0'   Negative → 'DOWN -22.0'   Positive → 'UP +14.5'
+
+// Without trend label
+{ renderAs: 'deltaValue', renderAsOptions: { trendIndicator: false, fractionDigits: 1 } }
+// Zero → '0.0'        Negative → '-22.0'         Positive → '+14.5'
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ### Percent Suffix
 
 `suffixPercent: true` appends `%` to the formatted number. Combine with `trendIndicator` for compact KPI cells. A zero value renders as `FLAT 0.0%`.
@@ -147,9 +188,12 @@ Override the default green/red/grey palette with your own brand colors.
 
 ## Caveats
 
-- Non-numeric values render `'Invalid'` in the neutral color.
-- The sign prefix (`+`/`-`) is always added — you cannot suppress it independently of the trend label.
+- Non-numeric values (including `null`, `undefined`, and unparseable strings) render the plain text `Invalid` with no color applied.
+- Zero values use an empty sign prefix — they render as `0.0` (or `FLAT 0.0` with `trendIndicator`), never as `+0.0`.
+- Positive values are always prefixed with `+`; negative values with `-`. There is no option to suppress the sign independently of `trendIndicator`.
+- `palette` accepts partial overrides — you can override only `positive` and let `negative` and `neutral` fall back to their defaults.
 - `fractionDigits` is clamped to `[0, 6]`. Values outside this range are silently clamped.
+- `formatter` can pre-process the value before rendering. Use it to normalise units (e.g. convert basis points to a decimal) before the sign and color logic runs.
 
 ## See Also
 
