@@ -5,6 +5,7 @@ export const rendererData = [
     name: 'Aurora Chen',
     status: 'active',
     score: 78,
+    completion: 78,
     budget: 4200,
     change: 12.4,
     rating: 4,
@@ -17,6 +18,7 @@ export const rendererData = [
     name: 'Mateo Silva',
     status: 'pending',
     score: 45,
+    completion: 45,
     budget: 7800,
     change: -5.2,
     rating: 3,
@@ -29,6 +31,7 @@ export const rendererData = [
     name: 'Priya Nair',
     status: 'inactive',
     score: 91,
+    completion: 91,
     budget: 1500,
     change: 3.1,
     rating: 5,
@@ -51,6 +54,7 @@ export const rendererShowcaseConfig = {
           { key: 'score', label: 'score → scoreMeter', renderAs: 'scoreMeter', renderAsOptions: { density: 'compact' } },
           { key: 'budget', label: 'budget → currency', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } },
           { key: 'change', label: 'change → deltaValue', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true } },
+          { key: 'completion', label: 'completion → progress', renderAs: 'progress', renderAsOptions: { height: '8px', showPercentage: false } },
           { key: 'rating', label: 'rating → rating', renderAs: 'rating', renderAsOptions: { max: 5, size: 14 } },
           { key: 'trend', label: 'trend → sparkTrend', renderAs: 'sparkTrend', renderAsOptions: { width: 80, height: 28 } },
           { key: 'breakdown', label: 'breakdown → compositionBar', renderAs: 'compositionBar', renderAsOptions: { legend: 'tooltip', barHeight: 10 } },
@@ -72,7 +76,7 @@ Renderers are independent of field type: a `number` field can render as `currenc
 ## All Built-in Renderers at a Glance
 
 <WidgemoShowcase
-  description="Ten built-in renderers applied to a single dataset. Each column uses a different renderAs value."
+  description="Ten non-temporal built-in renderers applied to a single dataset. Each column uses a different renderAs value. The Name column is plain text with no renderer."
   data={rendererData}
   config={rendererShowcaseConfig}
 />
