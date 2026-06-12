@@ -1,31 +1,160 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const datetimeData = [
+  { name: 'Aurora Chen', postedAt: '2025-06-10T08:32:00Z', updatedAt: '2026-06-12T07:15:00Z' },
+  { name: 'Mateo Silva', postedAt: '2026-05-28T14:00:00Z', updatedAt: '2026-06-11T22:44:00Z' },
+  { name: 'Priya Nair',  postedAt: '2026-06-01T09:00:00Z', updatedAt: '2026-06-12T06:00:00Z' },
+];
+
+export const datetimeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',     type: 'text' },
+          { key: 'postedAt', label: 'Posted',   renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime' } },
+          { key: 'updatedAt', label: 'Updated', renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimeRelativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',      label: 'Name',              type: 'text' },
+          { key: 'postedAt',  label: 'Relative only',     renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', relativeTime: true, relativeDisplay: 'relative' } },
+          { key: 'updatedAt', label: 'Absolute + relative', renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', relativeTime: true, relativeDisplay: 'both' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimePresetsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',   type: 'text' },
+          { key: 'postedAt', label: 'short',  renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short' } },
+          { key: 'postedAt', label: 'medium', renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'medium' } },
+          { key: 'postedAt', label: 'long',   renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'long' } },
+          { key: 'postedAt', label: 'full',   renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'full' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # datetime Renderer
 
-Use `renderAs: 'datetime'` for date-time values with absolute and relative display options.
+`renderAs: 'datetime'` formats a combined date-and-time value using `Intl.DateTimeFormat`. It adds `relativeTime` support for showing values like "3 days ago" alongside or instead of the absolute timestamp.
 
-## Example
+## Core Examples
+
+### Basic Datetime
+
+<WidgemoShowcase
+  description="ISO datetime strings formatted with medium (default) and short presets."
+  data={datetimeData}
+  config={datetimeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{
-  key: 'postedAt',
-  type: 'datetime',
-  renderAs: 'datetime',
-  renderAsOptions: {
-    parseMode: 'iso-datetime',
-    locale: 'en-US',
-    timezone: 'utc',
-    formatPreset: 'short',
-    relativeTime: true,
-    relativeDisplay: 'both',
-  },
-}
+{ key: 'postedAt',  renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime' } }
+{ key: 'updatedAt', renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short' } }
 ```
 
-## Required Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- `renderAsOptions.parseMode` is required.
+### Relative Time
 
-## Canonical Reference
+`relativeTime: true` uses `Intl.RelativeTimeFormat` to compute "3 months ago", "in 2 days" etc. `relativeDisplay: 'both'` stacks the absolute value above the relative label:
 
-- API contract: [Field Config](/core/reference/field-config)
-- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Option interface: `DatetimeRenderAsOptions` in core types
+<WidgemoShowcase
+  description="Left: relative-only display. Right: absolute + relative stacked ('both' mode)."
+  data={datetimeData}
+  config={datetimeRelativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', relativeTime: true, relativeDisplay: 'relative' } }
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', relativeTime: true, relativeDisplay: 'both'     } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Format Presets
+
+<WidgemoShowcase
+  description="short / medium / long / full presets applied to the same ISO datetime."
+  data={datetimeData}
+  config={datetimePresetsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'short'  } }
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'medium' } }  // default
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'long'   } }
+{ renderAs: 'datetime', renderAsOptions: { parseMode: 'iso-datetime', formatPreset: 'full'   } }  // includes timezone name
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `TemporalParseMode` | required | How to parse the raw value. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag. |
+| `timezone` | string | `'local'` | `'local'`, `'utc'`, or IANA zone. |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Preset `Intl` option set. `'full'` includes timezone name. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Full `Intl.DateTimeFormat` options — merged over `formatPreset`. |
+| `showSeconds` | boolean | `false` | Include seconds component. |
+| `hour12` | boolean | locale default | Force 12h or 24h. |
+| `relativeTime` | boolean | `false` | Use `Intl.RelativeTimeFormat` instead of absolute formatting. |
+| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | `'relative'`: relative text only. `'both'`: absolute on top, relative below. |
+| `fallbackText` | string | `'Invalid'` | Text shown when parsing fails. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `parseMode` values
+
+| Value | Parses |
+|---|---|
+| `'iso-datetime'` | ISO 8601 datetime strings |
+| `'epoch-ms'` | Unix timestamp in milliseconds |
+| `'epoch-sec'` | Unix timestamp in seconds |
+| `'iso-date'` | `YYYY-MM-DD` strings (time component becomes 00:00:00) |
+| `'any'` | Auto-detect |
+
+## Caveats
+
+- `parseMode` is required. Without it the renderer outputs `fallbackText` immediately.
+- Relative time thresholds: seconds < 60s, minutes < 60m, hours < 24h, days < 30d, months < 12m, then years. All computed via `Intl.RelativeTimeFormat`.
+- `relativeTime` uses the current wall clock at render time. The value is not live-updated — it reflects the time the component rendered.
+- `formatPreset: 'full'` adds `timeZoneName: 'short'` to the Intl options, which displays the timezone abbreviation (e.g. "UTC", "EST").
+- All options accept `(entity) => value` functions for per-row dynamic values.
+
+## See Also
+
+- [timestamp Renderer](/core/components/renderers/timestamp) — same capabilities, `parseMode` is required (epoch values)
+- [date Renderer](/core/components/renderers/date) — date-only
+- [time Renderer](/core/components/renderers/time) — time-only
+- [Field Config](/core/reference/field-config)

@@ -1,29 +1,151 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const timestampData = [
+  { name: 'Aurora Chen', createdMs: 1749715200000, updatedSec: 1749801600 },
+  { name: 'Mateo Silva', createdMs: 1747036800000, updatedSec: 1749715200 },
+  { name: 'Priya Nair',  createdMs: 1749628800000, updatedSec: 1749888000 },
+];
+
+export const timestampBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',      label: 'Name',           type: 'text' },
+          { key: 'createdMs', label: 'Created (epoch-ms)', renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', formatPreset: 'short' } },
+          { key: 'updatedSec', label: 'Updated (epoch-sec)', renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-sec', formatPreset: 'short' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timestampRelativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',      label: 'Name',   type: 'text' },
+          { key: 'createdMs', label: 'Created', renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', relativeTime: true, relativeDisplay: 'both', timezone: 'utc' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timestampTzConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',      label: 'Name',              type: 'text' },
+          { key: 'createdMs', label: 'UTC',               renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'utc',              formatPreset: 'long' } },
+          { key: 'createdMs', label: 'America/New_York',  renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'America/New_York', formatPreset: 'long' } },
+          { key: 'createdMs', label: 'Asia/Tokyo',        renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'Asia/Tokyo',       formatPreset: 'long' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # timestamp Renderer
 
-Use `renderAs: 'timestamp'` for Unix-style timestamp values with controlled parse mode.
+`renderAs: 'timestamp'` is a datetime renderer optimised for epoch-based values. It shares all capabilities of the `datetime` renderer but requires `parseMode` to be explicit — there is no ambiguity-tolerant `'any'` fallback encouraged for epoch data.
 
-## Example
+## Core Examples
+
+### Epoch-ms and Epoch-sec
+
+<WidgemoShowcase
+  description="Millisecond and second epoch values formatted with the short preset."
+  data={timestampData}
+  config={timestampBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{
-  key: 'updatedAtEpoch',
-  type: 'timestamp',
-  renderAs: 'timestamp',
-  renderAsOptions: {
-    parseMode: 'epoch-sec',
-    locale: 'en-US',
-    timezone: 'utc',
-    formatPreset: 'short',
-  },
-}
+{ key: 'createdMs',  renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms',  formatPreset: 'short' } }
+{ key: 'updatedSec', renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-sec', formatPreset: 'short' } }
 ```
 
-## Required Contract
+<div style={{ marginBottom: '1rem' }} />
 
-- `renderAsOptions.parseMode` is required.
+### Relative Time
 
-## Canonical Reference
+Same `relativeTime` and `relativeDisplay` options as `datetime`:
 
-- API contract: [Field Config](/core/reference/field-config)
-- Full temporal options: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Option interface: `TimestampRenderAsOptions` in core types
+<WidgemoShowcase
+  description="Epoch-ms timestamp in 'both' mode — absolute date on top, relative time below."
+  data={timestampData}
+  config={timestampRelativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'timestamp', renderAsOptions: {
+  parseMode: 'epoch-ms',
+  relativeTime: true,
+  relativeDisplay: 'both',
+  timezone: 'utc',
+}}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Timezone
+
+<WidgemoShowcase
+  description="Same epoch-ms value displayed in UTC, America/New_York, and Asia/Tokyo."
+  data={timestampData}
+  config={timestampTzConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'utc',              formatPreset: 'long' } }
+{ renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'America/New_York', formatPreset: 'long' } }
+{ renderAs: 'timestamp', renderAsOptions: { parseMode: 'epoch-ms', timezone: 'Asia/Tokyo',       formatPreset: 'long' } }
+```
+
+## Options Reference
+
+`timestamp` inherits all options from `datetime`. `parseMode` is **required** (typed as non-optional).
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | How to parse the raw value. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag. |
+| `timezone` | string | `'local'` | `'local'`, `'utc'`, or IANA zone. |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Preset `Intl` option set. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Full `Intl.DateTimeFormat` options. |
+| `showSeconds` | boolean | `false` | Include seconds component. |
+| `hour12` | boolean | locale default | Force 12h or 24h. |
+| `relativeTime` | boolean | `false` | Use `Intl.RelativeTimeFormat`. |
+| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | `'both'` stacks absolute + relative. |
+| `fallbackText` | string | `'Invalid'` | Text shown when parsing fails. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- `parseMode` is required. Without it the renderer outputs `fallbackText` immediately — unlike `datetime` where `parseMode` is optional and defaults to `'any'`.
+- `epoch-ms` vs `epoch-sec`: a 10-digit number (seconds since epoch) passed to `epoch-ms` will render as a date in 1970. Always use the matching parse mode for your data source.
+- `'any'` parse mode is available but discouraged for epoch values — the heuristic (numbers ≥ 1e12 treated as ms, otherwise as seconds) may misclassify values near the boundary.
+- All options accept `(entity) => value` functions for per-row dynamic values.
+
+## See Also
+
+- [datetime Renderer](/core/components/renderers/datetime) — same capabilities, `parseMode` optional
+- [date Renderer](/core/components/renderers/date)
+- [Field Config](/core/reference/field-config)
