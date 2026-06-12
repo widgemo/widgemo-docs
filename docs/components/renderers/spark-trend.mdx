@@ -85,7 +85,7 @@ export const sparkStyledConfig = {
 
 ### Array Series
 
-Pass an array of numbers as the field value. The delta is computed as `last - first`. The sparkline direction and color follow the sign of the delta.
+Pass an array of numbers as the field value. The delta is computed as `last - first`. The sparkline direction and color follow the sign of the delta. The renderer also accepts a `{ series: number[] }` object shape.
 
 <WidgemoShowcase
   description="7-point trend arrays per row. Positive trend is green, negative red, flat grey."
@@ -108,10 +108,10 @@ Pass an array of numbers as the field value. The delta is computed as `last - fi
 
 ### Single Numeric Delta
 
-If the field value is a single number, the renderer builds a synthetic 2-point series from the entity context and uses that number as the delta. Useful when you store the delta directly without the full series.
+If the field value is a single number (or a 1-element array), the renderer builds a seeded pseudo-random series of 18 points with a directional bias matching the sign of the delta. The seed is derived from a stable entity identifier, so each row always produces the same spark shape for the same entity.
 
 <WidgemoShowcase
-  description="A scalar change value (-5.2) drives sparkline direction and color without a series array."
+  description="A scalar change value drives sparkline direction and color. Each row gets a unique but stable noise curve derived from the entity seed."
   data={sparkData}
   config={sparkSingleConfig}
 />
@@ -166,9 +166,11 @@ If the field value is a single number, the renderer builds a synthetic 2-point s
 
 ## Caveats
 
-- When given a single numeric delta, the sparkline shape is a simple 2-point line (up or down). Provide a full array for a richer curve.
-- The delta label always shows one decimal place (e.g. `+12.4%`) regardless of the actual value precision.
-- Non-numeric and non-array values fall back to a flat neutral sparkline.
+- The field value accepts a plain `number[]`, a `{ series: number[] }` object, or a scalar number. Arrays with fewer than 2 valid numeric elements fall back to the seeded single-value path.
+- When given a single numeric delta, the sparkline shape is an 18-point seeded noise curve with a directional bias — not a simple 2-point line. The seed is derived from a stable entity identifier, so the curve is consistent per row across renders.
+- The delta label always appends `%` (e.g. `+12.4%`) regardless of whether the underlying value is actually a percentage. Omit `showDeltaLabel` or set it to `false` if the `%` is misleading for your data.
+- Non-numeric and non-array values produce delta=0 and render as a flat-ish neutral-colored noise curve, not a strictly flat line.
+- `formatter` can pre-process the value before rendering. Use it to extract a sub-array from a complex object before passing it to the sparkline logic.
 
 ## See Also
 
