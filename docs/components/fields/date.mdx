@@ -28,89 +28,6 @@ export const dateBasicConfig = {
   },
 };
 
-export const datePresetsConfig = {
-  zones: {
-    content: {
-      mode: 'table',
-      modeConfig: { table: { showHeader: true, hover: true } },
-      item: {
-        fields: [
-          { key: 'operation', label: 'Operation', type: 'text' },
-          {
-            key: 'dueDate',
-            label: 'Short',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' },
-          },
-          {
-            key: 'dueDate',
-            label: 'Medium',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
-          },
-          {
-            key: 'dueDate',
-            label: 'Long',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'long' },
-          },
-          {
-            key: 'dueDate',
-            label: 'Full',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'full' },
-          },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-
-export const dateRelativeConfig = {
-  zones: {
-    content: {
-      mode: 'table',
-      modeConfig: { table: { showHeader: true, hover: true } },
-      item: {
-        fields: [
-          { key: 'operation', label: 'Operation', type: 'text' },
-          {
-            key: 'dueDate',
-            label: 'Relative',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: {
-              parseMode: 'iso-date',
-              locale: 'en-US',
-              relativeTime: true,
-              relativeDisplay: 'relative',
-            },
-          },
-          {
-            key: 'dueDate',
-            label: 'Abs + Relative',
-            type: 'date',
-            renderAs: 'date',
-            renderAsOptions: {
-              parseMode: 'iso-date',
-              locale: 'en-US',
-              formatPreset: 'medium',
-              relativeTime: true,
-              relativeDisplay: 'both',
-            },
-          },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-
 export const dateConditionConfig = {
   zones: {
     content: {
@@ -169,56 +86,6 @@ export const dateConditionConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Format Presets
-
-`formatPreset` controls how much detail is shown. All presets use `Intl.DateTimeFormat` internally — output adapts to `locale`.
-
-<WidgemoShowcase
-  description="The same date rendered with short, medium, long, and full presets."
-  data={dateData}
-  config={datePresetsConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' } }
-// → 5/29/26
-
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' } }
-// → May 29, 2026  (default when formatPreset is omitted)
-
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'long' } }
-// → May 29, 2026
-
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'full' } }
-// → Friday, May 29, 2026
-```
-
-<div style={{ marginBottom: '1rem' }} />
-
-### Relative Time
-
-`relativeTime: true` shows human-friendly relative output ("2 weeks ago"). `relativeDisplay: 'both'` stacks the absolute date above the relative label.
-
-<WidgemoShowcase
-  description="Relative-only and absolute+relative stacked display using the same due dates."
-  data={dateData}
-  config={dateRelativeConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-// Relative only
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', relativeTime: true, relativeDisplay: 'relative' } }
-
-// Absolute + relative stacked
-{ renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium', relativeTime: true, relativeDisplay: 'both' } }
-```
-
-<div style={{ marginBottom: '1rem' }} />
-
 ### Condition
 
 <WidgemoShowcase
@@ -255,16 +122,7 @@ export const dateConditionConfig = {
 
 ### `renderAsOptions` for `renderAs: 'date'`
 
-| Option | Type | Default | Effect |
-|---|---|---|---|
-| `parseMode` | `'iso-date'` \| `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
-| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
-| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. Does not affect the stored value. |
-| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Controls date detail level. |
-| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with preset, takes precedence. |
-| `relativeTime` | `boolean` | `false` | Show relative time ("2 weeks ago") instead of absolute. |
-| `relativeDisplay` | `'relative'` \| `'both'` | `'relative'` | When `relativeTime: true`: show only relative, or absolute+relative stacked. |
-| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+`parseMode` is required — without it the field renders `'Invalid'`. All other display options (`formatPreset`, `locale`, `timezone`, `relativeTime`, `formatOptions`, etc.) are documented on the [date Renderer](/core/components/renderers/date) page.
 
 ## Caveats
 
@@ -277,6 +135,7 @@ export const dateConditionConfig = {
 ## See Also
 
 - [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [date Renderer](/core/components/renderers/date) — full `renderAsOptions` reference
 - [datetime Field Type](/core/components/fields/datetime)
 - [timestamp Field Type](/core/components/fields/timestamp)
 - [Field Config](/core/reference/field-config)

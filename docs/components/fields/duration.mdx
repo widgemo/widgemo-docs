@@ -28,70 +28,6 @@ export const durationClockConfig = {
   },
 };
 
-export const durationHumanizedConfig = {
-  zones: {
-    content: {
-      mode: 'table',
-      modeConfig: { table: { showHeader: true, hover: true } },
-      item: {
-        fields: [
-          { key: 'operation', label: 'Operation', type: 'text' },
-          {
-            key: 'queueLagMs',
-            label: 'Queue Lag (default)',
-            type: 'duration',
-            renderAs: 'duration',
-            renderAsOptions: { unit: 'ms', format: 'humanized', precision: 2, showSign: false },
-          },
-          {
-            key: 'queueLagMs',
-            label: 'Queue Lag (extended)',
-            type: 'duration',
-            renderAs: 'duration',
-            renderAsOptions: {
-              unit: 'ms',
-              format: 'humanized',
-              humanizedUnits: ['hour', 'minute', 'second', 'millisecond'],
-              precision: 3,
-              showSign: false,
-            },
-          },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-
-export const durationDecimalConfig = {
-  zones: {
-    content: {
-      mode: 'table',
-      modeConfig: { table: { showHeader: true, hover: true } },
-      item: {
-        fields: [
-          { key: 'operation', label: 'Operation', type: 'text' },
-          {
-            key: 'reconciliationMin',
-            label: 'Reconciliation (min)',
-            type: 'duration',
-            renderAs: 'duration',
-            renderAsOptions: { unit: 'min', format: 'decimal', precision: 2, showSign: false },
-          },
-          {
-            key: 'deltaRatioSec',
-            label: 'Delta (signed)',
-            type: 'duration',
-            renderAs: 'duration',
-            renderAsOptions: { unit: 'sec', format: 'decimal', precision: 1, showSign: true },
-          },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-
 export const durationConditionConfig = {
   zones: {
     content: {
@@ -152,58 +88,6 @@ export const durationConditionConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Humanized Format
-
-`format: 'humanized'` renders a readable breakdown ("48 seconds", "2 hours 8 minutes"). `humanizedUnits` controls which time units to include. `precision` limits how many units appear.
-
-<WidgemoShowcase
-  description="Left: default humanizedUnits (day/hour/minute/second), precision 2. Right: explicit millisecond-level units, precision 3."
-  data={durationData}
-  config={durationHumanizedConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-// Default units — day, hour, minute, second
-{ renderAsOptions: { unit: 'ms', format: 'humanized', precision: 2, showSign: false } }
-
-// Explicit units including milliseconds
-{
-  renderAsOptions: {
-    unit: 'ms',
-    format: 'humanized',
-    humanizedUnits: ['hour', 'minute', 'second', 'millisecond'],
-    precision: 3,
-    showSign: false,
-  },
-}
-```
-
-<div style={{ marginBottom: '1rem' }} />
-
-### Decimal Format
-
-`format: 'decimal'` renders the duration as a decimal number in the declared `unit`. Useful for dashboards and finance-style KPIs. `showSign: true` prefixes positive values with `+` and negative with `-`.
-
-<WidgemoShowcase
-  description="Reconciliation time in decimal minutes; signed delta in decimal seconds."
-  data={durationData}
-  config={durationDecimalConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-// Decimal minutes, unsigned
-{ renderAsOptions: { unit: 'min', format: 'decimal', precision: 2, showSign: false } }
-
-// Decimal seconds, signed — useful for deltas
-{ renderAsOptions: { unit: 'sec', format: 'decimal', precision: 1, showSign: true } }
-```
-
-<div style={{ marginBottom: '1rem' }} />
-
 ### Condition
 
 <WidgemoShowcase
@@ -240,14 +124,7 @@ export const durationConditionConfig = {
 
 ### `renderAsOptions` for `renderAs: 'duration'`
 
-| Option | Type | Default | Effect |
-|---|---|---|---|
-| `unit` | `'ms'` \| `'sec'` \| `'min'` \| `'hour'` \| `'day'` | **required** | Declares the source unit of the raw numeric value. |
-| `format` | `'clock'` \| `'humanized'` \| `'decimal'` | `'humanized'` | Output format. |
-| `humanizedUnits` | Array of `'year'` \| `'month'` \| `'day'` \| `'hour'` \| `'minute'` \| `'second'` \| `'millisecond'` | `['day','hour','minute','second']` | Which units to include in humanized output. Ordered largest-to-smallest. |
-| `precision` | `number` | `2` | Max number of units shown (humanized) or decimal places (decimal format). |
-| `showSign` | `boolean` | `true` | Prefix positive values with `+` and negative with `-` in decimal/clock formats. |
-| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+`unit` is required — without it the field renders `'Invalid'`. All other display options (`format`, `humanizedUnits`, `precision`, `showSign`, `formatOptions`, `fallbackText`) are documented on the [duration Renderer](/core/components/renderers/duration) page.
 
 ## Caveats
 
@@ -259,6 +136,7 @@ export const durationConditionConfig = {
 
 ## See Also
 
+- [duration Renderer](/core/components/renderers/duration) — full `renderAsOptions` reference
 - [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, best practices
 - [timestamp Field Type](/core/components/fields/timestamp)
 - [Field Config](/core/reference/field-config)

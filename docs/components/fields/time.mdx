@@ -28,42 +28,6 @@ export const timeBasicConfig = {
   },
 };
 
-export const timeFormattingConfig = {
-  zones: {
-    content: {
-      mode: 'table',
-      modeConfig: { table: { showHeader: true, hover: true } },
-      item: {
-        fields: [
-          { key: 'operation', label: 'Operation', type: 'text' },
-          {
-            key: 'checkpointTime',
-            label: '24h with seconds',
-            type: 'time',
-            renderAs: 'time',
-            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: true, hour12: false },
-          },
-          {
-            key: 'checkpointTime',
-            label: '12h no seconds',
-            type: 'time',
-            renderAs: 'time',
-            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: true },
-          },
-          {
-            key: 'scheduledTime',
-            label: 'Scheduled',
-            type: 'time',
-            renderAs: 'time',
-            renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
-          },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-
 export const timeConditionConfig = {
   zones: {
     content: {
@@ -122,30 +86,6 @@ export const timeConditionConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
-### 12h vs 24h and Seconds
-
-`hour12` toggles 12h/24h format. `showSeconds` adds or removes the seconds component.
-
-<WidgemoShowcase
-  description="Same time value rendered in 24h with seconds, 12h without seconds, and a separate scheduled time field."
-  data={timeData}
-  config={timeFormattingConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-// 24-hour with seconds
-{ renderAsOptions: { parseMode: 'iso-time', showSeconds: true, hour12: false } }
-// → 08:15:10
-
-// 12-hour without seconds
-{ renderAsOptions: { parseMode: 'iso-time', showSeconds: false, hour12: true } }
-// → 8:15 AM
-```
-
-<div style={{ marginBottom: '1rem' }} />
-
 ### Condition
 
 <WidgemoShowcase
@@ -182,15 +122,7 @@ export const timeConditionConfig = {
 
 ### `renderAsOptions` for `renderAs: 'time'`
 
-| Option | Type | Default | Effect |
-|---|---|---|---|
-| `parseMode` | `'iso-time'` \| `'epoch-ms'` \| `'epoch-sec'` \| `'iso-datetime'` \| `'any'` | **required** | Declares the source format. Without this, renders `'Invalid'`. |
-| `locale` | string | `'en-US'` | BCP 47 locale tag passed to `Intl.DateTimeFormat`. |
-| `timezone` | `'local'` \| `'utc'` \| IANA string | `'local'` | Timezone for display. |
-| `showSeconds` | `boolean` | `false` | Include seconds in the rendered time. |
-| `hour12` | `boolean` | locale default | `true` for 12-hour AM/PM, `false` for 24-hour. |
-| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Direct override — merged with computed options, takes precedence. |
-| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+`parseMode` is required — without it the field renders `'Invalid'`. All other display options (`showSeconds`, `hour12`, `locale`, `timezone`, `formatOptions`, etc.) are documented on the [time Renderer](/core/components/renderers/time) page.
 
 ## Caveats
 
@@ -201,6 +133,7 @@ export const timeConditionConfig = {
 
 ## See Also
 
+- [time Renderer](/core/components/renderers/time) — full `renderAsOptions` reference
 - [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
 - [datetime Field Type](/core/components/fields/datetime)
 - [Field Config](/core/reference/field-config)
