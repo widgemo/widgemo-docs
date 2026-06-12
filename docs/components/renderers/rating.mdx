@@ -1,9 +1,9 @@
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
 export const ratingData = [
-  { name: 'Aurora Chen', stars: 4, confidence: 3, satisfaction: 5 },
-  { name: 'Mateo Silva', stars: 2, confidence: 4, satisfaction: 3 },
-  { name: 'Priya Nair', stars: 5, confidence: 5, satisfaction: 4 },
+  { name: 'Aurora Chen', stars: 4, hearts: 3, budget: 4, confidence: 5, diamonds: 3 },
+  { name: 'Mateo Silva', stars: 2, hearts: 5, budget: 2, confidence: 4, diamonds: 1 },
+  { name: 'Priya Nair', stars: 5, hearts: 4, budget: 3, confidence: 5, diamonds: 5 },
 ];
 
 export const ratingBasicConfig = {
@@ -22,7 +22,7 @@ export const ratingBasicConfig = {
   },
 };
 
-export const ratingVariantsConfig = {
+export const ratingIconsConfig = {
   zones: {
     content: {
       mode: 'table',
@@ -30,9 +30,29 @@ export const ratingVariantsConfig = {
       item: {
         fields: [
           { key: 'name', label: 'Name', type: 'text' },
-          { key: 'stars', label: 'Stars (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#f59e0b', emptyColor: '#e5e7eb' } },
-          { key: 'confidence', label: 'Confidence (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#6d28d9', emptyColor: '#e5e7eb' } },
-          { key: 'satisfaction', label: 'Satisfaction (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#16a34a', emptyColor: '#e5e7eb' } },
+          { key: 'stars',    label: '★ stars',    renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'star',           color: '#f59e0b', emptyColor: '#d1d5db' } },
+          { key: 'hearts',   label: '♥ hearts',   renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'heart',          color: '#e11d48', emptyColor: '#fecdd3' } },
+          { key: 'budget',   label: '$ budget',   renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'dollar',         color: '#16a34a', emptyColor: '#d1fae5' } },
+          { key: 'diamonds', label: '◆ diamonds', renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'diamond',        color: '#0ea5e9', emptyColor: '#bae6fd' } },
+          { key: 'confidence', label: '● circles', renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'circle-fill',   color: '#6d28d9', emptyColor: '#ede9fe' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const ratingMaxConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'stars', label: 'out of 3', renderAs: 'rating', renderAsOptions: { max: 3, size: 16, icon: 'star',    color: '#f59e0b', emptyColor: '#d1d5db' } },
+          { key: 'stars', label: 'out of 5', renderAs: 'rating', renderAsOptions: { max: 5, size: 16, icon: 'star',    color: '#f59e0b', emptyColor: '#d1d5db' } },
+          { key: 'stars', label: 'out of 10', renderAs: 'rating', renderAsOptions: { max: 10, size: 14, icon: 'heart', color: '#e11d48', emptyColor: '#fecdd3' } },
         ],
         layout: { type: 'auto' },
       },
@@ -66,20 +86,50 @@ export const ratingVariantsConfig = {
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Multiple Rating Fields
+### Icon Variety
+
+The `icon` option accepts any name from the Widgemo icon registry. Use `color` for filled icons and `emptyColor` for the unfilled remainder.
 
 <WidgemoShowcase
-  description="Three independent rating columns with different accent colors."
+  description="Stars, hearts, dollar signs, diamonds, and filled circles — each with matching filled/empty color pairs."
   data={ratingData}
-  config={ratingVariantsConfig}
+  config={ratingIconsConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{ key: 'stars',        renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#f59e0b' } },
-{ key: 'confidence',  renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#6d28d9' } },
-{ key: 'satisfaction',renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#16a34a' } },
+// Hearts — satisfaction or NPS
+{ renderAs: 'rating', renderAsOptions: { icon: 'heart', color: '#e11d48', emptyColor: '#fecdd3' } }
+
+// Dollar signs — budget tier or spend level
+{ renderAs: 'rating', renderAsOptions: { icon: 'dollar', color: '#16a34a', emptyColor: '#d1fae5' } }
+
+// Diamonds — tier / premium indicator
+{ renderAs: 'rating', renderAsOptions: { icon: 'diamond', color: '#0ea5e9', emptyColor: '#bae6fd' } }
+
+// Filled circles — confidence dots
+{ renderAs: 'rating', renderAsOptions: { icon: 'circle-fill', color: '#6d28d9', emptyColor: '#ede9fe' } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Custom Scale
+
+`max` is not limited to 5. Use 3 for a simple Low/Medium/High or 10 for a finer-grained scale.
+
+<WidgemoShowcase
+  description="Same value rendered at max=3, max=5, and max=10 with different icons."
+  data={ratingData}
+  config={ratingMaxConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { max: 3,  icon: 'star',  color: '#f59e0b' } }  // 3-point scale
+{ renderAsOptions: { max: 5,  icon: 'star',  color: '#f59e0b' } }  // 5-point scale (default)
+{ renderAsOptions: { max: 10, icon: 'heart', color: '#e11d48' } }  // 10-point scale
 ```
 
 ## Options Reference
@@ -88,16 +138,19 @@ export const ratingVariantsConfig = {
 |---|---|---|---|
 | `max` | number \| `(entity) => number` | `5` | Total number of icons (filled + empty). |
 | `size` | number \| CSS string \| `(entity) => ...` | `16` | Icon size in px. |
-| `color` | string \| `(entity) => string` | `'#ffc107'` | Color of filled icons. |
-| `emptyColor` | string \| `(entity) => string` | theme muted | Color of empty icons. |
 | `icon` | string \| `(entity) => string` | `'star'` | Icon name from the Widgemo icon registry. |
+| `color` | string \| `(entity) => string` | `'#ffc107'` | Color of filled icons. |
+| `emptyColor` | string \| `(entity) => string` | `'#e4e5e9'` | Color of empty icons. |
 | `className` | string | unset | Additional CSS class on the root element. |
+
+The `icon` option accepts any name from the icon registry — see the [Icons reference](/core/components/icons) for the full list of built-in names and aliases. Custom icons registered via `registerWidgemoIcon` also work here — see [Custom Icons](/core/guides/custom-icons).
 
 ## Caveats
 
-- The value is floored to the nearest integer — `4.7` renders as 4 filled icons.
+- Values are floored to the nearest integer — `4.7` renders as 4 filled icons.
 - Values greater than `max` fill all icons without error.
-- `icon` expects a name registered with the Widgemo icon registry. Unrecognized names fall back to a default star shape.
+- Unrecognized icon names render nothing — the slot is present but invisible. Check the icon name against the registry if icons are missing.
+- `emptyColor` should have low contrast against your background so filled icons stand out. Use a light tint of the `color` value (e.g. `#fecdd3` for a red `#e11d48`).
 
 ## See Also
 

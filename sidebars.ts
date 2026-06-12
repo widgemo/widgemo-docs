@@ -104,14 +104,7 @@ const sidebars: SidebarsConfig = {
             'components/renderers/composition-bar-guide',
           ],
         },
-        {
-          type: 'category',
-          label: 'Icons',
-          items: [
-            'components/icons/overview',
-            'components/icons/built-in-icons',
-          ],
-        },
+        'components/icons',
       ],
     },
     {
