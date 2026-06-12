@@ -1,40 +1,225 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const badgeData = [
+  { name: 'Aurora Chen', status: 'active', priority: 'high', tier: 'gold' },
+  { name: 'Mateo Silva', status: 'pending', priority: 'medium', tier: 'silver' },
+  { name: 'Priya Nair', status: 'inactive', priority: 'low', tier: 'bronze' },
+];
+
+export const badgeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'status',
+            label: 'Status',
+            renderAs: 'badge',
+            renderAsOptions: {
+              colorMap: {
+                active: { background: '#16a34a', text: '#ffffff' },
+                pending: { background: '#d97706', text: '#ffffff' },
+                inactive: { background: '#6b7280', text: '#ffffff' },
+              },
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeSizesConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'status', label: 'sm', renderAs: 'badge', renderAsOptions: { size: 'sm', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+          { key: 'status', label: 'md (default)', renderAs: 'badge', renderAsOptions: { size: 'md', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+          { key: 'status', label: 'lg', renderAs: 'badge', renderAsOptions: { size: 'lg', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeStyleConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'status', label: 'badge style', renderAs: 'badge', renderAsOptions: { style: 'badge', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+          { key: 'status', label: 'inline style', renderAs: 'badge', renderAsOptions: { style: 'inline', colorMap: { active: '#16a34a', pending: '#d97706', inactive: '#6b7280' } } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const badgeFallbackConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'tier',
+            label: 'Tier',
+            renderAs: 'badge',
+            renderAsOptions: {
+              colorMap: {
+                gold: { background: '#f59e0b', text: '#78350f' },
+                silver: { background: '#94a3b8', text: '#1e293b' },
+              },
+              defaultColor: { background: '#e5e7eb', text: '#374151' },
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # badge Renderer
 
-Use `renderAs: 'badge'` to display categorical values with semantic color treatment.
+`renderAs: 'badge'` renders a value as a styled pill or inline label. Use `colorMap` to map values to colors — any value not in the map falls back to `defaultColor`.
 
-## Typical Use Cases
+## Core Examples
 
-- Status chips (`active`, `pending`, `inactive`)
-- Lightweight inline labels for table cells
-- Icon plus text state markers
+### Basic Badge
 
-## Example
+<WidgemoShowcase
+  description="Status column rendered as colored badges with a colorMap."
+  data={badgeData}
+  config={badgeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
   key: 'status',
-  label: 'Status',
   renderAs: 'badge',
   renderAsOptions: {
-    style: 'badge',
-    size: 'md',
     colorMap: {
-      active: { background: '#198754', text: '#ffffff' },
-      pending: { background: '#ffc107', text: '#212529' },
-      inactive: { background: '#6c757d', text: '#ffffff', icon: 'close' },
+      active:   { background: '#16a34a', text: '#ffffff' },
+      pending:  { background: '#d97706', text: '#ffffff' },
+      inactive: { background: '#6b7280', text: '#ffffff' },
     },
   },
 }
 ```
 
-## Key Options
+<div style={{ marginBottom: '1rem' }} />
 
-- `style`: `badge` or `inline`
-- `size`: `sm`, `md`, `lg`
-- `colorMap`: map values to colors and optional icons
-- `defaultColor`: fallback when value is not mapped
+### Size Variants
 
-## Canonical Reference
+`size` controls padding and font size. Default is `'md'`.
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `BadgeRenderAsOptions` in core types
+<WidgemoShowcase
+  description="Same status value rendered at sm, md, and lg."
+  data={badgeData}
+  config={badgeSizesConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { size: 'sm' } }  // compact
+{ renderAsOptions: { size: 'md' } }  // default
+{ renderAsOptions: { size: 'lg' } }  // larger
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Style Variants
+
+`'badge'` renders a filled pill. `'inline'` renders colored text without a background chip.
+
+<WidgemoShowcase
+  description="Badge style (filled pill) vs inline style (colored text)."
+  data={badgeData}
+  config={badgeStyleConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { style: 'badge' } }   // filled pill
+{ renderAsOptions: { style: 'inline' } }  // colored text only
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Fallback Color
+
+`defaultColor` applies when the value is not in `colorMap`. Priya's `bronze` tier is not mapped — it uses the default grey.
+
+<WidgemoShowcase
+  description="gold and silver are mapped; bronze falls back to defaultColor."
+  data={badgeData}
+  config={badgeFallbackConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  renderAsOptions: {
+    colorMap: {
+      gold:   { background: '#f59e0b', text: '#78350f' },
+      silver: { background: '#94a3b8', text: '#1e293b' },
+    },
+    defaultColor: { background: '#e5e7eb', text: '#374151' },
+  },
+}
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `colorMap` | `Record<string, string \| ColorConfig>` | `{}` | Maps field values to colors. String values are used as background color (text auto-contrasted). |
+| `defaultColor` | `string \| ColorConfig` | `'#6c757d'` | Fallback color for values not in `colorMap`. |
+| `style` | `'badge'` \| `'inline'` | `'badge'` | `'badge'`: filled pill. `'inline'`: colored text only. |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Controls padding and font size. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `ColorConfig` shape
+
+```ts
+{
+  background?: string;  // pill background color
+  text?: string;        // label text color (auto-contrasted if omitted)
+  icon?: string;        // icon name to prepend/append
+  iconPosition?: 'left' | 'right' | 'only';  // default: 'left'
+  iconColor?: string;   // icon color override
+}
+```
+
+## Caveats
+
+- An empty or nullish value renders a `-` placeholder — it does not throw.
+- When `colorMap` maps a value to a plain string (e.g. `active: '#16a34a'`), text color is auto-contrasted against the background.
+- `icon` within a `ColorConfig` expects an icon name registered with the Widgemo icon registry. Unrecognized names render nothing.
+
+## See Also
+
+- [select Field Type](/core/components/fields/select) — badge is the natural pair for select fields
+- [Renderer Components Overview](/core/components/renderers/overview)
+- [Field Config](/core/reference/field-config)

@@ -1,39 +1,106 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const ratingData = [
+  { name: 'Aurora Chen', stars: 4, confidence: 3, satisfaction: 5 },
+  { name: 'Mateo Silva', stars: 2, confidence: 4, satisfaction: 3 },
+  { name: 'Priya Nair', stars: 5, confidence: 5, satisfaction: 4 },
+];
+
+export const ratingBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'stars', label: 'Stars', renderAs: 'rating', renderAsOptions: { max: 5, size: 16, color: '#f59e0b', emptyColor: '#d1d5db' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const ratingVariantsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'stars', label: 'Stars (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#f59e0b', emptyColor: '#e5e7eb' } },
+          { key: 'confidence', label: 'Confidence (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#6d28d9', emptyColor: '#e5e7eb' } },
+          { key: 'satisfaction', label: 'Satisfaction (5)', renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#16a34a', emptyColor: '#e5e7eb' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # rating Renderer
 
-Use `renderAs: 'rating'` for discrete score display with repeated icons.
+`renderAs: 'rating'` renders a numeric value as a row of filled and empty icons — stars by default. Use it for quality scores, satisfaction ratings, or any discrete 1-to-N metric.
 
-## Typical Use Cases
+## Core Examples
 
-- Product quality ratings
-- Reviewer confidence scores
-- Service quality indicators
+### Basic Rating
 
-## Example
+<WidgemoShowcase
+  description="Five-star rating with filled amber stars and grey empty stars."
+  data={ratingData}
+  config={ratingBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
-  key: 'rating',
-  label: 'Rating',
+  key: 'stars',
   renderAs: 'rating',
-  renderAsOptions: {
-    max: 5,
-    size: 18,
-    icon: 'star',
-    color: '#ffd700',
-    emptyColor: '#dee2e6',
-  },
+  renderAsOptions: { max: 5, size: 16, color: '#f59e0b', emptyColor: '#d1d5db' },
 }
 ```
 
-## Key Options
+<div style={{ marginBottom: '1rem' }} />
 
-- `max`
-- `size`
-- `icon`
-- `color`
-- `emptyColor`
+### Multiple Rating Fields
 
-## Canonical Reference
+<WidgemoShowcase
+  description="Three independent rating columns with different accent colors."
+  data={ratingData}
+  config={ratingVariantsConfig}
+/>
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `RatingRenderAsOptions` in core types
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'stars',        renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#f59e0b' } },
+{ key: 'confidence',  renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#6d28d9' } },
+{ key: 'satisfaction',renderAs: 'rating', renderAsOptions: { max: 5, size: 14, color: '#16a34a' } },
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `max` | number \| `(entity) => number` | `5` | Total number of icons (filled + empty). |
+| `size` | number \| CSS string \| `(entity) => ...` | `16` | Icon size in px. |
+| `color` | string \| `(entity) => string` | `'#ffc107'` | Color of filled icons. |
+| `emptyColor` | string \| `(entity) => string` | theme muted | Color of empty icons. |
+| `icon` | string \| `(entity) => string` | `'star'` | Icon name from the Widgemo icon registry. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- The value is floored to the nearest integer — `4.7` renders as 4 filled icons.
+- Values greater than `max` fill all icons without error.
+- `icon` expects a name registered with the Widgemo icon registry. Unrecognized names fall back to a default star shape.
+
+## See Also
+
+- [scoreMeter Renderer](/core/components/renderers/score-meter) — continuous meter with banded labels
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

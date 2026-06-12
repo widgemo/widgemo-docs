@@ -1,39 +1,187 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const currencyData = [
+  { name: 'Aurora Chen', budget: 4200, spend: 3870, delta: 420.5, revenue: 1420000 },
+  { name: 'Mateo Silva', budget: 7800, spend: -320, delta: -1250, revenue: 980000 },
+  { name: 'Priya Nair', budget: 1500, spend: 1500, delta: 0, revenue: 3250000 },
+];
+
+export const currencyBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'budget', label: 'Budget', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } },
+          { key: 'spend', label: 'Spend', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD', colorize: true } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const currencyLocalesConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'budget', label: 'USD (en-US)', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } },
+          { key: 'budget', label: 'EUR (de-DE)', renderAs: 'currency', renderAsOptions: { locale: 'de-DE', currency: 'EUR' } },
+          { key: 'budget', label: 'GBP (en-GB)', renderAs: 'currency', renderAsOptions: { locale: 'en-GB', currency: 'GBP' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const currencyCompactConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'revenue', label: 'Revenue (full)', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } },
+          { key: 'revenue', label: 'Revenue (compact)', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD', compact: true, compactThreshold: 1000 } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const currencyNegativeConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'delta', label: 'Delta (minus)', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD', colorize: true, negativeFormat: 'minus' } },
+          { key: 'delta', label: 'Delta (parens)', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD', colorize: true, negativeFormat: 'parentheses' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # currency Renderer
 
-Use `renderAs: 'currency'` for locale-aware numeric currency formatting.
+`renderAs: 'currency'` renders a numeric value as a locale-aware formatted currency amount using `Intl.NumberFormat`. Supports colorization, compact notation, and parenthetical negative formatting.
 
-## Typical Use Cases
+## Core Examples
 
-- Finance amounts in table and grid views
-- Positive/negative value colorization
-- Compact notation for large values
+### Basic Currency
 
-## Example
+<WidgemoShowcase
+  description="Budget as plain USD. Spend with colorize: true — negative red, positive green."
+  data={currencyData}
+  config={currencyBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-{
-  key: 'amount',
-  label: 'Amount',
-  renderAs: 'currency',
-  renderAsOptions: {
-    currency: 'USD',
-    locale: 'en-US',
-    compact: true,
-    colorize: true,
-    negativeFormat: 'parentheses',
-  },
-}
+{ key: 'budget', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } }
+{ key: 'spend',  renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD', colorize: true } }
 ```
 
-## Key Options
+<div style={{ marginBottom: '1rem' }} />
 
-- `currency`, `locale`
-- `minimumFractionDigits`, `maximumFractionDigits`
-- `compact`, `compactThreshold`
-- `colorize`, `positiveColor`, `negativeColor`, `zeroColor`
-- `negativeFormat`, `decimalAlign`
+### Locale and Currency Code
 
-## Canonical Reference
+Pass any BCP 47 locale and ISO 4217 currency code. The symbol position and decimal separator adapt automatically.
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `CurrencyRenderAsOptions` in core types
+<WidgemoShowcase
+  description="Same value formatted as USD, EUR, and GBP with their respective locales."
+  data={currencyData}
+  config={currencyLocalesConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { locale: 'en-US', currency: 'USD' } }  // $4,200.00
+{ renderAsOptions: { locale: 'de-DE', currency: 'EUR' } }  // 4.200,00 €
+{ renderAsOptions: { locale: 'en-GB', currency: 'GBP' } }  // £4,200.00
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Compact Notation
+
+`compact: true` switches to compact notation when the value meets `compactThreshold` (default: 1,000,000). Set a lower threshold to compact smaller values.
+
+<WidgemoShowcase
+  description="Revenue in full format vs compact notation (threshold set to 1000 for demonstration)."
+  data={currencyData}
+  config={currencyCompactConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { locale: 'en-US', currency: 'USD', compact: true, compactThreshold: 1000 } }
+// → $1.42M
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Negative Format
+
+`negativeFormat: 'parentheses'` wraps negative values in `(parens)` — standard accounting notation.
+
+<WidgemoShowcase
+  description="Negative delta shown with minus sign vs accounting parentheses. Colorize applied to both."
+  data={currencyData}
+  config={currencyNegativeConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAsOptions: { colorize: true, negativeFormat: 'minus' } }        // -$1,250.00
+{ renderAsOptions: { colorize: true, negativeFormat: 'parentheses' } }  // ($1,250.00)
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `currency` | string | `'USD'` | ISO 4217 currency code. |
+| `locale` | string | `'en-US'` | BCP 47 locale for number formatting. |
+| `minimumFractionDigits` | number | `2` | Minimum decimal places. |
+| `maximumFractionDigits` | number | `2` | Maximum decimal places. |
+| `showSymbol` | boolean | `true` | Show the currency symbol. |
+| `symbolPosition` | `'prefix'` \| `'suffix'` | locale default | Override symbol position. |
+| `compact` | boolean | `false` | Use compact notation (K, M, B) when value reaches `compactThreshold`. |
+| `compactThreshold` | number | `1000000` | Minimum absolute value to trigger compact notation. |
+| `colorize` | boolean | `false` | Color positive values green, negative red, zero neutral. |
+| `positiveColor` | string | theme green | Override for positive values. |
+| `negativeColor` | string | theme red | Override for negative values. |
+| `zeroColor` | string | theme neutral | Override for zero values. |
+| `negativeFormat` | `'minus'` \| `'parentheses'` | `'minus'` | How to display negative values. |
+| `decimalAlign` | boolean | `false` | Aligns decimal points vertically in table columns. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- Non-numeric values and `NaN` render `'Invalid'`.
+- `compact` uses `Intl.NumberFormat` `notation: 'compact'` — output depends on locale (e.g. `1.4M` in `en-US`, `1,4 Mio.` in `de-DE`).
+- `decimalAlign` uses CSS `ch` units — reliable in monospace columns but may drift in proportional fonts.
+
+## See Also
+
+- [deltaValue Renderer](/core/components/renderers/delta-value) — signed directional change values
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

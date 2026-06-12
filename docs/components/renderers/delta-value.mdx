@@ -1,41 +1,159 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const deltaData = [
+  { name: 'Aurora Chen', change: 12.4, pct: 8.3, yoy: 0 },
+  { name: 'Mateo Silva', change: -5.2, pct: -3.1, yoy: -22.0 },
+  { name: 'Priya Nair', change: 3.1, pct: 1.7, yoy: 14.5 },
+];
+
+export const deltaBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'change', label: 'Change', renderAs: 'deltaValue', renderAsOptions: { trendIndicator: true, fractionDigits: 1 } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const deltaPercentConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'pct', label: '% Change', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true, trendIndicator: true, fractionDigits: 1 } },
+          { key: 'yoy', label: 'YoY %', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true, trendIndicator: true, fractionDigits: 1 } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const deltaPaletteConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'change',
+            label: 'Change (custom palette)',
+            renderAs: 'deltaValue',
+            renderAsOptions: {
+              trendIndicator: false,
+              fractionDigits: 1,
+              palette: { positive: '#0284c7', negative: '#b91c1c', neutral: '#64748b' },
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # deltaValue Renderer
 
-Use `renderAs: 'deltaValue'` for signed metric change display with optional trend indicators.
+`renderAs: 'deltaValue'` renders a signed numeric change with color coding and an optional directional label (`UP`, `DOWN`, `FLAT`). Use it for period-over-period variance, KPI movement, or any metric where direction matters.
 
-## Typical Use Cases
+## Core Examples
 
-- Period-over-period variance
-- KPI movement (+/-)
-- Alerting around directional change
+### Basic Delta
 
-## Example
+<WidgemoShowcase
+  description="Signed numeric change with UP/DOWN/FLAT label and green/red/grey coloring."
+  data={deltaData}
+  config={deltaBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
-  key: 'delta',
-  label: 'Delta',
+  key: 'change',
+  renderAs: 'deltaValue',
+  renderAsOptions: { trendIndicator: true, fractionDigits: 1 },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Percent Suffix
+
+`suffixPercent: true` appends `%` to the formatted number. Combine with `trendIndicator` for compact KPI cells. A zero value renders as `FLAT 0.0%`.
+
+<WidgemoShowcase
+  description="Two percent-change columns — one non-zero and one zero (FLAT)."
+  data={deltaData}
+  config={deltaPercentConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'pct', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true, trendIndicator: true, fractionDigits: 1 } }
+{ key: 'yoy', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true, trendIndicator: true, fractionDigits: 1 } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Custom Palette
+
+Override the default green/red/grey palette with your own brand colors.
+
+<WidgemoShowcase
+  description="Same change values using a blue/crimson/slate palette instead of the default green/red/grey."
+  data={deltaData}
+  config={deltaPaletteConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'change',
   renderAs: 'deltaValue',
   renderAsOptions: {
-    trendIndicator: true,
-    suffixPercent: true,
+    trendIndicator: false,
     fractionDigits: 1,
-    palette: {
-      positive: '#198754',
-      negative: '#dc3545',
-      neutral: '#6c757d',
-    },
+    palette: { positive: '#0284c7', negative: '#b91c1c', neutral: '#64748b' },
   },
 }
 ```
 
-## Key Options
+## Options Reference
 
-- `trendIndicator`
-- `suffixPercent`
-- `fractionDigits`
-- `palette`
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `trendIndicator` | boolean | `true` | Prepend `UP`, `DOWN`, or `FLAT` to the value. |
+| `suffixPercent` | boolean | `false` | Append `%` after the formatted number. |
+| `fractionDigits` | number | `0` | Decimal places (clamped 0–6). |
+| `palette.positive` | string | `'#2f855a'` | Color for positive values. |
+| `palette.negative` | string | `'#c53030'` | Color for negative values. |
+| `palette.neutral` | string | `'#718096'` | Color for zero values. |
+| `className` | string | unset | Additional CSS class on the root element. |
 
-## Canonical Reference
+## Caveats
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `DeltaValueRenderAsOptions` in core types
+- Non-numeric values render `'Invalid'` in the neutral color.
+- The sign prefix (`+`/`-`) is always added — you cannot suppress it independently of the trend label.
+- `fractionDigits` is clamped to `[0, 6]`. Values outside this range are silently clamped.
+
+## See Also
+
+- [sparkTrend Renderer](/core/components/renderers/spark-trend) — trend line over time series data
+- [currency Renderer](/core/components/renderers/currency) — monetary values with sign coloring
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

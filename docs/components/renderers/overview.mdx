@@ -1,38 +1,174 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const rendererData = [
+  {
+    name: 'Aurora Chen',
+    status: 'active',
+    score: 78,
+    budget: 4200,
+    change: 12.4,
+    rating: 4,
+    trend: [52, 58, 61, 70, 68, 74, 78],
+    profile: 'https://profiles.example.com/aurora-chen',
+    breakdown: [{ label: 'Eng', value: 40 }, { label: 'Design', value: 25 }, { label: 'Ops', value: 13 }],
+    meta: { team: 'platform', region: 'APAC' },
+  },
+  {
+    name: 'Mateo Silva',
+    status: 'pending',
+    score: 45,
+    budget: 7800,
+    change: -5.2,
+    rating: 3,
+    trend: [60, 55, 50, 47, 44, 46, 45],
+    profile: 'https://profiles.example.com/mateo-silva',
+    breakdown: [{ label: 'Eng', value: 55 }, { label: 'Design', value: 10 }, { label: 'Ops', value: 20 }],
+    meta: { team: 'infra', region: 'EMEA' },
+  },
+  {
+    name: 'Priya Nair',
+    status: 'inactive',
+    score: 91,
+    budget: 1500,
+    change: 3.1,
+    rating: 5,
+    trend: [80, 82, 85, 87, 89, 90, 91],
+    profile: 'https://profiles.example.com/priya-nair',
+    breakdown: [{ label: 'Eng', value: 20 }, { label: 'Design', value: 15 }, { label: 'Ops', value: 60 }],
+    meta: { team: 'ops', region: 'Americas' },
+  },
+];
+
+export const rendererShowcaseConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'status', label: 'status → badge', renderAs: 'badge' },
+          { key: 'score', label: 'score → scoreMeter', renderAs: 'scoreMeter', renderAsOptions: { density: 'compact' } },
+          { key: 'budget', label: 'budget → currency', renderAs: 'currency', renderAsOptions: { locale: 'en-US', currency: 'USD' } },
+          { key: 'change', label: 'change → deltaValue', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true } },
+          { key: 'rating', label: 'rating → rating', renderAs: 'rating', renderAsOptions: { max: 5, size: 14 } },
+          { key: 'trend', label: 'trend → sparkTrend', renderAs: 'sparkTrend', renderAsOptions: { width: 80, height: 28 } },
+          { key: 'breakdown', label: 'breakdown → compositionBar', renderAs: 'compositionBar', renderAsOptions: { legend: 'tooltip', barHeight: 10 } },
+          { key: 'profile', label: 'profile → link', renderAs: 'link', renderAsOptions: { text: 'View', newTab: true } },
+          { key: 'meta', label: 'meta → jsonPreview', renderAs: 'jsonPreview' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # Renderer Components Overview
 
-Renderers define how an individual field value is presented.
+Renderers control how a field value is displayed. Set `renderAs` on any field config to override the default type-based display with a purpose-built visual output — a badge, a progress bar, a trend sparkline, a formatted currency amount, and so on.
 
-## Built-in Renderers
+Renderers are independent of field type: a `number` field can render as `currency`, `progress`, `rating`, `scoreMeter`, or `deltaValue`. A `text` field can render as `badge`. An `email` or `url` field can render as `link`. Renderer choice is driven by what the data means and how it should look, not by the storage type.
 
+## All Built-in Renderers at a Glance
+
+<WidgemoShowcase
+  description="Ten built-in renderers applied to a single dataset. Each column uses a different renderAs value."
+  data={rendererData}
+  config={rendererShowcaseConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## How renderAs Relates to type
+
+If both `type` and `renderAs` are set on a field, `renderAs` controls display — the `type` switch is bypassed entirely. However, `type` still has two effects:
+
+- **Wrap behavior**: `image` is excluded from `wrap: false` clipping; `email` and `url` apply forced word-breaking under `wrap: true`
+- **Semantic intent**: signals the data's category to developers and future tooling (inline editing, filtering)
+
+As a practical rule: always set `type`, set `renderAs` when the default type rendering isn't the right visual.
+
+```tsx
+// type drives display — plain text
+{ key: 'status', type: 'text' }
+
+// renderAs overrides display — badge widget
+{ key: 'status', type: 'text', renderAs: 'badge' }
+```
+
+## Renderer Reference
+
+### Value and Label Renderers
+
+| Renderer | Best for | Key options |
+|---|---|---|
+| `badge` | Status labels, category tags | `colorMap`, `defaultColor`, `pill` |
+| `currency` | Monetary amounts | `locale`, `currency`, `decimals` |
+| `progress` | Percentage or capacity (0–100) | `color`, `height`, `showPercentage` |
+| `rating` | Star or icon score display | `max`, `size`, `color`, `icon` |
+
+### Metric and Analytical Renderers
+
+| Renderer | Best for | Key options |
+|---|---|---|
+| `deltaValue` | Signed change values with trend color | `positiveColor`, `negativeColor`, `suffixPercent` |
+| `sparkTrend` | Array-valued trend lines | `width`, `height`, `positiveColor`, `negativeColor` |
+| `scoreMeter` | Numeric score with a visual progress meter and band label | `density`, `bands`, `showValue`, `tagPosition` |
+| `compositionBar` | Multi-segment proportion bars | `segments`, `legend`, `barHeight`, `palette` |
+
+### Link and Data Renderers
+
+| Renderer | Best for | Key options |
+|---|---|---|
+| `link` | URLs and email addresses as clickable links | `text`, `url`, `newTab`, `externalWarning` |
+| `jsonPreview` | Collapsible inline JSON object preview | `maxDepth`, `expanded` |
+
+### Temporal Renderers
+
+Temporal renderers require `parseMode` (or `unit` for duration) in `renderAsOptions`. See the [Temporal Fields Guide](/core/components/fields/temporal-fields) for the full contract.
+
+| Renderer | Field type pairing | Required option |
+|---|---|---|
+| `date` | `type: 'date'` | `parseMode` |
+| `time` | `type: 'time'` | `parseMode` |
+| `datetime` | `type: 'datetime'` | `parseMode` |
+| `timestamp` | `type: 'timestamp'` | `parseMode` |
+| `duration` | `type: 'duration'` | `unit` |
+
+## Custom Renderers
+
+Register a `renderAs` renderer for domain-specific visuals not covered by the built-ins:
+
+- [Custom renderAs](/core/extensions/renderas-customization) — registration and runtime usage
+- [Extension Architecture](/core/concepts/extension-architecture) — how plugins and extensions work
+
+## Renderer Guides
+
+**Value renderers**
 - [badge](/core/components/renderers/badge)
 - [currency](/core/components/renderers/currency)
 - [progress](/core/components/renderers/progress)
 - [rating](/core/components/renderers/rating)
-- [link](/core/components/renderers/link)
-- [jsonPreview](/core/components/renderers/json-preview)
+
+**Metric renderers**
 - [deltaValue](/core/components/renderers/delta-value)
 - [sparkTrend](/core/components/renderers/spark-trend)
 - [scoreMeter](/core/components/renderers/score-meter)
 - [compositionBar](/core/components/renderers/composition-bar)
+
+**Link and data renderers**
+- [link](/core/components/renderers/link)
+- [jsonPreview](/core/components/renderers/json-preview)
+
+**Temporal renderers**
 - [date](/core/components/renderers/date)
 - [time](/core/components/renderers/time)
 - [datetime](/core/components/renderers/datetime)
 - [timestamp](/core/components/renderers/timestamp)
 - [duration](/core/components/renderers/duration)
 
-## Custom Renderer Path
+## See Also
 
-For registration and runtime usage of custom renderers:
-
-- [Custom renderAs](/core/extensions/renderas-customization)
-- [Extension API](/core/reference/extension-api)
-
-## Canonical Contract
-
-For renderer option type details and precedence rules, use [Field Config](/core/reference/field-config).
-
-## Next Steps
-
-- Open the renderer page that matches your field display need from the list above.
-- For custom renderer registration, use [Custom renderAs](/core/extensions/renderas-customization).
-- Validate contracts in [Field Config](/core/reference/field-config) and [Extension API](/core/reference/extension-api).
+- [Field Components Overview](/core/components/fields/overview) — field types and the type vs renderAs decision
+- [Field Config](/core/reference/field-config) — full field contract and renderer option types
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-cutting temporal contracts

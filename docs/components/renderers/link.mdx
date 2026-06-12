@@ -1,36 +1,167 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const linkData = [
+  { name: 'Aurora Chen', profile: 'https://profiles.example.com/aurora-chen', email: 'aurora@example.com' },
+  { name: 'Mateo Silva', profile: 'https://profiles.example.com/mateo-silva', email: 'mateo@example.com' },
+  { name: 'Priya Nair', profile: 'https://profiles.example.com/priya-nair', email: 'priya@example.com' },
+];
+
+export const linkBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'profile', label: 'Profile', renderAs: 'link', renderAsOptions: { text: 'View profile', newTab: true } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const linkDynamicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'profile',
+            label: 'Profile (dynamic text)',
+            renderAs: 'link',
+            renderAsOptions: {
+              text: (entity) => `Profile → ${entity.name}`,
+              newTab: true,
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const linkEmailConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'name',
+            label: 'Send Email',
+            renderAs: 'link',
+            renderAsOptions: {
+              url: (entity) => `mailto:${entity.email}`,
+              text: (entity) => entity.email,
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # link Renderer
 
-Use `renderAs: 'link'` to render field values as navigable links.
+`renderAs: 'link'` renders a field value as a navigable `<a>` element. Both `text` and `url` accept a function receiving the entity, enabling fully dynamic link construction.
 
-## Typical Use Cases
+## Core Examples
 
-- Detail-page navigation
-- External profile links
-- Email values converted to `mailto:` links
+### Basic Link
 
-## Example
+<WidgemoShowcase
+  description="Profile URL rendered as a fixed-text link opening in a new tab."
+  data={linkData}
+  config={linkBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 {
-  key: 'profileUrl',
-  label: 'Profile',
+  key: 'profile',
+  renderAs: 'link',
+  renderAsOptions: { text: 'View profile', newTab: true },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Dynamic Link Text
+
+`text` and `url` each accept `(entity) => string`. This lets you construct labels and URLs from any combination of row fields.
+
+<WidgemoShowcase
+  description="Link text is generated per-row using the entity name."
+  data={linkData}
+  config={linkDynamicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'profile',
   renderAs: 'link',
   renderAsOptions: {
-    text: 'Open profile',
+    text: (entity) => `Profile → ${entity.name}`,
     newTab: true,
-    externalWarning: true,
   },
 }
 ```
 
-## Key Options
+<div style={{ marginBottom: '1rem' }} />
 
-- `text`
-- `url`
-- `newTab`
-- `externalWarning`
+### Custom URL (e.g. mailto)
 
-## Canonical Reference
+`url` overrides the href independently of the field value. Use it to construct `mailto:`, `tel:`, or internal app routes from row data.
 
-- API contract: [Field Config](/core/reference/field-config)
-- Option interface: `LinkRenderAsOptions` in core types
+<WidgemoShowcase
+  description="Link href is built from entity.email while the visible text is the email address."
+  data={linkData}
+  config={linkEmailConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'name',  // field value drives the display
+  renderAs: 'link',
+  renderAsOptions: {
+    url: (entity) => `mailto:${entity.email}`,
+    text: (entity) => entity.email,
+  },
+}
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `text` | string \| `(entity) => string` | field value | Visible link label. Falls back to the raw field value when omitted. |
+| `url` | string \| `(entity) => string` | field value | href of the anchor. Falls back to the raw field value when omitted. |
+| `newTab` | boolean \| `(entity) => boolean` | `false` | Opens the link in a new browser tab (`target="_blank"` + `rel="noopener noreferrer"`). |
+| `externalWarning` | boolean | `false` | Shows a visual indicator when the URL navigates away from the current origin. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- If both `text` and `url` are omitted, the raw field value is used as both the label and the href.
+- `newTab: true` automatically adds `rel="noopener noreferrer"` to mitigate reverse tabnapping.
+- Function forms of `text` and `url` receive the full entity object. Keep the functions pure — avoid side effects.
+
+## See Also
+
+- [url Field Type](/core/components/fields/url) — field type with URL validation
+- [email Field Type](/core/components/fields/email)
+- [Field Config](/core/reference/field-config)
