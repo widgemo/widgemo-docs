@@ -1,6 +1,23 @@
 ---
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const stateData = [
+  { name: 'Aurora Chen',  role: 'Product Designer', status: 'active'  },
+  { name: 'Mateo Silva',  role: 'Engineer',          status: 'pending' },
+  { name: 'Priya Nair',   role: 'Operations',        status: 'inactive'},
+];
+
+export const baseItem = {
+  fields: [
+    { key: 'name',   label: 'Name' },
+    { key: 'role',   label: 'Role' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+  ],
+  layout: { type: 'auto' },
+};
+
 # Content Config
 
 `ContentConfig` is the canonical content contract inside `zones.content`.
@@ -150,4 +167,343 @@ For grouped table header styling and host-CSS caveats, see [Host CSS and Table L
 
 `actionOverflow` applies to both zone configs and `ContentConfig`.
 For full options, behavior, and `indicator` values, see [Action Overflow](/core/reference/action-config#action-overflow).
+
+## Loading States
+
+The content zone has a built-in loading state driven by `status: 'loading'`. Three display patterns are available — `spinner`, `skeleton`, and `text` — plus a full custom `renderer` override.
+
+### How it works
+
+Set `status: 'loading'` to activate. Widgemo renders the loading UI instead of the data content. `loadingState.enabled: false` suppresses the built-in loading UI even when `status === 'loading'` (useful if you render loading UI outside Widgemo).
+
+```tsx
+zones: {
+  content: {
+    status: 'loading',
+    loadingState: {
+      indicator: 'spinner',       // 'spinner' | 'skeleton' | 'text'
+      message: 'Fetching data…',  // string or (data) => string
+    },
+    mode: 'table',
+    item: { fields: […], layout: { type: 'auto' } },
+  },
+},
+```
+
+### Spinner (default)
+
+<WidgemoShowcase
+  description="Default spinner indicator with a custom message."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: { indicator: 'spinner', message: 'Fetching team data…' },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+content: {
+  status: 'loading',
+  loadingState: { indicator: 'spinner', message: 'Fetching team data…' },
+  mode: 'table',
+  item: { … },
+},
+```
+
+### Skeleton — text bars
+
+<WidgemoShowcase
+  description="Skeleton with 'text-bars' variant and shimmer animation (default)."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'text-bars', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Skeleton — table cells
+
+<WidgemoShowcase
+  description="Skeleton with 'table-cells' variant — gives a mode-representative placeholder for table content."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'table-cells', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Skeleton — cards grid
+
+<WidgemoShowcase
+  description="Skeleton with 'cards-grid' variant — representative placeholder for grid/card layouts."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'cards-grid', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Skeleton — pie chart
+
+<WidgemoShowcase
+  description="Skeleton with 'pie-chart' variant — representative placeholder for chart content."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'pie-chart', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Text indicator
+
+<WidgemoShowcase
+  description="'text' indicator — minimal; renders the message string in muted text only."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: { indicator: 'text', message: 'Loading…' },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### `loadingState` options
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Set to `false` to suppress built-in loading UI while keeping `status: 'loading'`. |
+| `indicator` | `'spinner'` \| `'skeleton'` \| `'text'` | `'spinner'` | Built-in loading indicator style. |
+| `skeleton.variant` | `'text-bars'` \| `'table-cells'` \| `'cards-grid'` \| `'pie-chart'` | `'text-bars'` | Skeleton layout shape. Choose the one that matches your content mode. |
+| `skeleton.animation` | `'shimmer'` \| `'morph'` \| `'none'` | `'shimmer'` | Skeleton animation style. |
+| `skeleton.gifUrl` | `string` | unset | Replace the built-in skeleton with a custom GIF. |
+| `message` | `string \| (data) => string` | `'Loading...'` | Text shown below the indicator. Accepts a function for dynamic messages. |
+| `renderer` | `(props) => ReactNode` | unset | Full custom loading UI. When provided, overrides all built-in indicator rendering. |
+
+#### Custom `renderer` props
+
+```ts
+renderer: (props: {
+  message?:   string;
+  indicator?: 'spinner' | 'skeleton' | 'text';
+  skeleton?:  { variant?, animation?, gifUrl? };
+  data?:      Entity[];
+}) => ReactNode
+```
+
+---
+
+## Error States
+
+The content zone has a built-in error state driven by `status: 'error'`. Three severity styles are available — `error`, `warning`, `info` — with optional retry support. A full custom `renderer` override is also available.
+
+### How it works
+
+Set `status: 'error'` to activate. Widgemo renders the error UI instead of data content. The error payload is available in `config.error` and passed to any `message` function or custom `renderer`.
+
+```tsx
+zones: {
+  content: {
+    status: 'error',
+    error: thrownError,
+    errorState: {
+      message: 'Failed to load team data.',
+      severity: 'error',
+      retry: { label: 'Try again', onRetry: refetch },
+    },
+    mode: 'table',
+    item: { fields: […], layout: { type: 'auto' } },
+  },
+},
+```
+
+### Severity: error (default)
+
+<WidgemoShowcase
+  description="Default error severity — red background, with a retry button."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'error',
+        error: 'Network timeout',
+        errorState: {
+          severity: 'error',
+          message: 'Failed to load team data.',
+          retry: { label: 'Try again', onRetry: () => {} },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Severity: warning
+
+<WidgemoShowcase
+  description="Warning severity — amber background. Useful for partial data or degraded state."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'error',
+        error: 'Partial data only',
+        errorState: {
+          severity: 'warning',
+          message: 'Showing cached data — live sync unavailable.',
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Severity: info
+
+<WidgemoShowcase
+  description="Info severity — blue background. Useful for empty states or expected no-data conditions."
+  data={stateData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'error',
+        error: null,
+        errorState: {
+          severity: 'info',
+          message: 'No data available for this period.',
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Dynamic message
+
+The `message` field accepts a function that receives the error payload:
+
+```tsx
+errorState: {
+  message: (error) => error instanceof Error ? error.message : 'An unexpected error occurred.',
+  severity: 'error',
+  retry: { label: 'Reload', onRetry: refetch },
+},
+```
+
+### `errorState` options
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Set to `false` to suppress built-in error UI while keeping `status: 'error'`. |
+| `message` | `string \| (error) => string` | `'An error occurred'` | Error message text. The function receives `config.error`. |
+| `severity` | `'error'` \| `'warning'` \| `'info'` | `'error'` | Controls the color scheme of the built-in error card. |
+| `retry` | `boolean \| { label?, onRetry? }` | unset | `true` enables the retry button but requires `errorState.retry.onRetry` or the top-level `onRetry` prop to have an effect. Object form allows a custom `label`. |
+| `renderer` | `(props) => ReactNode` | unset | Full custom error UI. When provided, overrides all built-in rendering. |
+
+#### Custom `renderer` props
+
+```ts
+renderer: (props: {
+  error:       unknown;
+  message?:    string;
+  severity?:   'info' | 'warning' | 'error';
+  retry?:      () => void;      // backward-compatible alias
+  onRetry?:    () => void;
+  retryLabel?: string;
+  showRetry?:  boolean;
+}) => ReactNode
+```
+
+### Retry wiring
+
+| Setup | Result |
+|---|---|
+| `retry: { onRetry: fn }` | Button always shown; calls `fn` |
+| `retry: true` + top-level `onRetry` prop | Top-level prop is injected as the callback |
+| `retry: true` without any `onRetry` | Button is not shown (no callback to wire) |
+| `retry: false` | Button never shown, even when top-level `onRetry` is provided |
+
+For the full `onRetry` precedence rules, see [Widgemo Props — `onRetry` precedence](/core/reference/widgemo-props#onretry-precedence).
+
+## See Also
+
+- [Widgemo Config](/core/reference/widgemo-config)
+- [Widgemo Props](/core/reference/widgemo-props) — `loading`, `error`, `onRetry` sugar props
+- [Action Config](/core/reference/action-config)
+- [Field Config](/core/reference/field-config)
 

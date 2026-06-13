@@ -1,6 +1,14 @@
 ---
 ---
 
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const teamData = [
+  { name: 'Aurora Chen',  role: 'Product Designer', status: 'active'   },
+  { name: 'Mateo Silva',  role: 'Engineer',          status: 'pending'  },
+  { name: 'Priya Nair',   role: 'Operations',        status: 'inactive' },
+];
+
 # Widgemo Config
 
 `WidgemoConfig` is the central configuration object. It is zone-oriented and mode-driven.
@@ -136,33 +144,56 @@ zones: {
 
 ## Container Frame
 
-`containerFrame` is the canonical first-release shell control.
+`containerFrame` controls the visual shell around the entire widget — border, shadow, radius, and the optional outer chrome surface.
 
-Supported fields:
+<WidgemoShowcase
+  description="shell: 'none' + explicit border color and square corners — embeds Widgemo flush into a host surface."
+  data={teamData}
+  config={{
+    containerFrame: { shell: 'none', border: 'on', borderRadius: 'square', borderColor: '#6366f1', borderWidth: '2px' },
+    zones: {
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
 
-- `shell`: `'on' | 'none'` — **new** — controls whether the outer container surface renders at all (see [Shellless mode](#shellless-mode-shell-none) below)
-- `border`: `'none' | 'on'` — shell border line
-- `shadow`: `'none' | 'on'` — shell drop shadow
-- `borderRadius`: `'square' | 'rounded' | number | string`
-- `borderColor`: `string`
-- `borderWidth`: `string | number`
-- `overflow`: any valid CSS `overflow` value
-
-Default for all fields: `undefined` (core defaults apply — bordered, with shadow, with background).
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-const config = {
+config={{
   containerFrame: {
+    shell: 'none',         // strip outer chrome background
     border: 'on',
+    borderRadius: 'square',
+    borderColor: '#6366f1',
+    borderWidth: '2px',
     shadow: 'none',
-    borderRadius: 10,
-    borderColor: '#d0d7de',
-    borderWidth: 2,
     overflow: 'hidden',
   },
-  zones: { /* … */ },
-};
+  zones: { content: { … } },
+}}
 ```
+
+### `ContainerFrame` options
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `shell` | `'on'` \| `'none'` | `'on'` | Show or hide the outer chrome wrapper. When `'none'`, background is transparent and header/footer default to transparent too. |
+| `border` | `'on'` \| `'none'` | `'on'` | Show or hide the outer border. |
+| `borderRadius` | `'square'` \| `'rounded'` \| number \| string | theme default | Corner radius. `'square'` forces 0; `'rounded'` uses theme default. |
+| `shadow` | `'on'` \| `'none'` | theme default | Box shadow on the outer shell. |
+| `borderColor` | `string` | theme default | Explicit border color. |
+| `borderWidth` | `string \| number` | theme default | Explicit border width. |
+| `overflow` | `CSSProperties['overflow']` | — | CSS `overflow` on the shell. |
 
 ### Shellless mode (`shell: 'none'`)
 
@@ -175,201 +206,57 @@ When `shell: 'none'`, the outer shell surface is disabled while zone internals c
 - Outer overflow defaults to `visible` unless explicitly configured
 - `zones.content` spacing remains mode-owned
 
-Shellless affects the outer container only; mode-level and zone-level spacing behavior is unchanged.
-
-```tsx
-const config = {
-  // The Widgemo has no visible card surface.
-  // It floats inside the host surface with normal zone spacing.
-  containerFrame: { shell: 'none' },
-  zones: {
-    header: { title: 'Approvals', subtitle: 'Inline queue' },
-    content: { mode: 'table', item: { fields: […], layout: { type: 'auto' } } },
-  },
-};
-```
-
 ### Borderless vs shellless — when to use which
 
 | | Borderless (`border: 'none', shadow: 'none'`) | Shellless (`shell: 'none'`) |
 |---|---|---|
 | **Outer card background** | Present (uses theme background) | Transparent |
+| **Header/footer background** | Present (theme/card surfaces) | Transparent by default |
 | **Border line** | Removed | Removed |
-| **Drop shadow** | Removed (when `shadow: 'none'`) | Removed |
-| **Header/footer default background** | Present (theme/card surfaces) | Transparent by default |
-| **Outer radius default** | Theme/card default radius | `0` (unless explicitly configured) |
-| **Outer overflow default** | Theme/container default behavior | `visible` (unless explicitly configured) |
-| **Zone padding** | Normal | Normal |
-| **Visual effect** | Card-like block, chrome stripped | Blends into host surface |
-| **Use when** | You want a flat card that fits inside a panel but keeps its own background | You want the Widgemo to read as part of the page, with no card boundary at all |
+| **Outer radius default** | Theme/card default | `0` unless configured |
+| **Visual effect** | Flat card, chrome stripped | Blends into host surface — no card boundary |
+| **Use when** | Fits inside a panel but keeps its own background | Reads as part of the page, no card boundary |
 
-**Key rule:** if you can still see the Widgemo's white/dark card rectangle after removing the border and shadow, you have borderless. If that rectangle is gone and the Widgemo content floats on the host surface, you have shellless.
+## devMode
 
-### Validation Checklist
-
-- In borderless shells (`containerFrame.border: 'none'`), confirm header/footer spacing remains consistent with bordered shells unless you explicitly override zone padding.
-- In shellless Widgemos (`containerFrame.shell: 'none'`), confirm host background shows through the Widgemo area.
-- In shellless Widgemos, confirm header/footer do not leave behind card-like background surfaces by default.
-- In shellless widgets, confirm no rounded outer card boundary remains unless radius is explicitly configured.
-
-## Loading and Error States
-
-Loading and error behavior is runtime-driven by `zones.content.status` plus the matching state object.
-
-### Loading indicators (built-in runtime behavior)
-
-- `spinner`: renders the built-in spinner indicator (animated rotation).
-- `skeleton`: renders built-in skeleton placeholders.
-- `text`: renders the built-in text indicator (`Loading`).
-
-`loadingState.indicator` selects built-in loading presentation only.
-`loadingState.renderer` is the only custom-loading override path.
-
-### Skeleton options (`loadingState.indicator: 'skeleton'`)
-
-`loadingState.skeleton.variant` supports:
-
-- `text-bars`: stacked text-line placeholders (default variant).
-- `table-cells`: table-like row and cell placeholders.
-- `cards-grid`: card-grid placeholders.
-- `pie-chart`: pie and legend placeholders.
-
-`loadingState.skeleton.animation` supports:
-
-- `shimmer`: shimmer animation (default).
-- `morph`: subtle morph animation.
-- `none`: no skeleton animation.
-
-`loadingState.skeleton.gifUrl` behavior:
-
-- When `gifUrl` is provided and indicator is `skeleton`, core renders that GIF image as the skeleton visual.
-- In that case, variant/animation placeholders are not used for rendering.
+`devMode: true` or `devMode: { enabled: true }` activates the dev inspector overlay — a collapsible panel showing the live serialised config. Useful during development.
 
 ```tsx
-content: {
-  mode: 'table',
-  status: 'loading',
-  loadingState: {
+// Shorthand
+config={{ devMode: true, zones: { content: { … } } }}
+
+// Full config
+config={{
+  devMode: {
     enabled: true,
-    indicator: 'skeleton',
-    skeleton: {
-      variant: 'table-cells',
-      animation: 'shimmer',
+    allowInProduction: false,    // must opt in to show in production builds
+    zone: 'auto',                // 'header' | 'content' | 'footer' | 'floating' | 'auto'
+    overlay: {
+      showHeader: true,
+      showDocsLink: 'https://your-docs.example.com',
+      showBranding: true,
+      excludeFields: ['zones.content.item.fields'],  // dot-path fields to omit
     },
-    message: () => 'Loading records…',
   },
-  item: { fields: […], layout: { type: 'auto' } },
-},
+  zones: { content: { … } },
+}}
 ```
 
-```tsx
-content: {
-  mode: 'grid',
-  status: 'loading',
-  loadingState: {
-    enabled: true,
-    indicator: 'skeleton',
-    skeleton: {
-      variant: 'cards-grid',
-      animation: 'morph',
-    },
-    message: 'Loading records…',
-    renderer: ({ message, indicator, skeleton, data }) => (
-      <div className="my-loading-shell">
-        <strong>{message}</strong>
-        <span>indicator={indicator}</span>
-        <span>variant={skeleton?.variant}</span>
-        <span>animation={skeleton?.animation}</span>
-        <span>rows={data?.length ?? 0}</span>
-      </div>
-    ),
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `enabled` | `boolean` | required | Activates the overlay. |
+| `allowInProduction` | `boolean` | `false` | Must be explicitly `true` to render in production builds. |
+| `zone` | `'header'` \| `'content'` \| `'footer'` \| `'floating'` \| `'auto'` | `'auto'` | Where to attach the inspector toggle icon. `'auto'` uses the fallback hierarchy: header → footer → floating. |
+| `overlay.showHeader` | `boolean` | `true` | Show the overlay header bar with copy button and docs link. |
+| `overlay.showDocsLink` | `string \| false` | unset | URL for the docs link in the overlay header. `false` hides it. |
+| `overlay.showBranding` | `boolean` | `true` | Show the Widgemo branding footer in the overlay. |
+| `overlay.excludeFields` | `string[]` | unset | Dot-path fields to omit from the JSON display (e.g. `'zones.content.item.fields'`). |
 
-```tsx
-content: {
-  mode: 'chart',
-  status: 'loading',
-  loadingState: {
-    enabled: true,
-    indicator: 'skeleton',
-    skeleton: {
-      variant: 'pie-chart',
-      gifUrl: 'https://cdn.example.com/loading/pie-skeleton.gif',
-    },
-    message: 'Loading chart…',
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
+## See Also
 
-### Error severity (built-in runtime behavior)
-
-- `info`: uses built-in info tone/styling.
-- `warning`: uses built-in warning tone/styling.
-- `error`: uses built-in error tone/styling (default).
-
-Severity affects built-in tone/styling only. It does not change retry wiring, error message resolution, or data flow.
-
-```tsx
-content: {
-  mode: 'table',
-  status: 'error',
-  error: { message: 'Failed to load data' },
-  errorState: {
-    enabled: true,
-    message: (err) => `Error: ${err?.message ?? 'Something went wrong'}`,
-    retry: { label: 'Try Again', onRetry: () => refetch() },
-    severity: 'warning',
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
-
-```tsx
-content: {
-  mode: 'table',
-  status: 'error',
-  error: { message: 'Failed to load data' },
-  errorState: {
-    enabled: true,
-    severity: 'info',
-    retry: { label: 'Try Again', onRetry: () => refetch() },
-    renderer: ({ message, severity, showRetry, retryLabel, onRetry }) => (
-      <div className={`my-error my-error-${severity ?? 'error'}`}>
-        <p>{message}</p>
-        {showRetry ? <button onClick={onRetry}>{retryLabel}</button> : null}
-      </div>
-    ),
-  },
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
-
-### Renderer override precedence
-
-- `loadingState.renderer` overrides built-in loading indicator UI (`spinner`, `skeleton`, `text`).
-- `errorState.renderer` overrides built-in severity UI (`info`, `warning`, `error`).
-
-When a renderer override is provided, built-in visuals are bypassed and your renderer output is rendered instead.
-
-Retry callback note:
-
-- `zones.content.errorState.retry` controls content-level retry UI.
-- For externally managed error flow (`<Widgemo error={...} onRetry={...} />`), top-level `onRetry` is used as the retry callback for the content error action. If `zones.content.errorState.retry` is an object, existing fields such as `label` are retained while `retry.onRetry` is overridden.
-- Current external-flow nuance: if `zones.content.errorState.retry` is `false`, retry remains disabled even when top-level `onRetry` is provided with `error`.
-- Top-level `onRetry` also powers retry in the runtime boundary fallback UI.
-
-Default built-in error retry presentation:
-
-- The retry action renders below the error message.
-- It is centered and visually separated by the built-in vertical layout gap.
-- It uses core action styling via Widgemo button classes (not unstyled browser-default button presentation).
-
-When `errorState.renderer` is used, it receives the resolved retry-related props from runtime:
-
-- `showRetry`: whether retry should be displayed.
-- `retryLabel`: resolved retry label.
-- `onRetry` and `retry`: callback aliases for backward compatibility.
+- [Widgemo Props](/core/reference/widgemo-props) — component props, `loading`/`error`/`onRetry` sugar props, exports
+- [Content Config](/core/reference/content-config) — full `ContentConfig` reference: loading states, error states, pagination, search, grouping, gestures
+- [Action Config](/core/reference/action-config) — action shape, placement, overflow
+- [Field Config](/core/reference/field-config) — field types and `renderAsOptions`
+- [Extension API](/core/reference/extension-api) — custom renderers, modes, hooks, icons
+- [Theme API](/core/reference/theme-api) — `WidgemoThemeProvider` and theme registration

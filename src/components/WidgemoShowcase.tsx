@@ -15,6 +15,9 @@ export interface WidgemoShowcaseProps {
   children?: ReactNode;
   className?: string;
   interactions?: { onEvent?: InteractionEventHandler };
+  loading?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
 }
 
 /**
@@ -32,6 +35,9 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   children,
   className,
   interactions,
+  loading,
+  error,
+  onRetry,
 }) => {
   const { colorMode } = useColorMode();
   const rootClassName = className?.trim() || undefined;
@@ -51,7 +57,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
       {description && <p>{description}</p>}
       <WidgemoThemeProvider theme={widgemoTheme}>
         <div className="widgemo-showcase__widget">
-          <Widgemo config={showcaseConfig} data={data} />
+          <Widgemo config={showcaseConfig} data={data} loading={loading} error={error} onRetry={onRetry} />
         </div>
       </WidgemoThemeProvider>
       {children}
