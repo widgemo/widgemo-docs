@@ -29,7 +29,7 @@ import { Widgemo } from '@widgemo/widgemo-core';
 | `data` | `Entity[]` | **yes** | Input dataset. Each element is a plain object (`Record<string, unknown>`). |
 | `config` | `WidgemoConfig` | no | Layout and behaviour configuration. Omitting renders data with defaults. |
 | `className` | `string` | no | Additional CSS class on the root element. |
-| `id` | `string` | no | HTML `id` attribute on the root element. |
+| `id` | `string` | no | HTML `id` on the root element; also the second arg to zone `title`/`subtitle` functions. Auto-generated (`wg-…`) if omitted. |
 | `loading` | `boolean` | no | Sugar prop — forces the content zone into a loading state. Overrides `config.zones.content.status`. |
 | `error` | `unknown` | no | Sugar prop — forces the content zone into an error state. |
 | `onRetry` | `() => void` | no | Sugar prop — retry callback wired into the content error UI. |
@@ -123,10 +123,12 @@ Omitting `config` renders `data` using built-in defaults (auto-detected table mo
 
 ## `id`
 
-`id` sets the HTML `id` attribute on the root element. It is also passed as the second argument to any `title` or `subtitle` function in `ZoneConfig`, so you can brand header text per instance.
+`id` sets the HTML `id` attribute on the root element **and** is passed as the second argument to any `title` or `subtitle` function in `ZoneConfig`.
+
+If omitted, Widgemo auto-generates a stable `wg-<random>` id on mount — so every instance is uniquely addressable in the DOM even without an explicit prop.
 
 <WidgemoShowcase
-  description="id=team-widget — the header title function receives it as its second argument."
+  description="id=team-widget — the header title function receives it as its second argument. The root element also gets id=team-widget in the DOM."
   data={teamData}
   config={{
     zones: {
@@ -154,14 +156,15 @@ Omitting `config` renders `data` using built-in defaults (auto-detected table mo
 ```tsx
 <Widgemo
   data={rows}
+  id="team-widget"
   config={{
     zones: {
       header: {
-        title: (data, id) => `${id ?? 'widget'} — ${data.length} members`,
+        // id is the value of the id prop
+        title: (data, id) => `${id} — ${data.length} members`,
       },
     },
   }}
-  id="team-widget"
 />
 ```
 
@@ -171,6 +174,7 @@ Common uses for `id`:
 - **Accessibility** — `aria-labelledby="team-widget"`, `aria-describedby="team-widget"`
 - **CSS overrides** — `#team-widget { … }` for per-instance style rules
 - **Dynamic title** — received as `id` in `title(data, id)` and `subtitle(data, id)` zone functions
+- **Auto-generated fallback** — when omitted, Widgemo sets `id="wg-Xk3mPq2f"` (random, stable for the instance lifetime)
 
 ## `loading`, `error`, and `onRetry`
 
