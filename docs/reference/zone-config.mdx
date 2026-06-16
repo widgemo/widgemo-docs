@@ -18,15 +18,12 @@ Widgemo has three named zones: `header`, `content`, and `footer` — all under `
 
 | Field | Type | Default | Description |
 |---|---|---|---|
-| `title` | `string \| ReactNode \| (data) => string` | — | Zone title. Pass a function to derive it from live data. |
-| `subtitle` | `string \| ReactNode \| (data, id?) => string` | — | Zone subtitle. Pass a function to derive it from live data. |
-| `titleRenderer` | `(data, id?) => string` | — | Alternative dynamic title. Receives the instance `id` as a second arg — useful when multiple Widgemos share one renderer function. Takes precedence over `title` when both are set. |
-| `subtitleRenderer` | `(data, id?) => string` | — | Alternative dynamic subtitle. Same `id` use-case as `titleRenderer`. Takes precedence over `subtitle` when both are set. |
+| `title` | `string \| ReactNode \| (data, id?) => string` | — | Zone title. Pass a function to derive it from live data; receives the full data array and the optional instance `id`. |
+| `subtitle` | `string \| ReactNode \| (data, id?) => string` | — | Zone subtitle. Same function signature as `title`. |
 | `icon` | `string \| IconConfig \| { src, size?, color? }` | — | Icon displayed beside (or above) the title. |
 | `layout` | `ZoneLayout` | — | Positional layout for the zone header area. |
 | `actions` | `ActionConfig[]` | — | Zone-level action buttons. |
 | `actionOverflow` | `{ maxInline?, menuLabel?, menuTooltip?, indicator? }` | — | Action overflow behaviour. See [Action Config](/core/reference/action-config#action-overflow). |
-| `collapse` | `{ initialState, button? }` | — | Collapse behaviour for this zone. |
 | `enabled` | `boolean` | `true` | Show or hide the zone entirely. |
 | `theme` | `string` | — | Registered theme name applied to this zone only. |
 | `themeOverrides` | `Partial<ZoneTheme>` | — | Inline theme property overrides. See [Theme API](/core/reference/theme-api). |
@@ -125,23 +122,21 @@ header: {
 },
 ```
 
-**`titleRenderer` and `subtitleRenderer`** exist for one specific case: when you need the Widgemo instance `id` to differentiate multiple Widgemos sharing the same renderer function — for example, rendering several Widgemos in a loop with one shared header function. Both receive `(data, id?)` and take precedence over `title`/`subtitle` when set. For all other dynamic title needs, the function form of `title` / `subtitle` is sufficient.
+Both `title` and `subtitle` accept the same function signature: `(data: Entity[], id?: string) => string`. The `id` argument is the value of the `id` **prop** on `<Widgemo>` (i.e. the HTML element id) — useful when you share a single function reference across multiple instances:
 
 ```tsx
-// Only use titleRenderer when you need the instance id
-const sharedTitle = (data, id) => `${id ?? 'Widget'}: ${data.length} items`;
+const sharedTitle = (data, id) => `[${id ?? 'widget'}] ${data.length} items`;
 
 widgets.map((w) => (
   <Widgemo
     key={w.id}
+    id={w.id}
     data={w.rows}
     config={{
-      id: w.id,
-      zones: { header: { titleRenderer: sharedTitle }, content: { /* … */ } },
+      zones: { header: { title: sharedTitle }, content: { /* … */ } },
     }}
   />
-));
-```
+));\n```
 
 ---
 
@@ -191,16 +186,17 @@ icon: { src: 'https://example.com/logo.png', size: 28 }
 
 ## Collapse
 
-`collapse.initialState` controls whether the zone starts expanded or collapsed. `collapse.button` shows or hides the toggle.
+Collapse is a **top-level `WidgemoConfig` field** — not a `ZoneConfig` field. It collapses the entire content and footer area; the toggle button always renders inside the header zone.
 
 <WidgemoShowcase
-  description="Footer starts collapsed. Click the toggle to expand it."
+  description="Widget starts collapsed. The toggle in the header expands and collapses the content and footer."
   data={teamData}
   config={{
+    collapse: { initialState: 'collapsed', button: true },
     zones: {
       header: {
         title: 'Team Directory',
-        subtitle: 'Click the footer toggle below',
+        subtitle: 'Click the toggle to expand',
       },
       content: {
         mode: 'table',
@@ -214,7 +210,6 @@ icon: { src: 'https://example.com/logo.png', size: 28 }
       },
       footer: {
         subtitle: 'Last synced just now',
-        collapse: { initialState: 'collapsed', button: true },
       },
     },
   }}
@@ -223,17 +218,24 @@ icon: { src: 'https://example.com/logo.png', size: 28 }
 <div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-footer: {
-  subtitle: 'Last synced just now',
+// collapse sits at the top level of WidgemoConfig — not inside a zone
+const config = {
   collapse: { initialState: 'collapsed', button: true },
-},
+  zones: {
+    header: { title: 'Team Directory', subtitle: 'Click to expand' },
+    content: { /* … */ },
+    footer: { subtitle: 'Last synced just now' },
+  },
+};
 ```
 
 | `initialState` | Effect |
 |---|---|
-| `'expanded'` | Zone starts open. Toggle is shown if `button: true`. Default. |
-| `'collapsed'` | Zone starts closed. Toggle is shown if `button: true`. |
-| `'fixed'` | Zone cannot be toggled. `button` defaults to `false`. |
+| `'expanded'` | Widget starts open. Toggle shown if `button: true`. Default. |
+| `'collapsed'` | Widget starts with content and footer hidden. Toggle shown if `button: true`. |
+| `'fixed'` | Widget cannot be toggled. `button` defaults to `false`. |
+
+The toggle button appears in the **header zone** — a header zone must be present for it to render. The footer is also hidden when collapsed.
 
 ---
 

@@ -146,27 +146,78 @@ For a quick decision guide on gestures vs lifecycle hooks, see [Extension API: W
 <div style={{ marginBottom: '1rem' }} />
 
 ```tsx
-zones: {
-  header: {
-    title:    (data) => `Team (${data.length} members)`,
-    subtitle: (data) => `Active: ${data.filter(d => d.status === 'active').length}`,
-    icon:    { name: 'users', size: 24, color: '#4f46e5' },
-    layout:  { iconPosition: 'left', titlePosition: 'left' },
-    actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
-    collapse: { initialState: 'expanded', button: true },
-    themeOverrides: { /* ZoneTheme */ },
-    style: { /* CSSProperties */ },
+const config = {
+  collapse: { initialState: 'expanded', button: true }, // top-level — see § Collapse below
+  zones: {
+    header: {
+      title:    (data) => `Team (${data.length} members)`,
+      subtitle: (data) => `Active: ${data.filter(d => d.status === 'active').length}`,
+      icon:    { name: 'users', size: 24, color: '#4f46e5' },
+      layout:  { iconPosition: 'left', titlePosition: 'left' },
+      actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+      themeOverrides: { /* ZoneTheme */ },
+      style: { /* CSSProperties */ },
+    },
+    content: { /* … ContentConfig */ },
+    footer: {
+      subtitle: 'Last synced just now',
+      layout: { titlePosition: 'center' },
+    },
   },
-  content: { /* … ContentConfig */ },
-  footer: {
-    subtitle: 'Last synced just now',
-    layout: { titlePosition: 'center' },
-  },
-},
+};
 ```
 
-For the full `ZoneConfig` shape, all `ZoneLayout` position options (with live showcases for every variant), icon, collapse, and `themeOverrides`, see [Zone Config](/core/reference/zone-config).
+For the full `ZoneConfig` shape, all `ZoneLayout` position options (with live showcases for every variant), icon, and `themeOverrides`, see [Zone Config](/core/reference/zone-config).
+## Collapse
 
+`config.collapse` controls whether the entire widget can be expanded and collapsed. The toggle button renders in the **header zone** — a header zone must be present for it to appear.
+
+<WidgemoShowcase
+  description="Widget starts collapsed. Click the toggle in the header to expand."
+  data={teamData}
+  config={{
+    collapse: { initialState: 'collapsed', button: true },
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Click the toggle to expand',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+      footer: {
+        subtitle: 'Last synced just now',
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  collapse: { initialState: 'collapsed', button: true },
+  zones: {
+    header: { title: 'Team Directory', subtitle: 'Click to expand' },
+    content: { /* … */ },
+    footer:  { subtitle: 'Last synced just now' },
+  },
+};
+```
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `initialState` | `'expanded'` \| `'collapsed'` \| `'fixed'` | `'expanded'` | Starting state. `'fixed'` disables the toggle entirely. |
+| `button` | `boolean` | `true` | Show or hide the toggle button in the header zone. |
+
+When collapsed, the content zone and footer zone are hidden. The header zone remains visible.
 ## Container Frame
 
 `containerFrame` controls the visual shell around the entire widget — border, shadow, radius, and the optional outer chrome surface.

@@ -80,20 +80,97 @@ The `config` prop accepts a `WidgemoConfig` object. For the full shape — `cont
 
 Omitting `config` renders `data` using built-in defaults (auto-detected table mode, all keys as plain text fields).
 
-## `className` and `id`
+## `className`
 
-Standard HTML attribute forwarding onto the root element.
+`className` appends a custom CSS class to Widgemo's root element — it does not replace Widgemo's internal class. Use it to apply per-instance styles from your own stylesheet.
+
+<style>{".docs-outline-widget { outline: 2px solid #4f46e5; outline-offset: 3px; border-radius: 6px; }"}</style>
+
+<WidgemoShowcase
+  description="Custom class docs-outline-widget adds an indigo outline to this widget's root element."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+  widgemoClassName="docs-outline-widget"
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```css
+/* your stylesheet */
+.docs-outline-widget {
+  outline: 2px solid #4f46e5;
+  outline-offset: 3px;
+}
+```
+
+```tsx
+<Widgemo data={rows} config={config} className="docs-outline-widget" />
+```
+
+## `id`
+
+`id` sets the HTML `id` attribute on the root element. It is also passed as the second argument to any `title` or `subtitle` function in `ZoneConfig`, so you can brand header text per instance.
+
+<WidgemoShowcase
+  description="id=team-widget — the header title function receives it as its second argument."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: (data, id) => `${id ?? 'widget'} — ${data.length} members`,
+        subtitle: 'id is the second arg to title(data, id)',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+  widgemoId="team-widget"
+/>
+
+<div style={{ marginBottom: '1rem' }} />
 
 ```tsx
 <Widgemo
   data={rows}
-  config={config}
-  id="team-table"
-  className="my-widget shadow-lg"
+  config={{
+    zones: {
+      header: {
+        title: (data, id) => `${id ?? 'widget'} — ${data.length} members`,
+      },
+    },
+  }}
+  id="team-widget"
 />
 ```
 
-`className` appends to Widgemo's own root class. `id` sets the HTML `id` attribute — useful for scroll targets, accessibility labels, and CSS selectors.
+Common uses for `id`:
+
+- **Scroll target** — `<a href="#team-widget">Go to table</a>`
+- **Accessibility** — `aria-labelledby="team-widget"`, `aria-describedby="team-widget"`
+- **CSS overrides** — `#team-widget { … }` for per-instance style rules
+- **Dynamic title** — received as `id` in `title(data, id)` and `subtitle(data, id)` zone functions
 
 ## `loading`, `error`, and `onRetry`
 

@@ -14,6 +14,8 @@ export interface WidgemoShowcaseProps {
   description?: string;
   children?: ReactNode;
   className?: string;
+  widgemoClassName?: string;
+  widgemoId?: string;
   interactions?: { onEvent?: InteractionEventHandler };
   loading?: boolean;
   error?: unknown;
@@ -34,6 +36,8 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
   description,
   children,
   className,
+  widgemoClassName,
+  widgemoId,
   interactions,
   loading,
   error,
@@ -57,7 +61,7 @@ export const WidgemoShowcase: React.FC<WidgemoShowcaseProps> = ({
       {description && <p>{description}</p>}
       <WidgemoThemeProvider theme={widgemoTheme}>
         <div className="widgemo-showcase__widget">
-          <Widgemo config={showcaseConfig} data={data} loading={loading} error={error} onRetry={onRetry} />
+          <Widgemo config={showcaseConfig} data={data} className={widgemoClassName} id={widgemoId} loading={loading} error={error} onRetry={onRetry} />
         </div>
       </WidgemoThemeProvider>
       {children}
