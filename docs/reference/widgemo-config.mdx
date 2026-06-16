@@ -20,95 +20,14 @@ export const teamData = [
 | `zones.header` | `ZoneConfig` | — | Optional header zone |
 | `zones.content` | `ContentConfig` | **required** | Content zone (mode, fields, actions, etc.) |
 | `zones.footer` | `ZoneConfig` | — | Optional footer zone |
-| `interactions.onEvent` | `(ctx: InteractionContext) => void` | — | Global sink for all actions and gestures |
 | `collapse.initialState` | `'expanded' \| 'collapsed' \| 'fixed'` | `'expanded'` | Widget collapse behaviour |
 | `collapse.button` | `boolean` | `true` | Show/hide the collapse toggle |
 | `containerFrame` | `{ shell?, border?, shadow?, borderRadius?, borderColor?, borderWidth?, overflow? }` | — | Outer shell frame controls |
 | `style` | `CSSProperties` | — | Inline styles on the root element |
 | `theme` | `string` | — | Registered theme name |
+| `interactions.onEvent` | `(ctx: InteractionContext) => void` | — | Global sink for all actions and gestures |
 | `devMode` | `boolean \| DevModeConfig` | `false` | Dev inspector overlay (`allowInProduction` opt-in available) |
 | `preRender` | `() => void` | — | Config-level callback invoked by `Widgemo` before render |
-
-## Gestures
-
-`zones.content.gestures` defines config-driven user interaction handlers.
-
-Supported gesture types:
-
-- `item-click`
-- `item-drag-start`
-- `item-drop`
-
-### Gesture Types
-
-| Type | Typical Source Surface | Payload Intent | Where Handler Goes |
-|---|---|---|---|
-| `item-click` | Table rows, cards, and other selectable content items | User selection or activation of an item | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
-| `item-drag-start` | Board cards that can be moved | Drag initiation details for a move operation | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
-| `item-drop` | Board drop targets | Drop/completion details for a move operation | `zones.content.gestures[].onTrigger`, otherwise `interactions.onEvent` |
-
-### Handler Flow
-
-- If a matching gesture entry defines `onTrigger`, Widgemo calls that handler first.
-- If `onTrigger` is not provided, Widgemo falls back to `interactions.onEvent`.
-- If neither is provided, Widgemo does not run an app-level gesture handler.
-
-```tsx
-const config = {
-  interactions: {
-    onEvent: (ctx) => {
-      console.log(ctx.kind, ctx.entity?.id);
-    },
-  },
-  zones: {
-    content: {
-      mode: 'board',
-      gestures: [
-        {
-          type: 'item-click',
-          interactionId: 'open-item',
-          interactionLabel: 'Open item',
-          onTrigger: (ctx) => {
-            openItem(ctx.entity?.id);
-          },
-        },
-        {
-          type: 'item-drag-start',
-          interactionId: 'move-start',
-          interactionLabel: 'Start move',
-        },
-        {
-          type: 'item-drop',
-          interactionId: 'move-drop',
-          interactionLabel: 'Finish move',
-        },
-      ],
-      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
-    },
-  },
-};
-```
-
-For a quick decision guide on gestures/interactions vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
-
-### `interactions.onEvent`
-
-`interactions.onEvent` is the global interaction sink for actions and gestures when no local handler is provided.
-
-For the canonical lifecycle hook contract, see [Extension API](/core/reference/extension-api#lifecycle-hooks).
-
-## Lifecycle Hook Entry Points
-
-`WidgemoConfig.preRender` is a config callback entry point.
-
-- It is called as `() => void` by `Widgemo` before render.
-- It is separate from registry lifecycle hooks (`registerWidgemoHook`).
-
-`zones.content.gestures` and `interactions.onEvent` are interaction handlers, not lifecycle hooks.
-
-For the canonical lifecycle hook contract (`preRender`, `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`), see [Extension API](/core/reference/extension-api#lifecycle-hooks).
-
-For a quick decision guide on gestures vs lifecycle hooks, see [Extension API: When to Use Which](/core/reference/extension-api#when-to-use-which).
 
 ## Header and Footer Zones
 
@@ -167,6 +86,30 @@ const config = {
 ```
 
 For the full `ZoneConfig` shape, all `ZoneLayout` position options (with live showcases for every variant), icon, and `themeOverrides`, see [Zone Config](/core/reference/zone-config).
+
+## Content Zone
+
+`zones.content` is the only required zone. It owns the data rendering pipeline — mode, field definitions, actions, pagination, search, grouping, sorting, filtering, gestures, loading/error states, and sizing.
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'table',
+      item: {
+        fields: [
+          { key: 'name',   label: 'Name' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+For the full `ContentConfig` shape and all options, see [Content Config](/core/reference/content-config).
+
 ## Collapse
 
 `config.collapse` controls whether the entire widget can be expanded and collapsed. The toggle button renders in the **header zone** — a header zone must be present for it to appear.
@@ -217,6 +160,7 @@ const config = {
 | `button` | `boolean` | `true` | Show or hide the toggle button in the header zone. |
 
 When collapsed, the content zone and footer zone are hidden. The header zone remains visible.
+
 ## Container Frame
 
 `containerFrame` controls the visual shell around the entire widget — border, shadow, radius, and the optional outer chrome surface.
@@ -292,9 +236,90 @@ When `shell: 'none'`, the outer shell surface is disabled while zone internals c
 | **Visual effect** | Flat card, chrome stripped | Blends into host surface — no card boundary |
 | **Use when** | Fits inside a panel but keeps its own background | Reads as part of the page, no card boundary |
 
+## style
+
+`style` applies inline CSS to the Widgemo root element, layered on top of Widgemo's computed styles. Use it for one-off positioning or sizing overrides that don't warrant a CSS class.
+
+<WidgemoShowcase
+  description="style: maxWidth + centred margin — constrains the widget width without adding a CSS class."
+  data={teamData}
+  config={{
+    style: { maxWidth: 480, margin: '0 auto' },
+    zones: {
+      header: { title: 'Centred widget' },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+config={{ style: { maxWidth: 480, margin: '0 auto' }, zones: { … } }}
+```
+
+For scoped per-zone styling use `zones.header.style` / `zones.footer.style` in `ZoneConfig`. For class-based styling use the `className` prop on `<Widgemo>` — see [Widgemo Props](/core/reference/widgemo-props#classname).
+
+## theme
+
+`theme` sets a named theme registered via `WidgemoThemeProvider` or `widgemoRegistry.registerWidgemoTheme`. Built-in values are `'light'` (default) and `'dark'`.
+
+```tsx
+config={{ theme: 'dark', zones: { … } }}
+```
+
+Theme tokens control the color palette, spacing, and surface appearance across the entire widget. Per-zone overrides use `zones.header.themeOverrides` / `zones.footer.themeOverrides` in `ZoneConfig`.
+
+For the full token reference, registration API, and `WidgemoThemeProvider`, see [Theme API](/core/reference/theme-api).
+
+## `interactions.onEvent`
+
+`interactions.onEvent` is the global interaction sink for all actions and gestures when no local handler is provided. It receives an `InteractionContext` for every action click, item gesture, and zone-action event across the whole widget.
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      console.log(ctx.kind, ctx.interactionId, ctx.entity);
+    },
+  },
+  zones: { content: { … } },
+};
+```
+
+For the full `InteractionContext` shape and `InteractionKind` values, see [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext).
+
+For per-gesture config (`zones.content.gestures`), handler flow, and examples, see [Content Config — Gestures](/core/reference/content-config#gestures).
+
+## preRender
+
+`preRender` is a config-level callback invoked synchronously before each render. Use it for lightweight side effects — analytics events, telemetry, or pre-flight state checks.
+
+```tsx
+const config = {
+  preRender: () => {
+    analytics.track('widget.render');
+  },
+  zones: { content: { … } },
+};
+```
+
+`preRender` does not receive arguments. It is separate from registry-based lifecycle hooks (`registerWidgemoHook`). For `postRender`, `onItemClick`, `onModeChange`, `onDragDrop`, and the decision guide on when to use each, see [Extension API — Lifecycle Hooks](/core/reference/extension-api#lifecycle-hooks).
+
 ## devMode
 
 `devMode: true` or `devMode: { enabled: true }` activates the dev inspector overlay — a collapsible panel showing the live serialised config. Useful during development.
+
+For a walkthrough of the Inspector UI, button placement rules, the JSON tree, and the interaction notes panel, see [DevMode](/core/concepts/devmode).
 
 ```tsx
 // Shorthand

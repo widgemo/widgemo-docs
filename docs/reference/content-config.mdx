@@ -89,19 +89,71 @@ content: {
 
 Search filters the full dataset first; pagination slices the filtered results. Page resets to 1 on each new query.
 
-## Row Click Gesture
+## Gestures
+
+`zones.content.gestures` defines config-driven user interaction handlers for item events.
+
+Supported types:
+
+- `item-click` — fires when a user clicks a row, card, or selectable item
+- `item-drag-start` — fires when a drag begins on a board card
+- `item-drop` — fires when a board card is dropped onto a target
+
+### Gesture Types
+
+| Type | Typical Source | Payload Intent | Handler location |
+|---|---|---|---|
+| `item-click` | Table rows, cards | User selection or activation | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+| `item-drag-start` | Board cards | Drag initiation details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+| `item-drop` | Board drop targets | Drop/completion details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+
+### Handler Flow
+
+- If the matching gesture entry defines `onTrigger`, Widgemo calls that handler first.
+- If `onTrigger` is not provided, Widgemo falls back to `interactions.onEvent`.
+- If neither is provided, Widgemo does not run an app-level handler for that event.
 
 ```tsx
-content: {
-  mode: 'table',
-  gestures: [
-    { type: 'item-click', enabled: true, interactionId: 'row-click', interactionLabel: 'Row Click' },
-  ],
-  item: { fields: […], layout: { type: 'auto' } },
-},
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      // fallback for any event without a local onTrigger
+      console.log(ctx.kind, ctx.entity?.id);
+    },
+  },
+  zones: {
+    content: {
+      mode: 'board',
+      gestures: [
+        {
+          type: 'item-click',
+          interactionId: 'open-item',
+          interactionLabel: 'Open item',
+          onTrigger: (ctx) => {
+            openItem(ctx.entity?.id);
+          },
+        },
+        {
+          type: 'item-drag-start',
+          interactionId: 'move-start',
+          interactionLabel: 'Start move',
+          // no onTrigger — falls through to interactions.onEvent
+        },
+        {
+          type: 'item-drop',
+          interactionId: 'move-drop',
+          interactionLabel: 'Finish move',
+        },
+      ],
+      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+    },
+  },
+};
 ```
 
-Fires through `interactions.onEvent` with `ctx.kind === 'item-click'` and `ctx.entity` set to the clicked row.
+`interactions.onEvent` is a top-level `WidgemoConfig` field — see [Widgemo Config — interactions.onEvent](/core/reference/widgemo-config#interactionsonevent).
+
+For the full `InteractionContext` shape, `InteractionKind` values, and the decision guide on gestures vs lifecycle hooks, see [Extension API](/core/reference/extension-api#interactioncontext).
 
 ## Static Filtering and Sorting
 
