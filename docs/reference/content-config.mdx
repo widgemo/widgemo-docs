@@ -24,32 +24,94 @@ export const baseItem = {
 
 ## Shape
 
-| Field | Type | Description |
-|---|---|---|
-| `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| 'chart' \| string` | Display mode |
-| `enabled` | `boolean` | Toggles the content zone on or off (defaults to enabled) |
-| `layout` | `ModeLayout` | Optional non-mode layout metadata (mode-specific settings stay in `modeConfig`) |
-| `item` | `ItemConfig` | Field definitions and card layout |
-| `modeConfig` | `ModeConfig` | Mode-specific config (`table`, `grid`, `carousel`, `board`, `chart`) |
-| `actions` | `ActionConfig[]` | Per-item actions |
-| `actionOverflow` | `ActionOverflowConfig` | Overflow menu behaviour for item actions |
-| `theme` | `string` | Optional theme name for content-zone styling overrides |
-| `pagination` | `{ pageSize, initialPage?, onPageChange? }` | Pagination settings |
-| `search` | `{ enabled?, placeholder?, fields?, debounceMs? }` | Search bar |
-| `groupings` | `GroupingConfig[]` | Row/card groupings |
-| `sorting` | `SortConfig[]` | Initial sort |
-| `filtering` | `StaticFilterRule[]` | Static filters (valid operators: `eq`, `ne`, `contains`, `startswith`, `gt`, `lt`) |
-| `gestures` | `GestureConfig[]` | Click and drop gestures |
-| `responsive` | `{ breakpoints: Record<string, { mode?, modeConfig? }> }` | Per-breakpoint overrides |
-| `sizing` | `{ mode?: 'auto' \| 'fixed' \| 'fill'; height?: number \| string }` | Content sizing |
-| `status` | `'idle' \| 'loading' \| 'success' \| 'error'` | Content state |
-| `error` | `unknown` | Optional error payload used with error states |
-| `loadingState` | `LoadingStateConfig` | Loading UI options |
-| `errorState` | `ErrorStateConfig` | Error UI options |
-| `themeOverrides` | `Partial<ZoneTheme>` | Zone-scoped theme overrides |
-| `style` | `CSSProperties` | Inline styles on the content zone |
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `mode` | `'table' \| 'grid' \| 'carousel' \| 'board' \| 'chart' \| string` | — | **Required.** Display mode |
+| `enabled` | `boolean` | `true` | Toggles the content zone on or off |
+| `layout` | `ModeLayout` | — | Reserved; mode-specific settings live in `modeConfig` |
+| `item` | `ItemConfig` | — | **Required.** Field definitions and card layout |
+| `modeConfig` | `ModeConfig` | — | Mode-specific config (`table`, `grid`, `carousel`, `board`, `chart`) |
+| `actions` | `ActionConfig[]` | — | Per-item actions |
+| `actionOverflow` | `ActionOverflowConfig` | — | Overflow menu behaviour for item actions |
+| `theme` | `string` | — | Registered theme name for content-zone styling |
+| `themeOverrides` | `Partial<ZoneTheme>` | — | Zone-scoped theme token overrides |
+| `groupings` | `GroupingConfig[]` | — | Row/card groupings |
+| `sorting` | `SortConfig[]` | — | Initial sort |
+| `filtering` | `StaticFilterRule[]` | — | Static filters (valid operators: `eq`, `ne`, `contains`, `startswith`, `gt`, `lt`) |
+| `search` | `{ enabled?, placeholder?, fields?, debounceMs?, onSearch? }` | — | Search bar |
+| `pagination` | `{ pageSize, initialPage?, onPageChange? }` | — | Pagination settings |
+| `responsive` | `{ breakpoints: Record<string, { mode?, modeConfig? }> }` | — | Per-breakpoint mode and config overrides |
+| `sizing` | `{ mode?: 'auto' \| 'fixed' \| 'fill'; height?: number \| string }` | — | Content sizing |
+| `status` | `'idle' \| 'loading' \| 'success' \| 'error'` | — | Content state |
+| `error` | `unknown` | — | Error payload used with `status: 'error'` |
+| `loadingState` | `LoadingStateConfig` | — | Loading UI options |
+| `errorState` | `ErrorStateConfig` | — | Error UI options |
+| `style` | `CSSProperties` | — | Inline styles on the content zone |
+| `gestures` | `GestureConfig[]` | — | Click and drop gestures |
 
-## Actions and Interactions
+---
+
+## `mode`
+
+`mode` is required. It selects which renderer Widgemo uses to display your data.
+
+Built-in values: `'table'`, `'grid'`, `'carousel'`, `'board'`, `'chart'`.
+
+Custom string values are also accepted when a matching renderer is registered via the extension API.
+
+```tsx
+zones: {
+  content: {
+    mode: 'table',
+    item: { fields: […], layout: { type: 'auto' } },
+  },
+},
+```
+
+For mode-specific behaviour, layouts, and live showcases see:
+[Table](/core/concepts/modes/table) · [Grid](/core/concepts/modes/grid) · [Carousel](/core/concepts/modes/carousel) · [Board](/core/concepts/modes/board) · [Chart](/core/concepts/modes/chart)
+
+---
+
+## `item`
+
+`item` is required. It defines the field list and the card/row layout used by all modes.
+
+```tsx
+item: {
+  fields: [
+    { key: 'name',   label: 'Name' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+    { key: 'joined', label: 'Joined',  type: 'date' },
+  ],
+  layout: { type: 'auto' },
+},
+```
+
+For the full `ItemConfig` and `FieldConfig` shapes — field types, `renderAs` keys, options lookup, visibility conditions, and custom field renderers — see [Field Config](/core/reference/field-config).
+
+---
+
+## `modeConfig`
+
+`modeConfig` holds mode-specific display settings that go beyond the shared `item` contract. Not all modes use every sub-key — each mode reads only its own namespace.
+
+```tsx
+content: {
+  mode: 'grid',
+  modeConfig: {
+    grid: { columns: 3, gap: '1rem' },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+For the full `modeConfig` shape and all sub-keys for each mode see:
+[Table](/core/concepts/modes/table) · [Grid](/core/concepts/modes/grid) · [Carousel](/core/concepts/modes/carousel) · [Board](/core/concepts/modes/board) · [Chart](/core/concepts/modes/chart)
+
+---
+
+## Actions
 
 All action and gesture callbacks route through `interactions.onEvent`:
 
@@ -76,95 +138,35 @@ const config = {
 
 `onAction` on individual `ActionConfig` objects is also supported as a local override — it takes precedence over `interactions.onEvent` for that action.
 
-## Pagination and Search
+`actionOverflow` applies to both zone configs and `ContentConfig`.
+For full options, behavior, and `indicator` values, see [Action Config — Action Overflow](/core/reference/action-config#action-overflow).
+
+---
+
+## `theme`, `themeOverrides`, and `style`
+
+`theme` accepts a registered theme name and applies it to the content zone.
+
+`themeOverrides` accepts a `Partial<ZoneTheme>` object for inline token overrides scoped to this zone — useful when you need a different background, title colour, or padding without introducing a new named theme.
+
+`style` accepts a `CSSProperties` object and applies inline styles directly to the content zone wrapper element.
 
 ```tsx
 content: {
   mode: 'table',
-  pagination: { pageSize: 5, initialPage: 1 },
-  search: { placeholder: 'Search…', fields: ['name', 'department'] },
+  theme: 'compact',
+  themeOverrides: {
+    backgroundColor: '#f8f9fa',
+    padding: '0.5rem',
+  },
+  style: { borderTop: '2px solid #6366f1' },
   item: { fields: […], layout: { type: 'auto' } },
 },
 ```
 
-Search filters the full dataset first; pagination slices the filtered results. Page resets to 1 on each new query.
+For the full `ZoneTheme` token list and theming precedence rules, see [Theming](/core/concepts/theming) and [Theme API](/core/reference/theme-api).
 
-## Gestures
-
-`zones.content.gestures` defines config-driven user interaction handlers for item events.
-
-Supported types:
-
-- `item-click` — fires when a user clicks a row, card, or selectable item
-- `item-drag-start` — fires when a drag begins on a board card
-- `item-drop` — fires when a board card is dropped onto a target
-
-### Gesture Types
-
-| Type | Typical Source | Payload Intent | Handler location |
-|---|---|---|---|
-| `item-click` | Table rows, cards | User selection or activation | `onTrigger` on the gesture entry, else `interactions.onEvent` |
-| `item-drag-start` | Board cards | Drag initiation details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
-| `item-drop` | Board drop targets | Drop/completion details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
-
-### Handler Flow
-
-- If the matching gesture entry defines `onTrigger`, Widgemo calls that handler first.
-- If `onTrigger` is not provided, Widgemo falls back to `interactions.onEvent`.
-- If neither is provided, Widgemo does not run an app-level handler for that event.
-
-```tsx
-const config = {
-  interactions: {
-    onEvent: (ctx) => {
-      // fallback for any event without a local onTrigger
-      console.log(ctx.kind, ctx.entity?.id);
-    },
-  },
-  zones: {
-    content: {
-      mode: 'board',
-      gestures: [
-        {
-          type: 'item-click',
-          interactionId: 'open-item',
-          interactionLabel: 'Open item',
-          onTrigger: (ctx) => {
-            openItem(ctx.entity?.id);
-          },
-        },
-        {
-          type: 'item-drag-start',
-          interactionId: 'move-start',
-          interactionLabel: 'Start move',
-          // no onTrigger — falls through to interactions.onEvent
-        },
-        {
-          type: 'item-drop',
-          interactionId: 'move-drop',
-          interactionLabel: 'Finish move',
-        },
-      ],
-      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
-    },
-  },
-};
-```
-
-`interactions.onEvent` is a top-level `WidgemoConfig` field — see [Widgemo Config — interactions.onEvent](/core/reference/widgemo-config#interactionsonevent).
-
-For the full `InteractionContext` shape, `InteractionKind` values, and the decision guide on gestures vs lifecycle hooks, see [Extension API](/core/reference/extension-api#interactioncontext).
-
-## Static Filtering and Sorting
-
-```tsx
-content: {
-  mode: 'table',
-  filtering: [{ fieldKey: 'status', operator: 'eq', value: 'active' }],
-  sorting:   [{ fieldKey: 'name',   direction: 'asc' }],
-  item: { fields: […], layout: { type: 'auto' } },
-},
-```
+---
 
 ## Grouping
 
@@ -215,10 +217,79 @@ content: {
 
 For grouped table header styling and host-CSS caveats, see [Host CSS and Table Layout](/core/reference/host-css-table-layout#grouping-chevron-color-contract).
 
-## Action Overflow
+---
 
-`actionOverflow` applies to both zone configs and `ContentConfig`.
-For full options, behavior, and `indicator` values, see [Action Overflow](/core/reference/action-config#action-overflow).
+## Static Filtering and Sorting
+
+```tsx
+content: {
+  mode: 'table',
+  filtering: [{ fieldKey: 'status', operator: 'eq', value: 'active' }],
+  sorting:   [{ fieldKey: 'name',   direction: 'asc' }],
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+---
+
+## Pagination and Search
+
+```tsx
+content: {
+  mode: 'table',
+  search: { placeholder: 'Search…', fields: ['name', 'department'] },
+  pagination: { pageSize: 5, initialPage: 1 },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+Search filters the full dataset first; pagination slices the filtered results. Page resets to 1 on each new query.
+
+`search.onSearch` is called with the current query after each debounce — useful for server-side search where you want to re-fetch data based on the query string.
+
+---
+
+## `responsive`
+
+`responsive.breakpoints` maps breakpoint keys to per-breakpoint mode and `modeConfig` overrides. The breakpoint key is any string that matches a registered breakpoint name (e.g. `'mobile'`, `'tablet'`).
+
+```tsx
+content: {
+  mode: 'table',
+  responsive: {
+    breakpoints: {
+      mobile: {
+        mode: 'grid',
+        modeConfig: { grid: { columns: 1 } },
+      },
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+For the full breakpoint system, available keys, and container-query behaviour, see [Responsive Mode Switching](/core/concepts/modes/responsive-switching).
+
+---
+
+## `sizing`
+
+`sizing` controls how the content zone determines its height.
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `mode` | `'auto' \| 'fixed' \| 'fill'` | `'auto'` | `auto`: grows with content. `fixed`: uses explicit `height`. `fill`: stretches to 100% of parent height. |
+| `height` | `number \| string` | — | Used when `mode` is `'fixed'`. Numbers are treated as `px`. |
+
+```tsx
+content: {
+  mode: 'table',
+  sizing: { mode: 'fixed', height: 400 },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+---
 
 ## Loading States
 
@@ -552,10 +623,83 @@ renderer: (props: {
 
 For the full `onRetry` precedence rules, see [Widgemo Props — `onRetry` precedence](/core/reference/widgemo-props#onretry-precedence).
 
+---
+
+## Gestures
+
+`zones.content.gestures` defines config-driven user interaction handlers for item events.
+
+Supported types:
+
+- `item-click` — fires when a user clicks a row, card, or selectable item
+- `item-drag-start` — fires when a drag begins on a board card
+- `item-drop` — fires when a board card is dropped onto a target
+
+### Gesture Types
+
+| Type | Typical Source | Payload Intent | Handler location |
+|---|---|---|---|
+| `item-click` | Table rows, cards | User selection or activation | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+| `item-drag-start` | Board cards | Drag initiation details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+| `item-drop` | Board drop targets | Drop/completion details | `onTrigger` on the gesture entry, else `interactions.onEvent` |
+
+### Handler Flow
+
+- If the matching gesture entry defines `onTrigger`, Widgemo calls that handler first.
+- If `onTrigger` is not provided, Widgemo falls back to `interactions.onEvent`.
+- If neither is provided, Widgemo does not run an app-level handler for that event.
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      // fallback for any event without a local onTrigger
+      console.log(ctx.kind, ctx.entity?.id);
+    },
+  },
+  zones: {
+    content: {
+      mode: 'board',
+      gestures: [
+        {
+          type: 'item-click',
+          interactionId: 'open-item',
+          interactionLabel: 'Open item',
+          onTrigger: (ctx) => {
+            openItem(ctx.entity?.id);
+          },
+        },
+        {
+          type: 'item-drag-start',
+          interactionId: 'move-start',
+          interactionLabel: 'Start move',
+          // no onTrigger — falls through to interactions.onEvent
+        },
+        {
+          type: 'item-drop',
+          interactionId: 'move-drop',
+          interactionLabel: 'Finish move',
+        },
+      ],
+      item: { fields: [{ key: 'name' }], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+`interactions.onEvent` is a top-level `WidgemoConfig` field — see [Widgemo Config — interactions.onEvent](/core/reference/widgemo-config#interactionsonevent).
+
+For the full `InteractionContext` shape, `InteractionKind` values, and the decision guide on gestures vs lifecycle hooks, see [Extension API](/core/reference/extension-api#interactioncontext).
+
+---
+
 ## See Also
 
 - [Widgemo Config](/core/reference/widgemo-config)
 - [Widgemo Props](/core/reference/widgemo-props) — `loading`, `error`, `onRetry` sugar props
+- [Zone Config](/core/reference/zone-config)
 - [Action Config](/core/reference/action-config)
 - [Field Config](/core/reference/field-config)
-
+- [Theming](/core/concepts/theming) · [Theme API](/core/reference/theme-api)
+- [Table Mode](/core/concepts/modes/table) · [Grid Mode](/core/concepts/modes/grid) · [Carousel Mode](/core/concepts/modes/carousel) · [Board Mode](/core/concepts/modes/board) · [Chart Mode](/core/concepts/modes/chart)
+- [Responsive Mode Switching](/core/concepts/modes/responsive-switching)
