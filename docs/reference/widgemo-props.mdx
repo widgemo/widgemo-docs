@@ -11,7 +11,7 @@ export const teamData = [
 
 # Widgemo Props
 
-`WidgemoProps` is the runtime prop contract for the `<Widgemo>` component. There are only a handful of top-level props; almost all configuration lives inside `config` as a `WidgemoConfig` object.
+`WidgemoProps` is the runtime prop contract for the `<Widgemo>` component. There are only 7 top-level props — almost all configuration lives inside `config` as a `WidgemoConfig` object.
 
 ```tsx
 import { Widgemo } from '@widgemo/widgemo-core';
@@ -34,7 +34,68 @@ import { Widgemo } from '@widgemo/widgemo-core';
 | `error` | `unknown` | no | Sugar prop — forces the content zone into an error state. |
 | `onRetry` | `() => void` | no | Sugar prop — retry callback wired into the content error UI. |
 
-### Sugar props: `loading`, `error`, `onRetry`
+## `data`
+
+`data` is the only required prop. It accepts an array of plain objects (`Entity[]` — `Record<string, unknown>[]`). Each element represents one record; the keys become addressable field keys in `config.zones.content.item.fields`.
+
+<WidgemoShowcase
+  description="Three records with name, role, status, and score keys — config.zones.content.item.fields maps each key to a labeled column."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team', subtitle: '3 members' },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'role',   label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'score',  label: 'Score',  renderAs: 'progress', renderAsOptions: { max: 100 } },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const rows = [
+  { name: 'Aurora Chen', role: 'Product Designer', status: 'active',   score: 92 },
+  { name: 'Mateo Silva',  role: 'Engineer',         status: 'pending',  score: 71 },
+  { name: 'Priya Nair',   role: 'Operations',       status: 'inactive', score: 55 },
+];
+
+<Widgemo data={rows} config={config} />
+```
+
+`data` is passed by reference — updating the array reference causes Widgemo to re-render. Field keys do not need to be declared in advance; any key present in the objects can be addressed by `FieldConfig.key`.
+
+## `config`
+
+The `config` prop accepts a `WidgemoConfig` object. For the full shape — `containerFrame`, `devMode`, `collapse`, `interactions.onEvent`, `preRender`, header/footer zones, and all `ContentConfig` options — see [Widgemo Config](/core/reference/widgemo-config).
+
+Omitting `config` renders `data` using built-in defaults (auto-detected table mode, all keys as plain text fields).
+
+## `className` and `id`
+
+Standard HTML attribute forwarding onto the root element.
+
+```tsx
+<Widgemo
+  data={rows}
+  config={config}
+  id="team-table"
+  className="my-widget shadow-lg"
+/>
+```
+
+`className` appends to Widgemo's own root class. `id` sets the HTML `id` attribute — useful for scroll targets, accessibility labels, and CSS selectors.
+
+## `loading`, `error`, and `onRetry`
 
 These three props are "sugar" — shortcuts to the content zone status system that avoid writing a full `loadingState`/`errorState` config block for simple cases.
 
@@ -86,204 +147,22 @@ These three props are "sugar" — shortcuts to the content zone status system th
 />
 ```
 
-#### `onRetry` precedence
+### `onRetry` precedence
 
 - When `error` + `onRetry` are provided, `onRetry` is wired into the content error retry action.
 - If `config.zones.content.errorState.retry` is an object with a `label`, that label is preserved; only the `onRetry` callback is overridden.
 - If `config.zones.content.errorState.retry` is `false`, retry remains disabled — `onRetry` is not injected.
 - Content-level `errorState.retry.onRetry` takes precedence over the top-level `onRetry` when both are defined.
 
-For the full `loadingState` and `errorState` config options, all indicator variants, skeleton shapes, severity styles, and custom renderer signatures, see [Content Config — Loading States](/core/reference/content-config#loading-states) and [Content Config — Error States](/core/reference/content-config#error-states).
-
-## `config` prop
-
-The `config` prop accepts a `WidgemoConfig` object. For the full shape — including `containerFrame`, `devMode`, `collapse`, `interactions.onEvent`, `preRender`, header/footer zones, and all `ContentConfig` options — see [Widgemo Config](/core/reference/widgemo-config).
-
-## `widgemoRegistry`
-
-The plugin system. All registry methods are grouped on the `widgemoRegistry` export:
-
-```tsx
-import { widgemoRegistry } from '@widgemo/widgemo-core';
-```
-
-| Method | Signature | Description |
-|---|---|---|
-| `registerWidgemoRenderAs` | `(entry: RenderAsRegistryEntry) => void` | Register a custom field renderer. |
-| `getWidgemoRenderAs` | `(name: string) => RenderAsRegistryEntry \| null` | Look up a renderer by name. |
-| `renderWidgemoRenderAs` | `(value, renderAs, options, entity) => ReactNode` | Render a value via the registry. |
-| `registerWidgemoMode` | `(entry: ModeRegistryEntry) => void` | Register a custom view mode. |
-| `getWidgemoMode` | `(name: string) => ModeRegistryEntry \| null` | Look up a mode by name. |
-| `getModeComponent` | `(name: string) => ComponentType \| null` | Get the React component for a mode. |
-| `getRegisteredModes` | `() => string[]` | List all registered mode names. |
-| `registerWidgemoHook` | `(entry: HookRegistryEntry) => void` | Register a lifecycle hook. |
-| `getWidgemoHook` | `(name: string) => HookRegistryEntry \| null` | Look up a hook by name. |
-| `executeWidgemoHook` | `(name: string, ...args) => unknown` | Execute a hook by name. |
-| `registerWidgemoIcon` | `(entry: IconRegistryEntry) => void` | Register a custom icon. |
-| `getWidgemoIcon` | `(name: string) => IconRegistryEntry \| null` | Look up an icon by name. |
-| `renderWidgemoIcon` | `(props: { name, size?, className?, color? }) => ReactNode` | Render an icon via the registry. |
-| `registerWidgemoFieldType` | `(entry: FieldTypeRegistryEntry) => void` | Register a custom field type. |
-| `getWidgemoFieldType` | `(name: string) => FieldTypeRegistryEntry \| null` | Look up a field type by name. |
-| `renderWidgemoField` | `(value, config, entity) => ReactNode` | Render a field value via the registry. |
-
-See [Extension API](/core/reference/extension-api) for full registration examples.
-
-## `widgemoColors`
-
-Color utility functions grouped on the `widgemoColors` export:
-
-```tsx
-import { widgemoColors } from '@widgemo/widgemo-core';
-
-const lighter = widgemoColors.lightenDarkenColor('#3b82f6', 20);
-const contrast = widgemoColors.getContrastColor('#1e293b');
-const palette  = widgemoColors.generatePalette('#6366f1', { steps: 5 });
-```
-
-| Function | Description |
-|---|---|
-| `lightenDarkenColor(hex, amount)` | Lighten (positive) or darken (negative) a hex color. |
-| `getContrastColor(hex)` | Return `#000` or `#fff` depending on which gives better contrast. |
-| `generatePalette(hex, options)` | Generate an array of tints/shades from a base color. |
-
-## `advanced`
-
-Internal renderer components and hooks exposed for host applications that need to compose custom layouts. Use with care — these are lower-level surfaces and may change between minor versions.
-
-```tsx
-import { advanced } from '@widgemo/widgemo-core';
-
-const { ContainerRenderer, ItemRenderer, FieldRenderer, TableMode, usePagination } = advanced;
-```
-
-| Export | Kind | Purpose |
-|---|---|---|
-| `ContainerRenderer` | Component | Full Widgemo layout shell (zones, chrome). |
-| `ActionsRenderer` | Component | Action bar renderer for zones and items. |
-| `ItemRenderer` | Component | Single entity card/row renderer. |
-| `FieldRenderer` | Component | Single field value renderer. |
-| `ModalRenderer` | Component | Modal/overlay renderer. |
-| `GridMode` | Component | Grid mode renderer. |
-| `TableMode` | Component | Table mode renderer. |
-| `CarouselMode` | Component | Carousel mode renderer. |
-| `BoardMode` | Component | Board mode renderer. |
-| `ChartMode` | Component | Chart mode renderer. |
-| `ConfigIcon` | Component | Dev-mode config toggle icon. |
-| `PaginationControls` | Component | Pagination UI component. |
-| `SearchBar` | Component | Search/filter input component. |
-| `usePagination` | Hook | Pagination state hook. |
-| `useFilter` | Hook | Filter state hook. |
-| `applySearchFilter` | Function | Apply a text search filter to an array. |
-| `applyStaticFilters` | Function | Apply `StaticFilterRule[]` to an array. |
-
-## Other top-level exports
-
-| Export | Kind | Description |
-|---|---|---|
-| `Widgemo` | Component | The main component. |
-| `WidgemoThemeProvider` | Component | Theme context provider. Wrap your app or subtree to share a theme. |
-| `defaultRenderWidgemoIcon` | Function | Stateless icon renderer — does not touch the registry. Safe for SSG/SSR. |
-| `Tooltip` | Component | Shared tooltip UI primitive. |
-| `coreActions` | Object | Built-in action presets (copy, export, etc.). |
-| `createAction` | Function | Utility to build a typed `ActionConfig` object. |
-| `createActions` | Function | Utility to build an array of `ActionConfig` objects. |
-| `isValidEmail` | Function | Email validation utility (used internally by the `email` field type). |
-| `generateId` | Function | Stable ID generator. |
-| `parseTemporalValue` | Function | Parse a raw temporal value given a `TemporalParseMode`. |
-| `parseDurationValue` | Function | Convert a raw duration number to milliseconds given a `DurationUnit`. |
-| `isTemporalParseMode` | Function | Type-guard for `TemporalParseMode` strings. |
-| `getTheme` | Function | Retrieve a registered theme by name. |
-| `registerTheme` | Function | Register a custom theme. |
-| `mergeZoneTheme` | Function | Merge a partial `ZoneTheme` into a full resolved theme. |
-
-## `InteractionContext` shape
-
-All action and gesture callbacks receive an `InteractionContext` payload:
-
-```ts
-interface InteractionContext {
-  kind:             InteractionKind;           // 'zone-action' | 'item-action' | 'item-click' | 'item-drag-start' | 'item-drop' | 'reference-click'
-  interactionId:    string;                    // stable interaction identifier
-  interactionLabel: string;                    // human-readable label
-  entity?:          Entity;                    // the entity in scope (item-level interactions)
-  data:             Entity[];                  // full data array in the render scope
-  zone:             string;                    // the zone where the interaction fired
-  nativeEvent?:     React.MouseEvent | React.DragEvent;
-  from?:            InteractionBoardLocation;  // board drag source
-  to?:              InteractionBoardLocation;  // board drag destination
-  // reference-click only:
-  fieldKey?:        string;                    // the field key that was clicked
-  fieldValue?:      unknown;                   // raw FK/ID value from the entity
-  fieldLabel?:      string;                    // resolved display label from options
-  relatedEntity?:   string;                    // entity type declared on the field
-}
-```
-
-## Exported types (complete list)
-
-```ts
-// Core
-WidgemoProps, WidgemoConfig, Entity
-
-// Zone and content config
-ZoneConfig, ZoneLayout, ContentConfig, ModeLayout
-GestureConfig, GroupingConfig, SortConfig, SortDirection
-FilterOperator, StaticFilterRule, AggregateType
-
-// Item config
-ItemConfig, ItemLayout, ItemStyle, ItemSection, ItemTemplate, SectionConfig
-
-// Field config
-FieldConfig, RenderAsOptions, BaseRenderAsOptions
-
-// renderAs option types
-LinkRenderAsOptions, ProgressRenderAsOptions, RatingRenderAsOptions
-CurrencyRenderAsOptions, BadgeRenderAsOptions
-JsonPreviewRenderAsOptions, DeltaValueRenderAsOptions, DeltaValuePalette
-SparkTrendRenderAsOptions, ScoreMeterRenderAsOptions, ScoreBand
-CompositionBarRenderAsOptions, CompositionBarSegment
-TemporalRenderAsOptions, DateRenderAsOptions, TimeRenderAsOptions
-DatetimeRenderAsOptions, TimestampRenderAsOptions, DurationRenderAsOptions
-TemporalParseMode, TemporalTimeZone, DurationUnit, DurationHumanizedUnit
-
-// Action and chrome config
-ActionConfig, IconConfig, ContainerFrame, DevModeConfig
-
-// Mode config
-ModeConfig, TableModeConfig, BoardModeConfig
-BoardColumnsConfig, BoardColumnConfig, BoardAxisItemConfig
-BoardSwimlaneConfig, BoardSwimlanesConfig
-ChartModeConfig, ChartSeriesConfig, ChartSeriesType
-
-// Interaction types
-InteractionContext, InteractionScope, InteractionEventHandler
-InteractionKind, InteractionBoardLocation
-
-// Registry entry types
-RenderAsRegistryEntry, ModeRegistryEntry, IconRegistryEntry
-FieldTypeRegistryEntry, HookRegistryEntry
-
-// Theme types
-WidgemoTheme, ZoneTheme, ActionTheme
-
-// Tooltip
-TooltipProps, TooltipPosition
-
-// Color utilities
-Palette, PaletteOptions
-
-// Advanced state
-AdvancedPaginationState, AdvancedFilterState
-
-// Utility types
-RenderIcon, ChartTooltipContext, ChartTooltipPosition
-```
+For the full `loadingState` and `errorState` config options, indicator variants, skeleton shapes, severity styles, and custom renderer signatures, see [Content Config — Loading States](/core/reference/content-config#loading-states) and [Content Config — Error States](/core/reference/content-config#error-states).
 
 ## See Also
 
-- [Widgemo Config](/core/reference/widgemo-config) — full `ContentConfig` and `ZoneConfig` reference
+- [Widgemo Config](/core/reference/widgemo-config) — full `WidgemoConfig` reference: zones, containerFrame, devMode, gestures
+- [Content Config](/core/reference/content-config) — `ContentConfig`: loading/error states, pagination, search, grouping
 - [Field Config](/core/reference/field-config) — `FieldConfig` and all `renderAsOptions`
-- [Action Config](/core/reference/action-config) — action shape, placement, and overflow
-- [Extension API](/core/reference/extension-api) — custom renderers, modes, icons
+- [Action Config](/core/reference/action-config) — action shape, placement, overflow, and action builders
+- [Extension API](/core/reference/extension-api) — `widgemoRegistry`, `advanced`, `InteractionContext`
+- [Utilities](/core/reference/utilities) — `widgemoColors`, temporal utilities, general utilities
+- [All Exports](/core/reference/all-exports) — every named export from `@widgemo/widgemo-core` with links
 - [Theme API](/core/reference/theme-api) — `WidgemoThemeProvider` and theme registration
-- [Host CSS and Table Layout](/core/reference/host-css-table-layout)

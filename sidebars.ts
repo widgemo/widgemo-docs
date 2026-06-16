@@ -112,6 +112,11 @@ const sidebars: SidebarsConfig = {
       items: [
         'reference/widgemo-props',
         'reference/widgemo-config',
+        {
+          type: 'doc',
+          id: 'reference/zone-config',
+          label: 'Zone Config (Header & Footer)',
+        },
         'reference/content-config',
         'reference/field-config',
         'reference/action-config',
@@ -119,6 +124,12 @@ const sidebars: SidebarsConfig = {
         'reference/host-css-table-layout',
         'reference/theme-api',
         'reference/extension-api',
+        'reference/utilities',
+        {
+          type: 'doc',
+          id: 'reference/all-exports',
+          label: 'All Exports',
+        },
       ],
     },
     {
