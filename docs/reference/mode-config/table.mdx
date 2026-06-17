@@ -1,0 +1,58 @@
+---
+---
+
+# Table Mode Config
+
+`modeConfig.table` controls the presentation of table mode — layout type, toggles, conditional row styling, and hook callbacks.
+
+```tsx
+content: {
+  mode: 'table',
+  modeConfig: {
+    table: {
+      type: 'traditional',
+      alternatingRows: true,
+      hover: true,
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `type` | `traditional`, `rich-cells` | `traditional` | Chooses classic row/cell table layout or richer multi-column cell blocks. |
+| `columns` | any number >= 1 | `1` | Number of rich-cell columns when `type` is `rich-cells`. |
+| `hover` | `true`, `false` | `true` | Enables row hover behavior. |
+| `showHeader` | `true`, `false` | `true` | Shows or hides the header row. |
+| `alternatingRows` | `true`, `false` | `true` | Applies zebra striping to alternating rows. |
+| `rowSeparator` | `true`, `false` | `true` | Draws row bottom borders. |
+| `conditionalBackgroundColor` | `(entity) => string \| { backgroundColor, color? }` | unset | Applies dynamic row background and optional text color per entity. |
+| `hooks.onSort` | `(field, direction) => void` | unset | Fires when a column sort changes. |
+| `hooks.onGroup` | `(field) => void` | unset | Fires when grouping changes. |
+| `hooks.preRowRender` | `(entity) => entity` | unset | Lets you transform a row before render. |
+| `hooks.onGroupToggle` | `(groupValue, isExpanded) => void` | unset | Fires when a group expands or collapses. |
+
+## Mode-Specific Caveats
+
+- `columns` applies only when `type` is `rich-cells`.
+- Grouping dropdown visibility requires at least one field with `groupable: true`.
+
+## Coverage Summary
+
+Every table setting is represented by at least one live example on the [Table Mode](/core/concepts/modes/table) guide page:
+
+- `type` and `columns`: Traditional Table, Rich Cells
+- `hover`, `showHeader`, `alternatingRows`, `rowSeparator`: Traditional Table, Presentation Toggles
+- `conditionalBackgroundColor`: Conditional Row Styling
+- `groupings.showDropdownControl` and `groupings.showHeaderControls`: Grouping Control Variants
+- `hooks.onSort`, `hooks.onGroup`, `hooks.preRowRender`, `hooks.onGroupToggle`: Hook Callbacks
+
+## See Also
+
+- [Table Mode](/core/concepts/modes/table) — examples, showcases, and grouping UI controls
+- [Content Config](/core/reference/content-config) — `modeConfig`, `groupings`, `sorting`, `filtering`
+- [Field Config](/core/reference/field-config)
+- [Host CSS and Table Layout](/core/reference/host-css-table-layout)

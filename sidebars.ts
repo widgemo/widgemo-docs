@@ -120,6 +120,17 @@ const sidebars: SidebarsConfig = {
         'reference/content-config',
         'reference/loading-state',
         'reference/error-state',
+        {
+          type: 'category',
+          label: 'Mode Config',
+          items: [
+            'reference/mode-config/table',
+            'reference/mode-config/grid',
+            'reference/mode-config/carousel',
+            'reference/mode-config/board',
+            'reference/mode-config/chart',
+          ],
+        },
         'reference/field-config',
         'reference/action-config',
         'reference/css-variables',

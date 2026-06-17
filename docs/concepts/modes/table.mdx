@@ -453,39 +453,9 @@ modeConfig: {
 }
 ```
 
-## Table Options Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| type | traditional or rich-cells | traditional | Chooses classic row/cell table layout or richer multi-column cell blocks. |
-| columns | any number >= 1 | 1 | Number of rich-cell columns when type is rich-cells. |
-| hover | true or false | true | Enables row hover behavior. |
-| showHeader | true or false | true | Shows or hides the header row. |
-| alternatingRows | true or false | true | Applies zebra striping to alternating rows. |
-| rowSeparator | true or false | true | Draws row bottom borders. |
-| conditionalBackgroundColor | function returning a color string, or an object with backgroundColor and optional color | unset | Applies dynamic row background and optional text color per entity. |
-| hooks.onSort | function (field, direction) => void | unset | Fires when a column sort changes. |
-| hooks.onGroup | function (field) => void | unset | Fires when grouping changes. |
-| hooks.preRowRender | function (entity) => entity | unset | Lets you transform a row before render. |
-| hooks.onGroupToggle | function (groupValue, isExpanded) => void | unset | Fires when a group expands or collapses. |
-
-## Mode-Specific Caveats
-
-- Grouping dropdown visibility requires at least one field with `groupable: true`.
-- `columns` applies only when `type` is `rich-cells`.
-
-## Coverage Summary
-
-Every table setting is represented by at least one live example on this page:
-
-- type and columns: Traditional Table, Rich Cells
-- hover, showHeader, alternatingRows, rowSeparator: Traditional Table, Presentation Toggles
-- conditionalBackgroundColor: Conditional Row Styling
-- groupings.showDropdownControl and groupings.showHeaderControls: Grouping Control Variants
-- hooks.onSort, hooks.onGroup, hooks.preRowRender, hooks.onGroupToggle: Hook Callbacks
-
 ## See Also
 
+- [Table Mode Config](/core/reference/mode-config/table) — full `modeConfig.table` options, caveats, and coverage summary
 - [Content Config](/core/reference/content-config)
 - [Field Config](/core/reference/field-config)
 - [Host CSS and Table Layout](/core/reference/host-css-table-layout)

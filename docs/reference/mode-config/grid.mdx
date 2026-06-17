@@ -1,0 +1,60 @@
+---
+---
+
+# Grid Mode Config
+
+`modeConfig.grid` controls the card layout and grid geometry in grid mode.
+
+```tsx
+content: {
+  mode: 'grid',
+  modeConfig: {
+    grid: {
+      minItemWidth: '240px',
+      maxColumns: 4,
+      gap: '1rem',
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `layoutMode` | `standard`, `masonry` | `standard` | Selects regular CSS grid or masonry layout strategy. |
+| `gap` | any CSS length | `1rem` | Sets spacing between cards. |
+| `minItemWidth` | any CSS length | `220px` | Sets minimum card width before wrapping. |
+| `maxColumns` | any number >= 1 | unset | Caps the maximum number of columns. |
+| `autoFlow` | `row`, `column`, `dense` | `row` | Controls packing direction and density behavior. |
+| `justifyItems` | `start`, `end`, `center`, `stretch` | browser default | Controls horizontal card alignment inside each grid cell. |
+| `alignItems` | `start`, `end`, `center`, `stretch` | browser default | Controls vertical card alignment inside each grid cell. |
+
+For grouping contract details and mode applicability, see [Content Config: Grouping](/core/reference/content-config#grouping).
+
+For item-level card layout and field rendering details, see [Field Config](/core/reference/field-config).
+
+## Mode-Specific Caveats
+
+- `autoFlow: dense` can visually reorder packing to fill gaps; use with care if strict visual sequence matters.
+- Grouping in grid renders grouped sections, not table-style header controls.
+- Sorting (`config.sorting`) is not supported in grid mode. Pre-sort your data before passing it in if a specific order is needed.
+
+## Coverage Summary
+
+Every grid setting is represented by at least one live example on the [Grid Mode](/core/concepts/modes/grid) guide page:
+
+- `minItemWidth`, `maxColumns`, `gap`: Responsive Grid (Baseline)
+- `layoutMode`: Masonry Layout
+- `autoFlow`: Grid Options Reference (best visualized when card footprints vary)
+- `justifyItems`, `alignItems`: Alignment Controls
+- `groupings` in grid mode: Grouping in Grid
+- `search`, `filtering`: Search and Filtering
+
+## See Also
+
+- [Grid Mode](/core/concepts/modes/grid) — examples and showcases
+- [Content Config](/core/reference/content-config) — `modeConfig`, `groupings`, `search`, `filtering`
+- [Field Config](/core/reference/field-config)
+- [Table Mode](/core/concepts/modes/table)

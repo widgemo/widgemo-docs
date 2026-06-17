@@ -1,0 +1,63 @@
+---
+---
+
+# Board Mode Config
+
+`modeConfig.board` defines column routing, swimlanes, and drag behavior in board mode.
+
+```tsx
+content: {
+  mode: 'board',
+  modeConfig: {
+    board: {
+      columns: {
+        field: 'status',
+        items: [
+          { id: 'todo',        label: 'To Do' },
+          { id: 'in-progress', label: 'In Progress' },
+          { id: 'done',        label: 'Done' },
+        ],
+      },
+      dragEnabled: true,
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `columns.field` | string | **required** | Selects the entity field used to route cards into columns. |
+| `columns.items` | `BoardColumnConfig[]` | **required** | Declares the visible columns and their order. |
+| `columns.items[].value` | string, number, boolean | item `id` | Overrides the value used for routing. |
+| `columns.items[].filter` | `(entity) => boolean` | unset | Replaces value matching with a predicate. |
+| `columns.items[].width` | CSS length | unset | Sets the width of a column. |
+| `columns.items[].color` | CSS color | unset | Sets the accent color for a column. |
+| `columns.items[].wipLimit` | number | unset | Adds a work-in-progress limit to a column. |
+| `swimlanes.field` | string | required when `swimlanes` is set | Selects the entity field used to route rows into swimlanes. |
+| `swimlanes.items` | `BoardSwimlaneConfig[]` | required when `swimlanes` is set | Declares the swimlanes and their order. |
+| `swimlanes.layout.type` | `collapsible`, `matrix` | `collapsible` | Switches between collapsible sections and matrix layout. |
+| `swimlanes.repeatingHeaders` | `true`, `false` | `true` | Chooses whether column headers repeat for each swimlane. |
+| `dragEnabled` | `true`, `false` | unset | Enables or disables board dragging. |
+
+## Mode-Specific Caveats
+
+- `columns.items[].filter` overrides simple field-value matching for that axis item.
+- `swimlanes` adds a second routing axis and changes board layout semantics.
+
+## Coverage Summary
+
+Every board option is mapped to at least one example or reference subsection on the [Board Mode](/core/concepts/modes/board) guide page:
+
+- `columns.field`, `columns.items`, `columns.items[].value`, `columns.items[].width`, `columns.items[].color`, `columns.items[].wipLimit`, `dragEnabled`: Column Routing
+- `columns.items[].filter`: Board Options Reference (documented for predicate-based column routing)
+- `swimlanes.field`, `swimlanes.items`, `swimlanes.layout.type`, `swimlanes.repeatingHeaders`, `dragEnabled`: Swimlanes
+
+## See Also
+
+- [Board Mode](/core/concepts/modes/board) — examples and showcases
+- [Content Config](/core/reference/content-config) — `modeConfig`, `gestures`
+- [Action Config](/core/reference/action-config)
+- [Table Mode](/core/concepts/modes/table)

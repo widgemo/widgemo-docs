@@ -158,47 +158,9 @@ modeConfig: {
 }
 ```
 
-## Board Options Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| `columns.field` | string | required | Selects the entity field used to route cards into columns. |
-| `columns.items` | `BoardColumnConfig[]` | required | Declares the visible columns and their order. |
-| `columns.items[].value` | string, number, boolean | item `id` | Overrides the value used for routing. |
-| `columns.items[].filter` | `(entity) => boolean` | unset | Replaces value matching with a predicate. |
-| `columns.items[].width` | CSS length | unset | Sets the width of a column. |
-| `columns.items[].color` | CSS color | unset | Sets the accent color for a column. |
-| `columns.items[].wipLimit` | number | unset | Adds a work-in-progress limit to a column. |
-| `swimlanes.field` | string | required when `swimlanes` is set | Selects the entity field used to route rows into swimlanes. |
-| `swimlanes.items` | `BoardSwimlaneConfig[]` | required when `swimlanes` is set | Declares the swimlanes and their order. |
-| `swimlanes.layout.type` | `collapsible`, `matrix` | `collapsible` | Switches between collapsible sections and matrix layout. |
-| `swimlanes.repeatingHeaders` | `true`, `false` | `true` | Chooses whether column headers repeat for each swimlane. |
-| `dragEnabled` | `true`, `false` | unset | Enables or disables board dragging. |
-
-## Mode-Specific Caveats
-
-- `columns.items[].filter` overrides simple field-value matching for that axis item.
-- `swimlanes` adds a second routing axis and changes board layout semantics.
-
-## Coverage Summary
-
-Every board option is mapped to at least one example or reference subsection on this page:
-
-- `columns.field`: Column Routing, Swimlanes
-- `columns.items`: Column Routing, Swimlanes
-- `columns.items[].value`: Column Routing, Swimlanes
-- `columns.items[].filter`: Board Options Reference (documented for predicate-based column routing)
-- `columns.items[].width`: Column Routing
-- `columns.items[].color`: Column Routing
-- `columns.items[].wipLimit`: Column Routing
-- `swimlanes.field`: Swimlanes
-- `swimlanes.items`: Swimlanes
-- `swimlanes.layout.type`: Swimlanes
-- `swimlanes.repeatingHeaders`: Swimlanes
-- `dragEnabled`: Column Routing, Swimlanes
-
 ## See Also
 
+- [Board Mode Config](/core/reference/mode-config/board) — full `modeConfig.board` options, caveats, and coverage summary
 - [Content Config](/core/reference/content-config)
 - [Action Config](/core/reference/action-config)
 - [Table Mode](/core/concepts/modes/table)
