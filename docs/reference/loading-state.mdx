@@ -1,0 +1,215 @@
+---
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const teamData = [
+  { name: 'Aurora Chen',  role: 'Product Designer', status: 'active'  },
+  { name: 'Mateo Silva',  role: 'Engineer',          status: 'pending' },
+  { name: 'Priya Nair',   role: 'Operations',        status: 'inactive'},
+];
+
+export const baseItem = {
+  fields: [
+    { key: 'name',   label: 'Name' },
+    { key: 'role',   label: 'Role' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+  ],
+  layout: { type: 'auto' },
+};
+
+# Loading State
+
+`loadingState` configures the built-in loading UI for the content zone. Activate it by setting `status: 'loading'` on `ContentConfig`.
+
+Three display patterns are available — `spinner`, `skeleton`, and `text` — plus a full custom `renderer` override.
+
+## How it works
+
+Set `status: 'loading'` to activate. Widgemo renders the loading UI instead of data content. Set `loadingState.enabled: false` to suppress the built-in loading UI while keeping `status: 'loading'` (useful when you render loading UI outside Widgemo).
+
+```tsx
+zones: {
+  content: {
+    status: 'loading',
+    loadingState: {
+      indicator: 'spinner',       // 'spinner' | 'skeleton' | 'text'
+      message: 'Fetching data…',  // string or (data) => string
+    },
+    mode: 'table',
+    item: { fields: […], layout: { type: 'auto' } },
+  },
+},
+```
+
+## Spinner (default)
+
+<WidgemoShowcase
+  description="Default spinner indicator with a custom message."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: { indicator: 'spinner', message: 'Fetching team data…' },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+content: {
+  status: 'loading',
+  loadingState: { indicator: 'spinner', message: 'Fetching team data…' },
+  mode: 'table',
+  item: { … },
+},
+```
+
+## Skeleton — text bars
+
+<WidgemoShowcase
+  description="Skeleton with 'text-bars' variant and shimmer animation (default)."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'text-bars', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Skeleton — table cells
+
+<WidgemoShowcase
+  description="Skeleton with 'table-cells' variant — gives a mode-representative placeholder for table content."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'table-cells', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Skeleton — cards grid
+
+<WidgemoShowcase
+  description="Skeleton with 'cards-grid' variant — representative placeholder for grid/card layouts."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'cards-grid', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Skeleton — pie chart
+
+<WidgemoShowcase
+  description="Skeleton with 'pie-chart' variant — representative placeholder for chart content."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: {
+          indicator: 'skeleton',
+          skeleton: { variant: 'pie-chart', animation: 'shimmer' },
+        },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Text indicator
+
+<WidgemoShowcase
+  description="'text' indicator — minimal; renders the message string in muted text only."
+  data={teamData}
+  config={{
+    zones: {
+      header: { title: 'Team Directory' },
+      content: {
+        status: 'loading',
+        loadingState: { indicator: 'text', message: 'Loading…' },
+        mode: 'table',
+        item: baseItem,
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+## `loadingState` options
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `enabled` | `boolean` | `true` | Set to `false` to suppress built-in loading UI while keeping `status: 'loading'`. |
+| `indicator` | `'spinner'` \| `'skeleton'` \| `'text'` | `'spinner'` | Built-in loading indicator style. |
+| `skeleton.variant` | `'text-bars'` \| `'table-cells'` \| `'cards-grid'` \| `'pie-chart'` | `'text-bars'` | Skeleton layout shape. Choose the one that matches your content mode. |
+| `skeleton.animation` | `'shimmer'` \| `'morph'` \| `'none'` | `'shimmer'` | Skeleton animation style. |
+| `skeleton.gifUrl` | `string` | unset | Replace the built-in skeleton with a custom GIF. |
+| `message` | `string \| (data) => string` | `'Loading...'` | Text shown below the indicator. Accepts a function for dynamic messages. |
+| `renderer` | `(props) => ReactNode` | unset | Full custom loading UI. When provided, overrides all built-in indicator rendering. |
+
+## Custom `renderer`
+
+When `renderer` is provided it takes full control of the loading UI — built-in indicator rendering is bypassed entirely.
+
+```ts
+renderer: (props: {
+  message?:   string;
+  indicator?: 'spinner' | 'skeleton' | 'text';
+  skeleton?:  { variant?, animation?, gifUrl? };
+  data?:      Entity[];
+}) => ReactNode
+```
+
+## See Also
+
+- [Content Config](/core/reference/content-config) — `status`, `loadingState` fields
+- [Error State](/core/reference/error-state) — `status: 'error'` and `errorState`
+- [Widgemo Props](/core/reference/widgemo-props) — `loading` sugar prop
