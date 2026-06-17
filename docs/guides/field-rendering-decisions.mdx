@@ -1,0 +1,81 @@
+---
+---
+
+# Field Rendering Decisions
+
+Use this guide when deciding whether a field should rely on `type`, use `renderAs`, or be extended through custom registration.
+
+## Quick Decision Matrix
+
+| Layer | Use when | Config key | Where to extend |
+|---|---|---|---|
+| `type` | You want semantic fallback rendering and type-aware behavior | `item.fields[].type` | [Custom Field Types](/core/extensions/custom-field-types) |
+| `renderAs` | You want a specific visual output independent of base type | `item.fields[].renderAs` | [Custom renderAs](/core/extensions/renderas-customization) |
+| Custom `renderAs` | You need a reusable visual treatment not covered by built-ins | registry renderAs entry | [Extension Architecture](/core/concepts/extension-architecture) |
+| Custom field type | You need domain-specific semantics and first-class type behavior | registry field type entry | [Extension Architecture](/core/concepts/extension-architecture) |
+
+## Contract Rule: renderAs Precedence
+
+If both `type` and `renderAs` are set, `renderAs` controls the final display.
+
+```tsx
+// Semantic only (default type rendering)
+{ key: 'status', type: 'text' }
+
+// Visual override (renderAs wins)
+{ key: 'status', type: 'text', renderAs: 'badge' }
+```
+
+Keep `type` even when using `renderAs` if semantic meaning matters for readability or future tooling.
+
+## Suggested Defaults
+
+- Start with `type` for straightforward value rendering.
+- Add `renderAs` when a richer visual treatment improves comprehension.
+- Use custom `renderAs` before custom field types when the need is primarily presentational.
+- Use custom field types when semantics and behavior should become a reusable first-class type.
+
+## Practical Examples
+
+### 1) Semantic Date with Default Output
+
+```tsx
+{ key: 'joinedAt', label: 'Joined', type: 'date' }
+```
+
+### 2) Date with Explicit Visual Renderer
+
+```tsx
+{
+  key: 'joinedAt',
+  label: 'Joined',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', timezone: 'utc' },
+}
+```
+
+### 3) Status as Badge
+
+```tsx
+{
+  key: 'status',
+  label: 'Status',
+  type: 'text',
+  renderAs: 'badge',
+  renderAsOptions: {
+    colorMap: {
+      active: '#198754',
+      pending: '#ffc107',
+      inactive: '#dc3545',
+    },
+  },
+}
+```
+
+## Reference Map
+
+- Item-level shape and layout: [Item Config](/core/reference/item-config)
+- Field schema and built-in catalogs: [Field Config](/core/reference/field-config)
+- Field type component docs: [Field Types Overview](/core/components/fields/overview)
+- Renderer component docs: [Field Renderers Overview](/core/components/renderers/overview)

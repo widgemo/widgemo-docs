@@ -118,6 +118,7 @@ const sidebars: SidebarsConfig = {
           label: 'Zone Config (Header & Footer)',
         },
         'reference/content-config',
+        'reference/item-config',
         'reference/loading-state',
         'reference/error-state',
         {
@@ -133,6 +134,7 @@ const sidebars: SidebarsConfig = {
         },
         'reference/field-config',
         'reference/action-config',
+          'guides/field-rendering-decisions',
         'reference/css-variables',
         'reference/host-css-table-layout',
         'reference/theme-api',
