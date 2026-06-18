@@ -3,57 +3,61 @@
 
 # Host CSS and Table Layout
 
-This page explains how host application CSS can affect Widgemo table rendering and how to keep behavior predictable.
+This page defines the compatibility contract between Widgemo table rendering and host-application CSS.
 
-## Baseline in plain apps
+## Baseline Rendering Contract
 
-When an app does not apply broad global table rules, Widgemo table rendering follows widgemo-core defaults.
+When a host does not apply broad global table selectors, Widgemo table rendering follows core defaults.
 
-Expected baseline:
+| Area | Contract |
+|---|---|
+| Borders and header styling | Driven by widgemo-core styles and mode config |
+| Row striping | Driven by `alternatingRows` and row tokens |
+| Density and spacing | Driven by core defaults plus responsive mode behavior |
+| Table layout mode | `traditional` uses fixed table layout; `rich-cells` uses auto table layout |
+| Width strategy | Runtime table uses `width: max-content` with `min-width: 100%` |
+| Overflow region | Internal scroll region (`.widgemo-table-scroll-region`) handles constrained container overflow |
 
-- Table borders, stripe behavior, and header treatment come from widgemo-core and mode config.
-- Cell spacing and row density follow core defaults plus any responsive mode behavior.
-- Table mode layout is mode-driven:
-  - `traditional` uses fixed table layout.
-  - `rich-cells` uses auto table layout.
-- Runtime table sizing uses `width: max-content` with `min-width: 100%`.
-- Fixed/fill container sizing with overflow constraints is handled by the internal scroll region (`.widgemo-table-scroll-region`).
+## Constrained Overflow Contract
 
-## Constrained overflow contract
+For fixed-size or fill containers, scrolling remains internal to Widgemo's table scroll region.
 
-When a Widgemo table is rendered in a fixed-size or fill container with constrained space, scrolling remains internal to the table scroll region.
+| Condition | Expected behavior |
+|---|---|
+| Horizontal overflow only | `overflow-x` is discoverable and usable |
+| Vertical overflow only | `overflow-y` is discoverable and usable |
+| Dual overflow | Both axes remain functionally discoverable and usable |
+| Pagination changes | Visible row count changes, but overflow discoverability semantics remain consistent |
 
-- Horizontal overflow (`overflow-x`) and vertical overflow (`overflow-y`) are independent axes and can appear independently based on content and container size.
-- In dual-overflow cases, both axes should remain functionally discoverable with usable controls.
-- Pagination changes visible rows, but does not change scrollbar discoverability semantics for constrained regions.
+### Overlay Scrollbar Caveat
 
-### Overlay scrollbar caveat
+Some operating systems auto-hide scrollbar rails based on platform preferences. Visual rail persistence is platform-dependent presentation.
 
-On some operating systems, native scrollbar rails auto-hide based on platform preferences. Treat visual rail persistence as platform-dependent presentation.
+The compatibility requirement is functional discoverability and usable scrolling controls, including transient-rail environments.
 
-The behavior contract is functional discoverability and usable scrolling controls, even when rails are transient.
+## Row Striping Contract
 
-## Row striping
+`alternatingRows` (default `true`) is the native Widgemo striping control. It applies row striping via `backgroundColor` using `--widgemo-row-alt-bg`.
 
-`alternatingRows` (defaults `true`) is the Widgemo-native control for row striping. It applies inline `backgroundColor` to every other row using the `--widgemo-row-alt-bg` token.
+Host CSS can restyle appearance, but Widgemo overflow behavior should remain intact. Striping conflicts usually come from explicit host repaint rules.
 
-Bootstrap-style hosts are supported, and with current widgemo-core behavior `alternatingRows` remains visible as the active striping contract.
+High-risk host patterns include:
 
-Bootstrap host influence can restyle appearance, but should not break Widgemo overflow semantics. The caveat is aggressive host overrides that explicitly repaint rows or cells. For example, a host rule that applies cell-level paint (`box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)`), hard `background` values on `td`, or `tr:nth-child` repaint rules can visually override row-level striping. This is host influence, not a second Widgemo striping mechanism.
+- `tr:nth-child(...)` striping rules
+- hard `background` rules on `td`/`th`
+- cell repaint overlays (for example `box-shadow: inset 0 0 0 9999px ...`)
 
-If alternating rows appear reduced or inconsistent, audit host-level `table`/`tr`/`td` repaint rules first.
+If striping appears inconsistent, audit host-level `table`/`tr`/`td` paint rules first.
 
-## Grouping chevron color contract
+## Grouping Chevron Contrast Contract
 
-In grouped table headers, collapse/expand chevrons inherit Widgemo icon color tokens (`--widgemo-group-chevron-color` -> `--widgemo-color-iconColor`) and should remain legible in default light/dark themes with accessible contrast.
+Grouped table header chevrons inherit Widgemo icon color tokens (`--widgemo-group-chevron-color` -> `--widgemo-color-iconColor`) and must remain legible in light and dark themes.
 
-Host themes may restyle icon appearance, but should preserve control legibility and interaction affordance. Keep any host-specific overrides scoped and avoid broad global icon/color rules that reduce grouped-control contrast.
+Host overrides should preserve control affordance and contrast. Keep overrides scoped and avoid broad global icon/color rules.
 
-Related references: [Content Config: Grouping](/core/reference/content-config#grouping), [Table Mode: Grouping UI Controls](/core/concepts/modes/table#grouping-ui-controls), [Field Config](/core/reference/field-config), and [CSS Variable Reference](/core/reference/css-variables).
+## Host Global CSS Risk Patterns
 
-## What host global table CSS can change
-
-Many sites ship global selectors like these:
+Many host apps include global selectors like the following:
 
 ```css
 /* Examples of host rules that can alter Widgemo table behavior */
@@ -62,7 +66,11 @@ table tr:nth-child(even) { background: var(--striped-row); }
 table th, table td { padding: 12px; }
 ```
 
-These selectors can change Widgemo semantics by introducing unexpected borders, striping overrides, and spacing. In particular, `tr:nth-child` stripe rules can conflict with `alternatingRows`-driven row backgrounds.
+These selectors can alter Widgemo semantics by introducing unexpected borders, stripe overrides, and spacing changes.
+
+## Mitigation Patterns
+
+Use scoped mitigations around a Widgemo wrapper class, not global table resets.
 
 ## Docusaurus and Infima hosts only
 
@@ -81,7 +89,7 @@ If your host stack is Docusaurus with Infima, scoped variable resets can neutral
 
 ## Framework-agnostic scoped mitigation
 
-For non-Infima hosts, avoid global `table`, `th`, and `td` overrides and restore Widgemo table semantics only inside a local scope.
+For non-Infima hosts, restore Widgemo table semantics only within a local scope.
 
 ```css
 /* Example for any host framework */
@@ -99,7 +107,7 @@ For non-Infima hosts, avoid global `table`, `th`, and `td` overrides and restore
 }
 ```
 
-Notes:
+Implementation notes:
 
 - Keep mitigations scoped to a Widgemo wrapper class.
 - Do not apply these mitigations as global table rules.
@@ -107,7 +115,7 @@ Notes:
 
 ## Deterministic column widths
 
-If host CSS and content variability produce inconsistent column width distribution, define widths explicitly with `field.width`.
+If host CSS and content variability produce inconsistent column distribution, define explicit `field.width` values.
 
 ```tsx
 fields: [
@@ -122,3 +130,10 @@ Use `field.width` when:
 - Key columns must remain stable across pages and breakpoints.
 - Content length differences cause noticeable width drift.
 - You need deterministic alignment with external UI elements.
+
+## See Also
+
+- [Content Config: Grouping](/core/reference/content-config#grouping)
+- [Table Mode: Grouping UI Controls](/core/concepts/modes/table#grouping-ui-controls)
+- [Field Config](/core/reference/field-config)
+- [CSS Variable Reference](/core/reference/css-variables)
