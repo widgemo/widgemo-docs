@@ -147,7 +147,7 @@ Pass a `WidgemoTheme` object to override tokens or zone styles:
 
 ### Zero-config table
 
-Fields are inferred from data keys — the minimum viable config:
+Fields are inferred from data keys only in `table` mode (first five keys from the first row). Card-based modes (`grid`, `carousel`, `board`, `chart`) require `zones.content.item.fields`.
 
 <WidgemoShowcase
   title="Example Widgemo"

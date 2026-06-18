@@ -59,13 +59,19 @@ Complete [Installation](/core/getting-started/installation) before this walkthro
 
 ## Step 1 — Minimal config
 
-The minimum viable config names a mode. Field keys and labels are inferred from data.
+For `grid` mode, the minimum viable config includes `item.fields`. Card-based modes (`grid`, `carousel`, `board`, `chart`) do not infer fields from data keys.
 
 ```tsx
 const config = {
   zones: {
     content: {
       mode: 'grid',
+      item: {
+        fields: [
+          { key: 'title', label: 'Title', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
     },
   },
 };
@@ -73,13 +79,13 @@ const config = {
 <Widgemo data={data} config={config} />
 ```
 
-This renders cards. Each card has one row per data key, using the raw key name as a label and the raw value as text.
+For zero-config field inference, use `table` mode. Table fallback inference uses the first five keys of the first row.
 
 ---
 
 ## Step 2 — Declare fields
 
-Explicit field declarations give you control over labels, types, and sort behavior. Undeclared keys are hidden once any `fields` array is present.
+Explicit field declarations give you control over labels, types, and sort behavior. When `item.fields` is present, Widgemo renders only those declared fields.
 
 ```tsx
 item: {

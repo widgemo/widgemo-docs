@@ -78,6 +78,7 @@ const sidebars: SidebarsConfig = {
             'components/fields/datetime',
             'components/fields/timestamp',
             'components/fields/duration',
+            'components/fields/relation',
             'components/fields/temporal-fields',
           ],
         },
@@ -134,7 +135,6 @@ const sidebars: SidebarsConfig = {
         },
         'reference/field-config',
         'reference/action-config',
-          'guides/field-rendering-decisions',
         'reference/css-variables',
         'reference/host-css-table-layout',
         'reference/theme-api',
@@ -156,6 +156,13 @@ const sidebars: SidebarsConfig = {
         'extensions/custom-field-types',
         'guides/custom-modes',
         'guides/custom-icons',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Guides',
+      items: [
+        'guides/field-rendering-decisions',
       ],
     },
     {
