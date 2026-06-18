@@ -7,6 +7,15 @@ This is an appendix — a flat index of every named export from `@widgemo/widgem
 
 For usage, see the linked reference page for each entry.
 
+## Reading This Page
+
+| Column | Meaning |
+|---|---|
+| `Export` / `Type` | Public name exported from `@widgemo/widgemo-core` |
+| `Kind` | Runtime shape (`Component`, `Function`, `Hook`, `Object`, namespace) |
+| `Description` | Short contract summary |
+| `Docs` | Primary reference page |
+
 ---
 
 ## Components
@@ -71,7 +80,7 @@ For usage, see the linked reference page for each entry.
 | `getTheme` | Function | Retrieve a registered theme by name. | [Theme API](/core/reference/theme-api) |
 | `registerTheme` | Function | Register a custom `WidgemoTheme`. | [Theme API](/core/reference/theme-api) |
 | `mergeZoneTheme` | Function | Merge a partial `ZoneTheme` into a resolved theme. | [Theme API](/core/reference/theme-api) |
-| `defaultWidgemoTheme` | Object | The built-in default theme object. | [Theme API](/core/reference/theme-api) |
+| `defaultWidgemoTheme` | Object | Public default light preset alias used as a base theme object. | [Theme API](/core/reference/theme-api) |
 | `useWidgemoTheme` | Hook | React hook — read the current theme from context. | [Theme API](/core/reference/theme-api) |
 
 ---
@@ -179,7 +188,7 @@ For usage, see the linked reference page for each entry.
 | `InteractionKind` | Discriminant for interaction type. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
 | `InteractionScope` | Scope descriptor for an interaction. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
 | `InteractionEventHandler` | Function type for `interactions.onEvent`. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
-| `InteractionBoardLocation` | Board column/swimlane location used in drag/drop contexts. | [Extension API — InteractionContext](/core/reference/extension-api#board-location-fields) |
+| `InteractionBoardLocation` | Board drag/drop location with `columnId`, optional `swimlaneValue`, and optional `index`. | [Extension API — InteractionContext](/core/reference/extension-api#board-location-fields) |
 
 ### Registry entry types
 
@@ -225,3 +234,11 @@ For usage, see the linked reference page for each entry.
 | Type | Description | Docs |
 |---|---|---|
 | `RenderIcon` | Function type for icon render callbacks. | [Extension API](/core/reference/extension-api) |
+
+---
+
+## See Also
+
+- [Utilities](/core/reference/utilities)
+- [Extension API](/core/reference/extension-api)
+- [Theme API](/core/reference/theme-api)

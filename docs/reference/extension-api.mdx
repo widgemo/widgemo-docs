@@ -3,27 +3,96 @@
 
 # Extension API
 
-`widgemoRegistry` is the supported extension surface for registering and resolving custom icons, field types, renderers, hooks, and modes.
+`widgemoRegistry` is the supported extension surface for registering and resolving custom icons, field types, `renderAs` renderers, hooks, and modes.
 
-## Register Methods
+## Exports
+
+| Export | Kind | Purpose |
+|---|---|---|
+| `widgemoRegistry` | Namespace object | Stable registration and lookup surface |
+| `advanced` | Namespace object | Lower-level renderer components and hooks |
+| `Tooltip` | Component | Shared UI primitive for custom renderers |
+| `defaultRenderWidgemoIcon` | Function | Stateless icon renderer safe for SSG/SSR |
+| `InteractionContext` | Type | Canonical payload for actions and gestures |
+| `InteractionKind` | Type | Interaction discriminant |
+| `InteractionScope` | Type | Shared interaction scope fields |
+| `IconRegistryEntry` | Type | Icon registry entry contract |
+| `FieldTypeRegistryEntry` | Type | Field type registry entry contract |
+| `RenderAsRegistryEntry` | Type | `renderAs` registry entry contract |
+| `HookRegistryEntry` | Type | Hook registry entry contract |
+| `ModeRegistryEntry` | Type | Mode registry entry contract |
+
+---
+
+## `widgemoRegistry` namespace
+
+All stable registry methods are grouped on the `widgemoRegistry` named export.
+
+```tsx
+import { widgemoRegistry } from '@widgemo/widgemo-core';
+```
+
+### Register Methods
 
 | Method | Signature | Purpose |
 |---|---|---|
 | `registerWidgemoIcon` | `(entry: IconRegistryEntry) => void` | Register a custom icon entry |
-| `registerWidgemoFieldType` | `(entry: FieldTypeRegistryEntry) => void` | Register a custom field-type renderer |
+| `registerWidgemoFieldType` | `(entry: FieldTypeRegistryEntry) => void` | Register a custom field type renderer |
 | `registerWidgemoRenderAs` | `(entry: RenderAsRegistryEntry) => void` | Register a custom `renderAs` renderer |
 | `registerWidgemoHook` | `(entry: HookRegistryEntry) => void` | Register a named lifecycle hook |
 | `registerWidgemoMode` | `(entry: ModeRegistryEntry) => void` | Register a custom content mode |
 
-## Resolve and Execute Helpers
+### Resolve and Execute Helpers
 
-| Registry Type | Lookup/Render Helpers |
-|---|---|
-| Icons | `getWidgemoIcon`, `renderWidgemoIcon` |
-| Field types | `getWidgemoFieldType`, `renderWidgemoField` |
-| `renderAs` renderers | `getWidgemoRenderAs`, `renderWidgemoRenderAs` |
-| Hooks | `getWidgemoHook`, `executeWidgemoHook` |
-| Modes | `getWidgemoMode`, `getModeComponent`, `getRegisteredModes` |
+| Registry Type | Helpers | Notes |
+|---|---|---|
+| Icons | `getWidgemoIcon`, `renderWidgemoIcon` | Icon lookup falls back to a default icon entry when a custom icon is not registered |
+| Field types | `getWidgemoFieldType`, `renderWidgemoField` | Unknown field types fall back through core field rendering |
+| `renderAs` renderers | `getWidgemoRenderAs`, `renderWidgemoRenderAs` | `renderWidgemoRenderAs` returns `null` when no renderer is registered |
+| Hooks | `getWidgemoHook`, `executeWidgemoHook` | `executeWidgemoHook` returns `undefined` when hook is missing |
+| Modes | `getWidgemoMode`, `getModeComponent`, `getRegisteredModes` | `getModeComponent` returns `null` when mode is missing |
+
+### Registry Entry Shapes
+
+#### `IconRegistryEntry`
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key |
+| `component` | `ComponentType<{ className?, size?, color? }> \| ((props) => ReactNode)` | Icon component or render function |
+| `defaultProps` | `Record<string, unknown>` | Optional default props applied at render time |
+
+#### `FieldTypeRegistryEntry`
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key |
+| `render` | `(value, config, entity) => ReactNode` | Field-type render function |
+| `defaultConfig` | `Partial<FieldConfig>` | Default field config merged by host/core usage |
+| `validate` | `(value, config) => boolean \| string` | Optional validation hook |
+
+#### `RenderAsRegistryEntry`
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key |
+| `render` | `(value, options, entity) => ReactNode` | Visual renderer override |
+| `defaultOptions` | `Partial<RenderAsOptions>` | Default options merged before render |
+
+#### `HookRegistryEntry`
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Hook key |
+| `hook` | `(...args: unknown[]) => unknown` | Executed by core or explicit `executeWidgemoHook` invocation |
+
+#### `ModeRegistryEntry`
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key |
+| `component` | `ComponentType<{ data, config?, actions?, gestures?, onInteractionEvent? }>` | Custom mode renderer |
+| `defaultConfig` | `Record<string, unknown>` | Default mode-level config |
 
 ## Lifecycle Hooks
 
@@ -64,11 +133,11 @@ All five lifecycle hook names are registered by default in core:
 
 | Hook | Where It Runs | Receives | Returns | Built-In Default Registration |
 |---|---|---|---|---|
-| `preRender` | Called by runtime before render in `Widgemo`, `BoardMode`, and `CarouselMode` | Positional args. Current runtime calls include `('Widgemo', { data, config, className, id })`, `('BoardMode', config)`, and `('CarouselMode', config)` | Optional value. Default built-in returns payload passthrough (`args[1]`) | Yes. Built-in `preRender` is registered by default |
-| `postRender` | Called after render composition for `Widgemo` root and each `CarouselItem` | Positional args: `(componentName, renderedElement)` | May return a transformed/wrapped element. Runtime falls back to original element when hook returns nothing/falsy | Yes. Built-in `postRender` is registered by default |
-| `onItemClick` | Emitted from board card click and carousel item interactions (card click and indicator click) | Positional args: `(item, index, metadata)` where metadata includes mode/source details (for example board column context or carousel source) | Return value is ignored by runtime | Yes. Built-in `onItemClick` is registered by default as a no-op |
-| `onModeChange` | Emitted when resolved effective mode changes in content rendering | Single payload object with `previousMode`, `nextMode`, `requestedMode`, `breakpoint`, `reason` | Return value is ignored by runtime | Yes. Built-in `onModeChange` is registered by default as a no-op |
-| `onDragDrop` | Emitted from board drag/drop paths | Single payload object with movement context: `item`, `from`, `to`, `fromLocation`, `toLocation` | Return value is ignored by runtime | Yes. Built-in `onDragDrop` is registered by default as a no-op |
+| `preRender` | Called by runtime before render in `Widgemo`, `BoardMode`, and `CarouselMode` | Positional args. Current runtime calls include `('Widgemo', { data, config, className, id })`, `('BoardMode', config)`, and `('CarouselMode', config)` | Optional value. Built-in default returns payload passthrough (`args[1]`) | Yes |
+| `postRender` | Called after render composition for `Widgemo` root and each `CarouselItem` | Positional args: `(componentName, renderedElement)` | May return a transformed/wrapped element. Runtime falls back to original element when hook returns nothing/falsy | Yes |
+| `onItemClick` | Emitted from board card click and carousel item interactions | Positional args: `(item, index, metadata)` | Return value ignored | Yes |
+| `onModeChange` | Emitted when resolved effective mode changes in content rendering | Single payload object with `previousMode`, `nextMode`, `requestedMode`, `breakpoint`, `reason` | Return value ignored | Yes |
+| `onDragDrop` | Emitted from board drag/drop paths | Single payload object with movement context: `item`, `from`, `to`, `fromLocation`, `toLocation` | Return value ignored | Yes |
 
 ### `preRender`: Config Callback vs Registry Hook
 
@@ -217,20 +286,12 @@ void modeNames;
 void preRenderHook;
 ```
 
-## `widgemoRegistry` namespace
-
-All registry methods are grouped on the `widgemoRegistry` named export. Import it once and use throughout your app:
-
-```tsx
-import { widgemoRegistry } from '@widgemo/widgemo-core';
-```
-
 ### Icon management
 
 | Method | Signature | Description |
 |---|---|---|
 | `registerWidgemoIcon` | `(entry: IconRegistryEntry) => void` | Register a custom icon. |
-| `getWidgemoIcon` | `(name: string) => IconRegistryEntry \| null` | Look up an icon by name. |
+| `getWidgemoIcon` | `(name: string) => IconRegistryEntry` | Look up an icon by name. Falls back to a default icon entry when no custom icon exists. |
 | `renderWidgemoIcon` | `(props: { name, size?, className?, color? }) => ReactNode` | Render an icon via the registry. |
 
 ### Field type management
@@ -247,7 +308,7 @@ import { widgemoRegistry } from '@widgemo/widgemo-core';
 |---|---|---|
 | `registerWidgemoRenderAs` | `(entry: RenderAsRegistryEntry) => void` | Register a custom `renderAs` renderer. |
 | `getWidgemoRenderAs` | `(name: string) => RenderAsRegistryEntry \| null` | Look up a renderer by name. |
-| `renderWidgemoRenderAs` | `(value, renderAs, options, entity) => ReactNode` | Render a value via a registered `renderAs` renderer. |
+| `renderWidgemoRenderAs` | `(value, renderAs, options, entity) => ReactNode \| null` | Render a value via a registered `renderAs` renderer. Returns `null` if missing. |
 
 ### Hook management
 
@@ -255,7 +316,7 @@ import { widgemoRegistry } from '@widgemo/widgemo-core';
 |---|---|---|
 | `registerWidgemoHook` | `(entry: HookRegistryEntry) => void` | Register a named lifecycle hook. |
 | `getWidgemoHook` | `(name: string) => HookRegistryEntry \| null` | Look up a hook by name. |
-| `executeWidgemoHook` | `(name: string, ...args) => unknown` | Execute a hook by name. |
+| `executeWidgemoHook` | `(name: string, ...args) => unknown \| undefined` | Execute a hook by name. Returns `undefined` when missing. |
 
 ### Mode management
 
@@ -313,8 +374,8 @@ interface InteractionContext {
   data:             Entity[];                 // full data array in the render scope
   zone:             string;                   // zone where the interaction fired
   nativeEvent?:     React.MouseEvent | React.DragEvent;
-  from?:            InteractionBoardLocation; // board drag source column/swimlane
-  to?:              InteractionBoardLocation; // board drag destination column/swimlane
+  from?:            InteractionBoardLocation; // board drag source location
+  to?:              InteractionBoardLocation; // board drag destination location
   // reference-click only:
   fieldKey?:        string;                   // the field key that was clicked
   fieldValue?:      unknown;                  // raw FK/ID value from the entity
@@ -336,7 +397,13 @@ interface InteractionContext {
 
 ### Board location fields
 
-`from` and `to` are only set on board drag/drop interactions (`item-drag-start`, `item-drop`). Each is an `InteractionBoardLocation` object with `columnId`, `columnLabel`, `swimlaneId`, and `swimlaneLabel` fields identifying the column/swimlane position.
+`from` and `to` are only set on board drag/drop interactions (`item-drag-start`, `item-drop`). Each is an `InteractionBoardLocation` object.
+
+| Field | Type | Description |
+|---|---|---|
+| `columnId` | `string` | Board column identifier |
+| `swimlaneValue` | `string` | Optional swimlane value |
+| `index` | `number` | Optional index within the lane at interaction time |
 
 ## UI Primitives
 
@@ -349,5 +416,6 @@ Two stable exports are available for use inside custom renderers and host applic
 
 - [Widgemo Props](/core/reference/widgemo-props) — component props reference
 - [Widgemo Config](/core/reference/widgemo-config) — gestures and lifecycle hook config entry points
+- [Extension Architecture](/core/concepts/extension-architecture) — conceptual plugin model and design guidance
 - [All Exports](/core/reference/all-exports) — full index of every named export
 

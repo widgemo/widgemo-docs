@@ -5,6 +5,19 @@
 
 Utility functions exported from `@widgemo/widgemo-core` that are useful outside the core rendering pipeline.
 
+## Exports
+
+| Export | Kind | Purpose |
+|---|---|---|
+| `widgemoColors` | Namespace object | Color manipulation and palette helpers |
+| `parseTemporalValue` | Function | Parse raw temporal values into `Date` |
+| `parseDurationValue` | Function | Normalize raw durations into milliseconds |
+| `isTemporalParseMode` | Function | Validate `TemporalParseMode` strings |
+| `generateId` | Function | Create stable-ish generated ids |
+| `isValidEmail` | Function | Validate email syntax |
+
+---
+
 ## `widgemoColors`
 
 Color utilities grouped on the `widgemoColors` named export. Useful for building theme-consistent custom renderers, tooltips, and palettes.
@@ -43,6 +56,8 @@ const palette = widgemoColors.generatePalette('#6366f1', { steps: 5 });
 // palette.shades → ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81']
 ```
 
+`generatePalette` returns a `Palette` object.
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `steps` | `number` | `5` | Number of tint/shade steps to generate. |
@@ -59,6 +74,14 @@ Helper functions for parsing and validating raw temporal values. Used internally
 ```tsx
 import { parseTemporalValue, parseDurationValue, isTemporalParseMode } from '@widgemo/widgemo-core';
 ```
+
+### Export summary
+
+| Export | Signature | Returns |
+|---|---|---|
+| `parseTemporalValue` | `(value, parseMode) => Date \| null` | Parsed `Date` or `null` |
+| `parseDurationValue` | `(value, unit) => number` | Milliseconds |
+| `isTemporalParseMode` | `(value) => boolean` | Type-guard result |
 
 ### `parseTemporalValue(value, parseMode)`
 
@@ -114,6 +137,11 @@ Useful for validating user-supplied config at runtime boundaries.
 
 Small helpers exposed from the core package.
 
+| Export | Signature | Purpose |
+|---|---|---|
+| `generateId` | `() => string` | Generate a stable-ish identifier string |
+| `isValidEmail` | `(value) => boolean` | Validate email syntax |
+
 ### `generateId()`
 
 Generate a stable ID string. Used internally for element IDs and interaction identifiers.
@@ -143,7 +171,7 @@ Theme utility functions are documented on [Theme API](/core/reference/theme-api)
 
 | Function | Description |
 |---|---|
-| `getTheme(name)` | Retrieve a registered theme by name. |
+| `getTheme(name?)` | Retrieve a registered theme by name, with fallback to the default registry theme. |
 | `registerTheme(name, theme)` | Register a custom `WidgemoTheme`. |
 | `mergeZoneTheme(base, overrides)` | Merge a partial `ZoneTheme` into a resolved theme. |
 
