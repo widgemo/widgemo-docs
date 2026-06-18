@@ -1,71 +1,145 @@
 ---
 ---
 
-# CSS Variables
+export const Swatch = ({ color }) => (
+  <span
+    style={{
+      display: 'inline-block',
+      width: '0.95rem',
+      height: '0.95rem',
+      border: '1px solid #c7cdd6',
+      borderRadius: '3px',
+      background: color,
+      verticalAlign: 'middle',
+      marginRight: '0.4rem',
+    }}
+  />
+);
 
-widgemo-core uses CSS custom properties (`--widgemo-*`) for all customizable style values.
+# CSS Variable Reference
+
+Widgemo exposes CSS custom properties using the `--widgemo-*` prefix. This page lists the canonical variables intended for host-level theming and layout control.
 
 For host stylesheet interactions with Widgemo table behavior, see [Host CSS and Table Layout](/core/reference/host-css-table-layout).
 
-## Default Z-Index Values
+## Scope and Precedence
 
-Designed to coexist with Bootstrap's z-index scale:
+| Scope | Pattern | Typical use |
+|---|---|---|
+| Global | `:root { --widgemo-... }` | App-wide defaults |
+| Scoped container | `.my-surface { --widgemo-... }` | Per-widget or per-page overrides |
+| Runtime theme/config | Theme provider and config theme layers | Token-level runtime theming |
+
+When the same variable is defined in multiple scopes, normal CSS cascade and specificity rules apply.
+
+## Default Theme Palettes
+
+Widgemo includes both default light and default dark palettes.
+
+- Safety-net CSS variable fallbacks in `widgemo-theme.css` provide light defaults.
+- `WidgemoThemeProvider` applies the default dark palette when `theme="dark"`.
+
+### Core Color Tokens (Light and Dark)
+
+| Variable | Light default | Dark default |
+|---|---|---|
+| `--widgemo-color-primary` | <Swatch color="#0d6efd" />`#0d6efd` | <Swatch color="#4d94ff" />`#4d94ff` |
+| `--widgemo-color-background` | <Swatch color="#ffffff" />`#ffffff` | <Swatch color="#1e1e1e" />`#1e1e1e` |
+| `--widgemo-color-surfaceBg` | <Swatch color="#f8f9fa" />`#f8f9fa` | <Swatch color="#2d2d2d" />`#2d2d2d` |
+| `--widgemo-color-text` | <Swatch color="#212529" />`#212529` | <Swatch color="#e0e0e0" />`#e0e0e0` |
+| `--widgemo-color-textMuted` | <Swatch color="#6c757d" />`#6c757d` | <Swatch color="#adb5bd" />`#adb5bd` |
+| `--widgemo-color-border` | <Swatch color="#dee2e6" />`#dee2e6` | <Swatch color="#3f454c" />`#3f454c` |
+| `--widgemo-color-success` | <Swatch color="#28a745" />`#28a745` | <Swatch color="#28a745" />`#28a745` |
+| `--widgemo-color-warning` | <Swatch color="#ffc107" />`#ffc107` | <Swatch color="#ffc107" />`#ffc107` |
+| `--widgemo-color-danger` | <Swatch color="#dc3545" />`#dc3545` | <Swatch color="#dc3545" />`#dc3545` |
+| `--widgemo-color-info` | <Swatch color="#17a2b8" />`#17a2b8` | <Swatch color="#17a2b8" />`#17a2b8` |
+
+### Surface and Row Tokens (Light and Dark)
+
+| Variable | Light default | Dark default |
+|---|---|---|
+| `--widgemo-color-tableBg` | <Swatch color="#ffffff" />`#ffffff` | <Swatch color="#1e1e1e" />`#1e1e1e` |
+| `--widgemo-color-tableHeaderBg` | <Swatch color="#f8f9fa" />`#f8f9fa` | <Swatch color="#252525" />`#252525` |
+| `--widgemo-color-tableHeaderHoverBg` | <Swatch color="#e9ecef" />`#e9ecef` | <Swatch color="#3f454c" />`#3f454c` |
+| `--widgemo-color-rowHoverBg` | <Swatch color="#ced4da" />`#ced4da` | <Swatch color="rgba(255, 255, 255, 0.16)" />`rgba(255, 255, 255, 0.16)` |
+| `--widgemo-color-rowAltBg` | <Swatch color="#e9ecef" />`#e9ecef` | <Swatch color="rgba(255, 255, 255, 0.08)" />`rgba(255, 255, 255, 0.08)` |
+
+## Action and Menu Tokens
+
+| Variable | Default/fallback |
+|---|---|
+| `--widgemo-action-button-bg` | `var(--widgemo-color-actionButtonBg, transparent)` |
+| `--widgemo-action-button-color` | `var(--widgemo-color-actionButtonColor, #212529)` |
+| `--widgemo-action-button-border` | `1px solid var(--widgemo-color-actionButtonBorder, #dee2e6)` |
+| `--widgemo-action-button-hover-bg` | `var(--widgemo-color-actionButtonHoverBg, rgba(0,0,0,0.05))` |
+| `--widgemo-action-button-hover-border` | `var(--widgemo-color-actionButtonHoverBorder, #0d6efd)` |
+| `--widgemo-action-menu-bg` | `var(--widgemo-color-actionMenuBg, #ffffff)` |
+| `--widgemo-action-menu-color` | `var(--widgemo-color-actionMenuColor, #212529)` |
+| `--widgemo-action-menu-item-hover-bg` | `var(--widgemo-color-actionMenuItemHoverBg, #e9ecef)` |
+
+## Layout and Spacing Tokens
+
+| Variable | Default |
+|---|---|
+| `--widgemo-border-radius` | `8px` |
+| `--widgemo-card-padding` | `1rem` |
+| `--widgemo-zone-padding` | `0.75rem 1rem` |
+| `--widgemo-container-padding` | `0` |
+| `--widgemo-zone-title-font-size` | `1.25rem` |
+| `--widgemo-board-col-width` | `280px` |
+| `--widgemo-board-swimlane-label-width` | `110px` |
+
+## Layering Tokens (z-index)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `--widgemo-dropdown-z-index` | `950` | Zone and table dropdown layers |
+| `--widgemo-lightbox-z-index` | `9000` | Lightbox/overlay layer |
+| `--widgemo-dev-overlay-z-index` | `var(--widgemo-lightbox-z-index, 9000)` | Dev overlay token |
+
+Note: DevMode overlay rendering uses a hardcoded high z-index in runtime (`10000001`) to remain above host chrome.
+
+## Row State Tokens
+
+| Variable | Source |
+|---|---|
+| `--widgemo-row-alt-bg` | `var(--widgemo-color-rowAltBg, #e9ecef)` |
+| `--widgemo-row-hover-bg` | `var(--widgemo-color-rowHoverBg, #ced4da)` |
+
+These row-state tokens are mapped into table behavior (including sticky and hover handling) and can be overridden globally or in a scoped container.
+
+## Override Patterns
+
+Global override:
 
 ```css
-/* Bootstrap defaults */
---bs-dropdown-z-index: 1000;
---bs-fixed-z-index: 1030;
---bs-modal-z-index: 1050;
-
-/* Widgemo defaults */
 :root {
-  --widgemo-zone-header-z-index: 50;     /* Zone headers */
-  --widgemo-table-actions-z-index: 900;  /* Table row action buttons */
-  --widgemo-dropdown-z-index: 950;       /* All dropdown menus */
-  /* DevMode overlay is hardcoded: z-index: 10000001 */
-}
-```
-
-## Z-Index Hierarchy
-
-```
-DevMode Overlay:   10000001  (hardcoded, always on top)
-Bootstrap Navbar:  1030
-├── Bootstrap Dropdowns:  1000
-├── Zone/Table Dropdowns:  950 (!important)
-├── Table Actions:         900
-└── Zone Headers:          50
-    └── Table Headers: 10 (sticky)
-```
-
-## Customization
-
-Override in your global CSS:
-
-```css
-:root {
-  --widgemo-dropdown-z-index: 800;
-}
-```
-
-Scoped override for a specific component:
-
-```css
-.my-component {
+  --widgemo-color-primary: #2563eb;
   --widgemo-dropdown-z-index: 1200;
+  --widgemo-border-radius: 10px;
 }
 ```
 
-## Portal-Based Dropdowns
-
-In table contexts, dropdowns render at `document.body` level via React Portal with `position: fixed`. In non-table contexts, they use `position: absolute`. This ensures dropdowns work in containers with `overflow: hidden`.
-
-## Layout and Spacing Variables
+Scoped override:
 
 ```css
-:root {
-  --widgemo-border-radius: 8px;
-  --widgemo-card-padding:  1rem;
-  --widgemo-font-size:     14px;
+.finance-widget-surface {
+  --widgemo-color-background: #ffffff;
+  --widgemo-color-border: #dbe3ef;
+  --widgemo-action-menu-bg: #f8fbff;
+  --widgemo-board-col-width: 320px;
 }
 ```
+
+## Dropdown Positioning Contract
+
+In table contexts, dropdown menus render through a portal at `document.body` with fixed positioning so they remain visible even when parent containers clip overflow.
+
+In non-table contexts, menus use absolute positioning in local flow.
+
+## See Also
+
+- [Theme API](/core/reference/theme-api)
+- [Theming](/core/concepts/theming)
+- [Host CSS and Table Layout](/core/reference/host-css-table-layout)
+- [Zone Config](/core/reference/zone-config)
