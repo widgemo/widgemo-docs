@@ -57,7 +57,7 @@ export const tableRichCellsConfig = {
         table: {
           type: 'rich-cells',
           columns: 2,
-          showHeader: true,
+          showHeader: false,
           hover: true,
         },
       },
@@ -246,30 +246,28 @@ export const tableGroupingBothControlsConfig = {
 
 # Table Mode
 
-## Mode Purpose and When to Use
+Table mode renders data as a structured grid with column headers, sortable columns, and row-level comparisons. It is the best choice when users need to scan many records across multiple fields simultaneously.
 
-modeConfig.table controls table-specific presentation and table lifecycle hooks.
-Use table mode when users need dense scanability, sortable columns, and row-level comparisons.
+The primary structural decision is `type`:
+- `traditional` — classic row/column table with optional striping, hover, and separators
+- `rich-cells` — multi-column cell blocks per row; better for records with many fields at a glance
 
-## Shared-Feature Boundary
+## Shared Behavior
 
 Shared content behavior remains canonical in Reference:
 
 - [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
 - [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions)
 - [Content Config: Shape](/core/reference/content-config#shape) for responsive breakpoints and shared content contract fields
 
 For field-level controls (label, width, alignment, renderAs, groupable, sortable), see [Field Config](/core/reference/field-config).
 
 ## Core Examples
 
-### Layout Type Examples
-
 ### Traditional Table
 
 <WidgemoShowcase
-  title="Traditional Table"
   description="Default table shape with header, hover, alternating rows, and row separators."
   data={tableModeData}
   config={tableTraditionalConfig}
@@ -277,44 +275,94 @@ For field-level controls (label, width, alignment, renderAs, groupable, sortable
 
 <div style={{ marginBottom: '1rem' }} />
 
+```tsx
+modeConfig: {
+  table: {
+    type: 'traditional',
+    alternatingRows: true,
+    hover: true,
+    showHeader: true,
+    rowSeparator: true,
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ### Rich Cells
 
 <WidgemoShowcase
-  title="Rich Cells Table"
-  description="The same dataset rendered with rich-cells and multiple content columns per row."
+  description="The same dataset with rich-cells layout — multiple fields per row block, no column header."
   data={tableOptionData}
   config={tableRichCellsConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Presentation Toggles Example
+```tsx
+modeConfig: {
+  table: {
+    type: 'rich-cells',
+    columns: 2,
+    showHeader: false,  // rich-cells has no meaningful column header
+    hover: true,
+  },
+}
+```
 
-This example focuses on hover, header visibility, striping, and row separators by turning all four off.
+<div style={{ marginBottom: '1rem' }} />
+
+### Presentation Toggles
 
 <WidgemoShowcase
-  title="Presentation Toggles"
-  description="A minimal table surface with hover/header/striping/separators disabled."
+  description="A minimal table surface with hover, header, striping, and row separators all disabled."
   data={tableModeData}
   config={tableTogglesConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Row Highlighting Example
+```tsx
+modeConfig: {
+  table: {
+    type: 'traditional',
+    hover: false,
+    showHeader: false,
+    alternatingRows: false,
+    rowSeparator: false,
+  },
+}
+```
 
-Use conditionalBackgroundColor when rows need clear visual state coloring.
+<div style={{ marginBottom: '1rem' }} />
+
+### Conditional Row Styling
 
 <WidgemoShowcase
-  title="Conditional Row Styling"
-  description="This example colors each row from the entity status value."
+  description="Each row is colored based on its status value via conditionalBackgroundColor."
   data={tableModeData}
   config={tableConditionalConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Grouping UI Controls
+```tsx
+modeConfig: {
+  table: {
+    type: 'traditional',
+    alternatingRows: false,
+    conditionalBackgroundColor: (entity) => {
+      if (entity.status === 'active') return { backgroundColor: '#16a34a', color: '#f0fdf4' };
+      if (entity.status === 'pending') return { backgroundColor: '#d97706', color: '#fffbeb' };
+      return { backgroundColor: '#4f46e5', color: '#eef2ff' };
+    },
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+## Grouping UI Controls
 
 Grouping is configured under `zones.content.groupings`; the canonical contract and cross-mode behavior live in [Content Config: Grouping](/core/reference/content-config#grouping).
 
@@ -325,14 +373,11 @@ This section is intentionally table-specific and focuses on grouping interaction
 | showDropdownControl | true or false | false | Shows the group-by dropdown control above the table. |
 | showHeaderControls | true or false | true | Shows grouping icons in header cells for groupable fields. |
 
-Dropdown visibility still requires at least one field with groupable: true so the control has selectable columns.
-
-### Grouping Control Variants
+Dropdown visibility still requires at least one field with `groupable: true` so the control has selectable columns.
 
 ### Dropdown Only
 
 <WidgemoShowcase
-  title="Grouping Controls: Dropdown Only"
   description="Only the dropdown is shown. Header grouping icons are disabled."
   data={tableGroupingControlData}
   config={tableGroupingDropdownOnlyConfig}
@@ -340,10 +385,16 @@ Dropdown visibility still requires at least one field with groupable: true so th
 
 <div style={{ marginBottom: '1rem' }} />
 
+```tsx
+// In zones.content.groupings:
+{ fieldKey: 'team', showDropdownControl: true, showHeaderControls: false }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ### Header Icons Only
 
 <WidgemoShowcase
-  title="Grouping Controls: Header Icons Only"
   description="Only header grouping icons are shown on groupable columns."
   data={tableGroupingControlData}
   config={tableGroupingIconsOnlyConfig}
@@ -351,10 +402,16 @@ Dropdown visibility still requires at least one field with groupable: true so th
 
 <div style={{ marginBottom: '1rem' }} />
 
+```tsx
+// In zones.content.groupings:
+{ fieldKey: 'team', showHeaderControls: true }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ### Dropdown and Header Icons
 
 <WidgemoShowcase
-  title="Grouping Controls: Dropdown + Header Icons"
   description="Both grouping control surfaces are enabled."
   data={tableGroupingControlData}
   config={tableGroupingBothControlsConfig}
@@ -362,52 +419,43 @@ Dropdown visibility still requires at least one field with groupable: true so th
 
 <div style={{ marginBottom: '1rem' }} />
 
-### Hook Callback Example
+```tsx
+// In zones.content.groupings:
+{ fieldKey: 'team', showDropdownControl: true, showHeaderControls: true }
+```
 
-This example is focused on hook wiring. Sort headers and grouping controls trigger callbacks.
+<div style={{ marginBottom: '1rem' }} />
+
+### Hook Callbacks
+
+Sort headers and grouping controls trigger the hook callbacks below. Open the browser console to see output.
+
+`preRowRender` receives each entity before it renders and returns the (optionally transformed) entity — useful for normalizing display values or injecting computed fields without modifying the source data.
 
 <WidgemoShowcase
-  title="Hook Callbacks"
-  description="Sort and group interactions trigger table hook callbacks."
+  description="Sort and group interactions trigger table hook callbacks — check the browser console."
   data={tableHookData}
   config={tableHooksConfig}
 />
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Mode Option Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| type | traditional or rich-cells | traditional | Chooses classic row/cell table layout or richer multi-column cell blocks. |
-| columns | any number >= 1 | 1 | Number of rich-cell columns when type is rich-cells. |
-| hover | true or false | true | Enables row hover behavior. |
-| showHeader | true or false | true | Shows or hides the header row. |
-| alternatingRows | true or false | true | Applies zebra striping to alternating rows. |
-| rowSeparator | true or false | true | Draws row bottom borders. |
-| conditionalBackgroundColor | function returning a color string, or an object with backgroundColor and optional color | unset | Applies dynamic row background and optional text color per entity. |
-| hooks.onSort | function (field, direction) => void | unset | Fires when a column sort changes. |
-| hooks.onGroup | function (field) => void | unset | Fires when grouping changes. |
-| hooks.preRowRender | function (entity) => entity | unset | Lets you transform a row before render. |
-| hooks.onGroupToggle | function (groupValue, isExpanded) => void | unset | Fires when a group expands or collapses. |
-
-## Mode-Specific Caveats
-
-- Grouping dropdown visibility still requires at least one field with `groupable: true`.
-- `columns` applies only when `type` is `rich-cells`.
-
-## Coverage Summary
-
-Every table setting is represented by at least one live example on this page:
-
-- type and columns: Rich Cells
-- hover, showHeader, alternatingRows, rowSeparator: Traditional Table, Presentation Toggles
-- conditionalBackgroundColor: Row Highlighting Example
-- groupings.showDropdownControl and groupings.showHeaderControls: Grouping Control Variants
-- hooks.onSort, hooks.onGroup, hooks.preRowRender, hooks.onGroupToggle: Hook Callback Example
+```tsx
+modeConfig: {
+  table: {
+    hooks: {
+      onSort: (field, direction) => console.log('sort changed', field, direction),
+      onGroup: (field) => console.log('group changed', field),
+      onGroupToggle: (groupValue, isExpanded) => console.log('group toggle', groupValue, isExpanded),
+      // preRowRender: (entity) => ({ ...entity, name: entity.name.toUpperCase() }),
+    },
+  },
+}
+```
 
 ## See Also
 
+- [Table Mode Config](/core/reference/mode-config/table) — full `modeConfig.table` options, caveats, and coverage summary
 - [Content Config](/core/reference/content-config)
 - [Field Config](/core/reference/field-config)
 - [Host CSS and Table Layout](/core/reference/host-css-table-layout)

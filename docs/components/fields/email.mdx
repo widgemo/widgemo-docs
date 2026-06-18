@@ -1,0 +1,236 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const emailData = [
+  { name: 'Aurora Chen', role: 'Design Lead', email: 'aurora.chen@company.com' },
+  { name: 'Mateo Silva', role: 'Platform Engineer', email: 'mateo.silva@company.com' },
+  { name: 'Priya Nair', role: 'Operations', email: 'priya.nair@company.com' },
+];
+
+export const emailBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          { key: 'email', label: 'Email', type: 'email' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const emailLinkConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          {
+            key: 'email',
+            label: 'Email',
+            type: 'email',
+            renderAs: 'link',
+            renderAsOptions: { newTab: true },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const emailFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'email',
+            label: 'Email (normalized)',
+            type: 'email',
+            formatter: (value) => String(value ?? '').toLowerCase().trim(),
+          },
+          {
+            key: 'email',
+            label: 'Domain',
+            type: 'text',
+            formatter: (value) => String(value ?? '').split('@')[1] ?? '',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const emailConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          {
+            key: 'email',
+            label: 'Email',
+            type: 'email',
+            renderAs: 'link',
+            renderAsOptions: { newTab: true },
+            condition: (entity) => entity.role !== 'Operations',
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# email Field Type
+
+`type: 'email'` renders an email address as plain text. Adding `renderAs: 'link'` upgrades it to a clickable `mailto:` link — the link renderer auto-detects the `@` symbol and builds the `mailto:` URL automatically.
+
+## Core Examples
+
+### Basic Email Field
+
+<WidgemoShowcase
+  description="Name, role, and email address displayed as plain text in table mode."
+  data={emailData}
+  config={emailBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'email', label: 'Email', type: 'email' }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Clickable mailto Link
+
+Adding `renderAs: 'link'` renders the address as an `<a href="mailto:...">` element. No `url` option is needed — the link renderer detects the `@` and builds the `mailto:` URL automatically.
+
+<WidgemoShowcase
+  description="Email addresses rendered as clickable mailto links. Opens the default mail client."
+  data={emailData}
+  config={emailLinkConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'email',
+  label: 'Email',
+  type: 'email',
+  renderAs: 'link',
+  renderAsOptions: { newTab: true },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` transforms the raw value before display. Common uses: normalize casing, extract the domain, or mask the local part for privacy.
+
+<WidgemoShowcase
+  description="Email normalized to lowercase; domain extracted into a separate column using the same key with a different formatter."
+  data={emailData}
+  config={emailFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'email',
+  label: 'Email (normalized)',
+  type: 'email',
+  formatter: (value) => String(value ?? '').toLowerCase().trim(),
+},
+{
+  key: 'email',
+  label: 'Domain',
+  type: 'text',
+  formatter: (value) => String(value ?? '').split('@')[1] ?? '',
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it entirely. Evaluated per row.
+
+<WidgemoShowcase
+  description="Email link is hidden for Priya (role: Operations). Aurora and Mateo show clickable mailto links."
+  data={emailData}
+  config={emailConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'email',
+  label: 'Email',
+  type: 'email',
+  renderAs: 'link',
+  condition: (entity) => entity.role !== 'Operations',
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'email'` | — | Renders as plain text. Use `renderAs: 'link'` for a clickable `mailto:` link. |
+| `wrap` | `true`, `false` | inherited from `ItemConfig.wrap` | `false`: single line, clips with ellipsis in card modes. `true`: wraps — uses **forced word-breaking** since email strings have no natural break points. |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before display. Does not mutate the entity. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `renderAs` | `'link'` | unset | Renders as a clickable `<a>` element. Auto-generates `mailto:` URL from the value. |
+| `renderAsOptions` | `LinkRenderAsOptions` | unset | Options forwarded to the link renderer (e.g. `newTab`, `text`, `url`). |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+
+## Caveats
+
+- `email` shares the same base renderer as `text`, `textarea`, and `url` — it outputs `<span className="field-text">` when rendered as plain text.
+- `wrap: true` applies **forced word-breaking** (CSS `overflow-wrap: break-word`) for email fields specifically, since addresses like `very.long.name@subdomain.company.com` have no natural break points.
+- `renderAs: 'link'` bypasses the `type` rendering entirely — the link renderer handles the output. The `type: 'email'` declaration still matters for semantic correctness and future tooling.
+- No client-side email format validation is performed. Invalid values render as plain text.
+
+## Why email vs text?
+
+They render identically today without `renderAs: 'link'`. The distinction matters for:
+
+**Automatic mailto detection** — `renderAs: 'link'` on a `type: 'email'` field automatically prefixes `mailto:`. On a `type: 'text'` field, you would need to provide the `url` option manually.
+
+**Forced word-breaking** — `wrap: true` on email applies `overflow-wrap: break-word` to handle the absence of natural break points. `type: 'text'` uses natural word boundaries only.
+
+**Forward compatibility** — future inline editing will render a `<input type="email">` for email fields and a `<input type="text">` for text fields.
+
+## See Also
+
+- [text Field Type](/core/components/fields/text)
+- [url Field Type](/core/components/fields/url)
+- [link Renderer](/core/components/renderers/link)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

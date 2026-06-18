@@ -4,155 +4,6 @@ sidebar_position: 3
 
 import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
 
-# Carousel Mode
-
-## Mode Purpose and When to Use
-
-`modeConfig.carousel` controls horizontal browsing behavior for featured content.
-Use carousel mode when items are best consumed as a swipeable sequence instead of a dense grid or table.
-
-## Shared-Feature Boundary
-
-Shared content behavior stays canonical in reference pages:
-
-- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
-- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
-- [Action Config](/core/reference/action-config) for action placement and overflow behavior
-
-## Core Examples
-
-### Fixed-Size Carousel
-
-This version uses fixed item sizing plus visible arrows and indicators.
-
-<WidgemoShowcase
-  title="Fixed-Size Carousel"
-  description="A standard carousel with explicit item size and visible navigation controls."
-  data={carouselModeData}
-  config={carouselFixedConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'carousel',
-      modeConfig: {
-        carousel: {
-          itemWidth: 280,
-          itemHeight: 200,
-          gap: 16,
-          showIndicators: true,
-          showArrows: true,
-          infinite: true,
-          revolving: true,
-          autoPlay: false,
-          dragThreshold: 50,
-        },
-      },
-      item: {
-        fields: [
-          { key: 'title', label: 'Title' },
-          { key: 'summary', label: 'Summary' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-```
-
-### Auto-Playing Carousel
-
-The controls below show the looping settings and automatic slide advance.
-
-<WidgemoShowcase
-  title="Auto-Playing Carousel"
-  description="This version uses auto-play, a shorter gap, and auto-sized item height."
-  data={carouselModeData}
-  config={carouselAutoPlayConfig}
-/>
-
-<div style={{ marginBottom: '1rem' }} />
-
-```tsx
-const config = {
-  zones: {
-    content: {
-      mode: 'carousel',
-      modeConfig: {
-        carousel: {
-          itemWidth: 260,
-          itemHeight: 'auto',
-          gap: 12,
-          showIndicators: false,
-          showArrows: true,
-          infinite: true,
-          revolving: false,
-          autoPlay: true,
-          autoPlayInterval: 3000,
-          dragThreshold: 40,
-        },
-      },
-      item: {
-        fields: [
-          { key: 'title', label: 'Title' },
-          { key: 'summary', label: 'Summary' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-        ],
-        layout: { type: 'auto' },
-      },
-    },
-  },
-};
-```
-
-## Mode Option Reference
-
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| `itemWidth` | number | unset | Sets the width of each card. |
-| `itemHeight` | number, `auto` | `auto` | Sets the item height, or lets items grow naturally with `auto`. |
-| `gap` | number | unset | Sets spacing between carousel items. |
-| `showIndicators` | `true`, `false` | unset | Shows or hides dot indicators. |
-| `showArrows` | `true`, `false` | unset | Shows or hides navigation arrows. |
-| `infinite` | `true`, `false` | unset | Enables looping at the ends. |
-| `revolving` | `true`, `false` | `true` when `infinite` is enabled | Changes how looping behaves when `infinite` is enabled. |
-| `autoPlay` | `true`, `false` | unset | Enables automatic slide advance. |
-| `autoPlayInterval` | number (milliseconds) | unset | Sets the auto-play interval in milliseconds. |
-| `dragThreshold` | number | unset | Sets the drag distance needed to change slides. |
-
-## Mode-Specific Caveats
-
-- `revolving` only applies when `infinite` is enabled.
-- `itemHeight: 'auto'` can create variable card heights, which changes perceived slide rhythm.
-
-## Coverage Summary
-
-Every carousel option is represented by at least one example on this page:
-
-- `itemWidth`: Fixed-Size Carousel, Auto-Playing Carousel
-- `itemHeight`: Fixed-Size Carousel, Auto-Playing Carousel
-- `gap`: Fixed-Size Carousel, Auto-Playing Carousel
-- `showIndicators`: Fixed-Size Carousel, Auto-Playing Carousel
-- `showArrows`: Fixed-Size Carousel, Auto-Playing Carousel
-- `infinite`: Fixed-Size Carousel, Auto-Playing Carousel
-- `revolving`: Fixed-Size Carousel, Auto-Playing Carousel
-- `autoPlay`: Auto-Playing Carousel
-- `autoPlayInterval`: Auto-Playing Carousel
-- `dragThreshold`: Fixed-Size Carousel, Auto-Playing Carousel
-
-## See Also
-
-- [Content Config](/core/reference/content-config)
-- [Action Config](/core/reference/action-config)
-- [Grid Mode](/core/concepts/modes/grid)
-
 export const carouselModeData = [
   { title: 'Release Notes', summary: 'Review the newest changes first.', status: 'new' },
   { title: 'Gallery', summary: 'Browse a curated set of visuals.', status: 'featured' },
@@ -218,3 +69,183 @@ export const carouselAutoPlayConfig = {
     },
   },
 };
+
+export const carouselGroupingData = [
+  { title: 'Sprint Planning', summary: 'Q1 capacity and scope.', status: 'live', team: 'Platform' },
+  { title: 'Bug Triage', summary: 'Prioritize open issues.', status: 'scheduled', team: 'Platform' },
+  { title: 'Design Review', summary: 'Critique latest mockups.', status: 'live', team: 'Design' },
+  { title: 'Brand Workshop', summary: 'Align on visual language.', status: 'new', team: 'Design' },
+  { title: 'Retro', summary: 'Last sprint retrospective.', status: 'featured', team: 'Operations' },
+  { title: 'Roadmap Sync', summary: 'Cross-team alignment session.', status: 'planned', team: 'Operations' },
+];
+
+export const carouselGroupingConfig = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      groupings: [
+        {
+          fieldKey: 'team',
+          collapsible: true,
+          renderer: (groupValue, count) => `${groupValue} · ${count} items`,
+        },
+      ],
+      modeConfig: {
+        carousel: {
+          itemWidth: 260,
+          itemHeight: 180,
+          gap: 16,
+          showArrows: true,
+          infinite: false,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# Carousel Mode
+
+`modeConfig.carousel` controls horizontal browsing behavior for featured content. Use carousel when items are best consumed as a swipeable sequence instead of a dense grid or table.
+
+## Shared Behavior
+
+Pagination, search, static filtering, actions, groupings, and gestures work the same as other modes — see the reference pages:
+
+- [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
+- [Content Config: Static Filtering](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions)
+- [Content Config: Grouping](/core/reference/content-config#grouping)
+- [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
+- [Action Config](/core/reference/action-config) for action placement and overflow behavior
+
+## Core Examples
+
+### Manual Navigation
+
+This version uses fixed item sizing plus visible arrows and indicators.
+
+<WidgemoShowcase
+  description="A standard carousel with explicit item size and visible navigation controls."
+  data={carouselModeData}
+  config={carouselFixedConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 280,
+          itemHeight: 200,
+          gap: 16,
+          showIndicators: true,
+          showArrows: true,
+          infinite: true,
+          revolving: true,
+          autoPlay: false,
+          dragThreshold: 50,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+### Auto-Playing Carousel
+
+The controls below show the looping settings and automatic slide advance.
+
+<WidgemoShowcase
+  description="Auto-play with looping enabled, no dot indicators, and auto-sized item height."
+  data={carouselModeData}
+  config={carouselAutoPlayConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'carousel',
+      modeConfig: {
+        carousel: {
+          itemWidth: 260,
+          itemHeight: 'auto',
+          gap: 12,
+          showIndicators: false,
+          showArrows: true,
+          infinite: true,
+          revolving: false,
+          autoPlay: true,
+          autoPlayInterval: 3000,
+          dragThreshold: 40,
+        },
+      },
+      item: {
+        fields: [
+          { key: 'title', label: 'Title' },
+          { key: 'summary', label: 'Summary' },
+          { key: 'status', label: 'Status', renderAs: 'badge' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+```
+
+## Grouping
+
+`zones.content.groupings` works with carousel mode. Each group renders as a separate labeled carousel with an optional collapse control.
+
+<WidgemoShowcase
+  description="Items grouped by team, each group rendering as its own collapsible carousel."
+  data={carouselGroupingData}
+  config={carouselGroupingConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+zones: {
+  content: {
+    groupings: [
+      {
+        fieldKey: 'team',
+        collapsible: true,
+        renderer: (groupValue, count) => `${groupValue} · ${count} items`,
+      },
+    ],
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+## See Also
+
+- [Carousel Mode Config](/core/reference/mode-config/carousel) — full `modeConfig.carousel` options, caveats, and coverage summary
+- [Content Config](/core/reference/content-config)
+- [Action Config](/core/reference/action-config)
+- [Grid Mode](/core/concepts/modes/grid)

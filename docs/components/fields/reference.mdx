@@ -1,0 +1,297 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const referenceData = [
+  { name: 'Task: API redesign',    assignee: 'user-2', project: 'proj-1', reviewer: 'user-1' },
+  { name: 'Task: Onboarding flow', assignee: 'user-3', project: 'proj-2', reviewer: 'user-2' },
+  { name: 'Task: Billing export',  assignee: 'user-1', project: 'proj-1', reviewer: null     },
+];
+
+export const userOptions = [
+  { value: 'user-1', label: 'Aurora Chen'  },
+  { value: 'user-2', label: 'Mateo Silva'  },
+  { value: 'user-3', label: 'Priya Nair'   },
+];
+
+export const projectOptions = [
+  { value: 'proj-1', label: 'Platform v2' },
+  { value: 'proj-2', label: 'Growth'      },
+];
+
+export const referenceBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text'      },
+          { key: 'assignee', label: 'Assignee', type: 'reference', options: userOptions,    relatedEntity: 'user'    },
+          { key: 'project',  label: 'Project',  type: 'reference', options: projectOptions, relatedEntity: 'project' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const referenceFallbackConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text'      },
+          { key: 'reviewer', label: 'Reviewer', type: 'reference', options: userOptions, relatedEntity: 'user' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const referenceConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text' },
+          { key: 'assignee', label: 'Assignee', type: 'reference', options: userOptions, relatedEntity: 'user' },
+          {
+            key: 'reviewer',
+            label: 'Reviewer',
+            type: 'reference',
+            options: userOptions,
+            relatedEntity: 'user',
+            condition: (entity) => entity.reviewer !== null && entity.reviewer !== undefined,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const referenceClickableConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Task',     type: 'text' },
+          {
+            key: 'assignee',
+            label: 'Assignee',
+            type: 'reference',
+            options: userOptions,
+            relatedEntity: 'user',
+            clickable: true,
+          },
+          {
+            key: 'project',
+            label: 'Project',
+            type: 'reference',
+            options: projectOptions,
+            relatedEntity: 'project',
+            clickable: true,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# reference Field Type
+
+`type: 'reference'` displays a cross-entity reference by resolving its raw ID against an `options` array. The value is matched with strict equality (`===`) against each option's `value` property; the corresponding `label` is shown. If no match is found, the raw value is displayed as a plain string.
+
+Use `relatedEntity` to declare what kind of entity the FK points to, and `clickable: true` to make the resolved label interactive — firing a `reference-click` interaction event that the host application can handle.
+
+## Core Examples
+
+### Basic Reference Rendering
+
+<WidgemoShowcase
+  description="Assignee and Project resolve IDs to names via options. relatedEntity declares the target entity type."
+  data={referenceData}
+  config={referenceBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+const userOptions = [
+  { value: 'user-1', label: 'Aurora Chen' },
+  { value: 'user-2', label: 'Mateo Silva' },
+  { value: 'user-3', label: 'Priya Nair'  },
+];
+
+{ key: 'assignee', label: 'Assignee', type: 'reference', options: userOptions,    relatedEntity: 'user'    },
+{ key: 'project',  label: 'Project',  type: 'reference', options: projectOptions, relatedEntity: 'project' },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Fallback for Unresolved References
+
+When the raw value is `null`, `undefined`, or an ID not present in `options`, it renders as a plain string. A `null` reviewer renders as the empty string `''`.
+
+<WidgemoShowcase
+  description="Billing export has no reviewer — the null value resolves to an empty string."
+  data={referenceData}
+  config={referenceFallbackConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'reviewer', label: 'Reviewer', type: 'reference', options: userOptions, relatedEntity: 'user' },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+Use `condition` to suppress the field entirely for rows where the reference is empty, rather than showing a blank cell.
+
+<WidgemoShowcase
+  description="Reviewer column only renders for rows where a reviewer is assigned. Billing export gets no Reviewer cell."
+  data={referenceData}
+  config={referenceConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'reviewer',
+  label: 'Reviewer',
+  type: 'reference',
+  options: userOptions,
+  relatedEntity: 'user',
+  condition: (entity) => entity.reviewer !== null && entity.reviewer !== undefined,
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Clickable References
+
+Set `clickable: true` to render the resolved label as an interactive element. Clicking (or pressing Enter/Space) fires a `reference-click` interaction event. The host application receives the event and decides what to do — navigate, open a drawer, fetch related data.
+
+<WidgemoShowcase
+  description="Assignee and Project labels are clickable. Click one to see the interaction event in the browser console."
+  data={referenceData}
+  config={referenceClickableConfig}
+  interactions={{
+    onEvent: (ctx) => console.log('[reference-click]', ctx),
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'assignee',
+  label: 'Assignee',
+  type: 'reference',
+  options: userOptions,
+  relatedEntity: 'user',
+  clickable: true,
+},
+```
+
+The interaction event payload:
+
+```ts
+{
+  kind: 'reference-click',
+  interactionId: 'reference-click:assignee',
+  interactionLabel: 'Assignee reference clicked',
+  entity: { /* full row */ },
+  fieldKey: 'assignee',
+  fieldValue: 'user-2',          // raw FK from entity
+  fieldLabel: 'Mateo Silva',     // resolved display label
+  relatedEntity: 'user',         // entity type declared on the field
+  zone: 'content',
+}
+```
+
+The host application pattern:
+
+```ts
+interactions: {
+  onEvent: (ctx) => {
+    if (ctx.kind === 'reference-click') {
+      navigate(`/${ctx.relatedEntity}/${ctx.fieldValue}`);
+      // or: openDrawer(ctx.relatedEntity, ctx.fieldValue);
+    }
+  },
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property holding the foreign key or reference ID. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'reference'` | — | Resolves the raw value against `options`. Falls back to `String(value)` on no match. |
+| `options` | `{ value, label }[]` | unset | The resolution table. `value` is matched with `===` against the raw field value. |
+| `relatedEntity` | string | unset | Declares the entity type this field points to (e.g. `'user'`, `'project'`). Forwarded in `reference-click` events and reserved for future resolvers. |
+| `clickable` | boolean | `false` | When `true`, renders the label as an interactive element and fires `reference-click` on interaction. |
+| `formatter` | `(value, entity) => unknown` | unset | Runs before the options lookup — use to normalise IDs before matching. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. Useful to suppress empty references. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `width` | CSS length or number | unset | Column width in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replace reference rendering. Use `link` for static hyperlinks built from the entity data. |
+
+## Why reference vs select?
+
+Both types use the same `options` lookup for display. The difference is intent and future capability:
+
+- **`select`** — a field constrained to a fixed domain list (status, priority, category). The `options` represent every valid value.
+- **`reference`** — a FK pointing to a separate entity in another collection. The `options` are a local snapshot used for display. `relatedEntity` declares what it points to; `clickable` enables navigation.
+
+Future Widgemo capabilities would treat these differently: `reference` fields would support live resolvers, navigation, and entity-aware filtering; `select` fields would drive local enumeration menus.
+
+## Caveats
+
+- The match is strict (`===`). A string ID `'user-1'` will **not** match a numeric option `{ value: 1 }`.
+- `null` and `undefined` values render as the empty string `''` — use `condition` to hide those rows instead.
+- `clickable: true` requires a `interactions.onEvent` handler on the Widgemo config — without it the click fires but nothing happens.
+- `formatter` output is what gets matched against `options.value` — not the original raw value.
+
+## Performance
+
+:::tip Stable options reference
+widgemo-core builds an internal `Map` from your `options` array for O(1) lookups. This Map is only rebuilt when the `options` reference changes. Define your options array **outside your render function** — or memoize it with `useMemo` if constructed dynamically — so the Map is reused across renders.
+
+```ts
+// Good — stable reference, Map built once
+const userOptions = users.map(u => ({ value: u.id, label: u.name })); // computed once
+
+// In a React component, memoize if users can change:
+const userOptions = useMemo(
+  () => users.map(u => ({ value: u.id, label: u.name })),
+  [users]
+);
+
+// Avoid — new array every render, Map rebuilt every render
+// options={users.map(u => ({ value: u.id, label: u.name }))}
+```
+
+Also pre-filter options to only the FK values present in your dataset — there is no need to pass 10,000 user records when only 47 distinct users appear in the current view.
+:::
+
+## See Also
+
+- [select Field Type](/core/components/fields/select)
+- [link Renderer](/core/components/renderers/link)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

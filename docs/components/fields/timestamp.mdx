@@ -1,0 +1,165 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const timestampData = [
+  { operation: 'Payroll Sync', updatedAtEpochSec: 1780042510, ingestedAtEpochMs: 1780042810000 },
+  { operation: 'Reserve Sweep', updatedAtEpochSec: 1780141353, ingestedAtEpochMs: 1780141633000 },
+  { operation: 'Invoice Clear', updatedAtEpochSec: 1780236301, ingestedAtEpochMs: 1780236541000 },
+];
+
+export const timestampBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'updatedAtEpochSec',
+            label: 'Updated (epoch-sec)',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+          {
+            key: 'ingestedAtEpochMs',
+            label: 'Ingested (epoch-ms)',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            renderAsOptions: { parseMode: 'epoch-ms', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timestampSortConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      sorting: [{ fieldKey: 'updatedAtEpochSec', direction: 'desc' }],
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'updatedAtEpochSec',
+            label: 'Updated',
+            type: 'timestamp',
+            renderAs: 'timestamp',
+            sortable: true,
+            renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# timestamp Field Type
+
+`type: 'timestamp'` marks a field as a machine-generated epoch timestamp — a numeric Unix value (seconds or milliseconds) or an ISO datetime string from a system log, audit trail, or event stream. Pair it with `renderAs: 'timestamp'` and the correct `parseMode` for the source format.
+
+## Core Examples
+
+### epoch-sec and epoch-ms
+
+The two most common timestamp formats in backend systems. `parseMode` tells the renderer how to interpret the raw number.
+
+<WidgemoShowcase
+  description="Two timestamp columns from the same dataset — one in Unix seconds, one in Unix milliseconds. Both render identically with the correct parseMode."
+  data={timestampData}
+  config={timestampBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Unix seconds
+{
+  key: 'updatedAtEpochSec',
+  label: 'Updated',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+
+// Unix milliseconds
+{
+  key: 'ingestedAtEpochMs',
+  label: 'Ingested',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  renderAsOptions: { parseMode: 'epoch-ms', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Sorting
+
+Timestamps sort chronologically in table mode when `parseMode` is declared and `sortable: true` is set.
+
+<WidgemoShowcase
+  description="Table pre-sorted descending by epoch-sec timestamp. Click the column header to toggle sort direction."
+  data={timestampData}
+  config={timestampSortConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'updatedAtEpochSec',
+  label: 'Updated',
+  type: 'timestamp',
+  renderAs: 'timestamp',
+  sortable: true,
+  renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the timestamp value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'timestamp'` | — | Marks the field as a machine-generated epoch value. Pair with `renderAs: 'timestamp'`. |
+| `renderAs` | `'timestamp'` | unset | Required for formatted output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'timestamp'`
+
+`parseMode` is required — without it the field renders `'Invalid'`. All other display options (`formatPreset`, `locale`, `timezone`, `relativeTime`, `showSeconds`, `hour12`, `formatOptions`, etc.) are documented on the [timestamp Renderer](/core/components/renderers/timestamp) page.
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'`.
+- `epoch-sec` and `epoch-ms` are the two most common choices. Mixing them (e.g. passing milliseconds with `epoch-sec`) produces a date far in the future — verify your source format.
+- `type: 'timestamp'` and `type: 'datetime'` share the same renderer internally (`renderTemporal` with `kind: 'datetime'`). The distinction is **semantic**: timestamp signals a machine-generated epoch value; datetime signals a human-authored date+time.
+- `parseMode: 'any'` attempts multiple formats in order. Use it only when the source format is genuinely unknown — it is less reliable than explicit modes.
+
+## Why timestamp vs datetime?
+
+Both accept epoch values with `parseMode: 'epoch-ms'` or `'epoch-sec'` and render identically. The distinction is semantic:
+
+- `type: 'timestamp'` — the value comes from a system clock, audit log, or event stream. The epoch integer is the primary form.
+- `type: 'datetime'` — the value is a human-readable ISO string authored to represent a specific point in time.
+
+Using the correct type communicates intent clearly and will matter for future features like inline editing (timestamp fields would get a read-only display; datetime fields might get a datetime picker).
+
+## See Also
+
+- [timestamp Renderer](/core/components/renderers/timestamp) — full `renderAsOptions` reference
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [datetime Field Type](/core/components/fields/datetime)
+- [date Field Type](/core/components/fields/date)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

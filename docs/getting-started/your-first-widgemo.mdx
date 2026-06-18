@@ -1,0 +1,207 @@
+---
+title: Your First Widgemo
+sidebar_position: 3
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const handleEvent = (ctx) => {
+  console.log('[Widgemo interaction]', ctx);
+};
+
+export const walkthroughData = [
+  { id: 1, title: 'API Integration',    priority: 'high',   owner: 'Aurora Chen',  completion: 75, status: 'in-progress' },
+  { id: 2, title: 'Dashboard Redesign', priority: 'medium', owner: 'Mateo Silva',  completion: 40, status: 'in-progress' },
+  { id: 3, title: 'Mobile Auth',        priority: 'high',   owner: 'Sam Torres',   completion: 90, status: 'review'      },
+  { id: 4, title: 'Data Export',        priority: 'low',    owner: 'Priya Nair',   completion: 10, status: 'backlog'     },
+];
+
+export const walkthroughConfig = {
+  zones: {
+    header: { title: 'Project Tracker', subtitle: 'Active tasks' },
+    content: {
+      mode: 'grid',
+      modeConfig: {
+        grid: { maxColumns: 2, gap: '1rem' },
+      },
+      item: {
+        fields: [
+          { key: 'title',      label: 'Title',      type: 'text',   sortable: true },
+          { key: 'priority',   label: 'Priority',   type: 'text',   renderAs: 'badge',
+            renderAsOptions: { colorMap: { high: '#dc3545', medium: '#ffc107', low: '#198754' } } },
+          { key: 'owner',      label: 'Owner',      type: 'text' },
+          { key: 'completion', label: 'Completion', type: 'number', renderAs: 'progress', sortable: true },
+          { key: 'status',     label: 'Status',     type: 'text',   renderAs: 'badge',
+            renderAsOptions: { colorMap: { 'in-progress': '#0d6efd', review: '#6f42c1', backlog: '#6c757d' } } },
+        ],
+        layout: { type: 'auto' },
+      },
+      actions: [
+        { id: 'open-task', label: 'Open', icon: 'external-link', placement: 'pinned' },
+      ],
+    },
+  },
+};
+
+# Your First Widgemo
+
+Quick Start shows the minimum to get something on screen. This walkthrough explains the decisions behind that minimum — using a different mode and dataset — and extends it to field renderers, grid layout options, and item actions.
+
+## What you are building
+
+A project tracker grid: four tasks, each rendered as a card with a priority badge, a progress bar, a status badge, and an "Open" action button.
+
+## Prerequisite
+
+Complete [Installation](/core/getting-started/installation) before this walkthrough. The Quick Start example is not required.
+
+---
+
+## Step 1 — Minimal config
+
+The minimum viable config names a mode. Field keys and labels are inferred from data.
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'grid',
+    },
+  },
+};
+
+<Widgemo data={data} config={config} />
+```
+
+This renders cards. Each card has one row per data key, using the raw key name as a label and the raw value as text.
+
+---
+
+## Step 2 — Declare fields
+
+Explicit field declarations give you control over labels, types, and sort behavior. Undeclared keys are hidden once any `fields` array is present.
+
+```tsx
+item: {
+  fields: [
+    { key: 'title',      label: 'Title',      type: 'text',   sortable: true },
+    { key: 'priority',   label: 'Priority',   type: 'text' },
+    { key: 'owner',      label: 'Owner',      type: 'text' },
+    { key: 'completion', label: 'Completion', type: 'number', sortable: true },
+    { key: 'status',     label: 'Status',     type: 'text' },
+  ],
+  layout: { type: 'auto' },
+},
+```
+
+`sortable: true` activates a sort control for that field. The `type` feeds the default renderer and sort comparator — `'number'` sorts numerically, `'text'` lexicographically.
+
+---
+
+## Step 3 — Add renderers and grid layout
+
+`renderAs` replaces the default text output with a purpose-built renderer. `renderAsOptions` configures it.
+
+```tsx
+{ key: 'priority', label: 'Priority', type: 'text', renderAs: 'badge',
+  renderAsOptions: { colorMap: { high: '#dc3545', medium: '#ffc107', low: '#198754' } } },
+
+{ key: 'completion', label: 'Completion', type: 'number', renderAs: 'progress', sortable: true },
+
+{ key: 'status', label: 'Status', type: 'text', renderAs: 'badge',
+  renderAsOptions: { colorMap: { 'in-progress': '#0d6efd', review: '#6f42c1', backlog: '#6c757d' } } },
+```
+
+`progress` maps a 0–100 number to a visual bar. `badge` maps a string value to a color via `colorMap`. See [Badge Renderer](/core/components/renderers/badge) and [Progress Renderer](/core/components/renderers/progress) for full option references.
+
+Tune the grid layout under `modeConfig.grid`:
+
+```tsx
+modeConfig: {
+  grid: { maxColumns: 2, gap: '1rem' },
+},
+```
+
+`maxColumns` caps the responsive column count. `gap` sets the CSS gap between cards.
+
+---
+
+## Step 4 — Add item actions
+
+Actions appear per card. Declare them under `item.actions`:
+
+```tsx
+content: {
+  mode: 'grid',
+  // ...item, modeConfig...
+  actions: [
+    { id: 'open-task', label: 'Open', icon: 'external-link', placement: 'pinned' },
+  ],
+},
+```
+
+`actions` is declared at the content zone level, not inside `item`.
+
+The three placement values and their responsive behavior:
+
+| `placement` | Desktop | Tablet (480–1024 px zone width) | Mobile (< 480 px) |
+|---|---|---|---|
+| `'pinned'` with icon | inline | inline | inline (first one only) |
+| `'pinned'` without icon | inline | **overflow menu** | overflow menu |
+| `'onHover'` | visible on hover | overflow menu | overflow menu |
+| `'menu'` | overflow menu | overflow menu | overflow menu |
+
+Widgemo measures the nearest zone width via `ResizeObserver`, not the viewport. An action without an `icon` declared will be demoted to the overflow menu whenever the zone is narrower than 1024 px — which includes most docs page Widgemos and many embedded use cases. **Always provide an `icon` on pinned actions** if they must stay visible at all widths.
+
+Wire `interactions.onEvent` inside `config` to receive the payload:
+
+```tsx
+const config = {
+  zones: {
+    content: {
+      mode: 'grid',
+      // ...
+      actions: [
+        { id: 'open-task', label: 'Open', icon: 'external-link', placement: 'pinned' },
+      ],
+    },
+  },
+  interactions: {
+    onEvent: (ctx) => {
+      // ctx.kind             → 'item-action'
+      // ctx.interactionId    → 'open-task'
+      // ctx.interactionLabel → 'Open'
+      // ctx.entity           → the task row that was clicked
+      console.log(ctx.entity);
+    },
+  },
+};
+
+<Widgemo config={config} data={data} />
+```
+
+`interactions.onEvent` is the single canonical sink for all Widgemo interactions — actions, gestures, and zone-level buttons all route through it. You can also use a per-action `onAction` callback instead if you prefer scoped handlers.
+
+---
+
+## Final result
+
+<WidgemoShowcase
+  title="Project Tracker"
+  data={walkthroughData}
+  config={walkthroughConfig}
+  interactions={{ onEvent: handleEvent }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+Click **Open** on any card — the `InteractionContext` payload is logged to the browser console. In a real app you would replace `console.log` with your own handler (navigate to the task, open a modal, etc.).
+
+---
+
+## Next steps
+
+- [Modes Overview](/core/concepts/modes-overview) — compare grid, table, board, carousel, chart
+- [Field Config](/core/reference/field-config) — canonical contract for all field options
+- [Content Config](/core/reference/content-config) — sorting, filtering, grouping, pagination, actions
+- [Common Setup Pitfalls](/core/getting-started/common-setup-pitfalls)

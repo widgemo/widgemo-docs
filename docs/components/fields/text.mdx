@@ -1,0 +1,271 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const textData = [
+  { name: 'Aurora Chen', role: 'Design Lead', bio: 'Runs design reviews and mentors the UI guild. Previously led product design at two Series B startups.' },
+  { name: 'Mateo Silva', role: 'Platform Engineer', bio: 'Owns API reliability, observability, and release pipelines.' },
+  { name: 'Priya Nair', role: 'Operations', bio: 'Coordinates cross-team rollout and process updates across five regions.' },
+];
+
+export const textBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textWrapFalseConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '200px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          { key: 'bio', label: 'Bio', type: 'text', wrap: false },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textWrapTrueConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      modeConfig: { grid: { minItemWidth: '200px', gap: '0.75rem' } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          { key: 'bio', label: 'Bio', type: 'text', wrap: true },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          {
+            key: 'name',
+            label: 'Initials',
+            type: 'text',
+            formatter: (value) =>
+              String(value ?? '')
+                .split(' ')
+                .map((w) => w[0] + '.')
+                .join(''),
+          },
+          {
+            key: 'role',
+            label: 'Role (upper)',
+            type: 'text',
+            formatter: (value) => String(value ?? '').toUpperCase(),
+          },
+          {
+            key: 'bio',
+            label: 'Word count',
+            type: 'text',
+            formatter: (value) => {
+              const words = String(value ?? '').trim().split(/\s+/).filter(Boolean);
+              return words.length + ' words';
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const textConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'bio',
+            label: 'Bio (only when long)',
+            type: 'text',
+            condition: (entity) => String(entity.bio ?? '').length > 60,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# text Field Type
+
+`type: 'text'` renders a string value as plain text. It is the default type — any field without an explicit `type` falls back to text rendering.
+
+## Core Examples
+
+### Basic Text Fields
+
+<WidgemoShowcase
+  description="Two text fields: name and role, both rendered as plain strings."
+  data={textData}
+  config={textBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+fields: [
+  { key: 'name', label: 'Name', type: 'text' },
+  { key: 'role', label: 'Role', type: 'text' },
+]
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Wrap Control
+
+`wrap: false` clips content to a single line. In **card-based modes** (grid, carousel, board), the card's fixed boundary constrains the field — overflowing text is replaced with an ellipsis and the full value appears on hover. In **table mode**, the column cell expands to fit `nowrap` content rather than clipping, so text stays on one line but the table may scroll horizontally.
+
+`wrap: true` allows text to flow across multiple lines within its container.
+
+#### `wrap: false` — single line with ellipsis (grid)
+
+<WidgemoShowcase
+  description="Each card has a fixed width from the grid column. Bio clips to one line with ellipsis. Hover to see full value."
+  data={textData}
+  config={textWrapFalseConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'bio', label: 'Bio', type: 'text', wrap: false }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+#### `wrap: true` — multi-line (grid)
+
+<WidgemoShowcase
+  description="Same fields. Bio wraps across as many lines as needed instead of clipping."
+  data={textData}
+  config={textWrapTrueConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'bio', label: 'Bio', type: 'text', wrap: true }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` transforms the raw value before display. It receives `(value, entity)` and must return the value to render — the entity is not mutated and the original data is unchanged.
+
+<WidgemoShowcase
+  description="Name → initials; Role uppercased; Bio → word count."
+  data={textData}
+  config={textFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'name',
+  label: 'Initials',
+  type: 'text',
+  formatter: (value) =>
+    String(value ?? '')
+      .split(' ')
+      .map((w) => w[0] + '.')
+      .join(''),
+},
+{
+  key: 'role',
+  label: 'Role (upper)',
+  type: 'text',
+  formatter: (value) => String(value ?? '').toUpperCase(),
+},
+{
+  key: 'bio',
+  label: 'Word count',
+  type: 'text',
+  formatter: (value) => {
+    const words = String(value ?? '').trim().split(/\s+/).filter(Boolean);
+    return words.length + ' words';
+  },
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it entirely. Evaluated per row — different rows can show or hide the same field independently.
+
+<WidgemoShowcase
+  description="Bio column only renders for Aurora and Priya (bio > 60 chars). Mateo's 59-char bio is hidden."
+  data={textData}
+  config={textConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'bio',
+  label: 'Bio (only when long)',
+  type: 'text',
+  condition: (entity) => String(entity.bio ?? '').length > 60,
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'text'` | `'text'` | Renders the value as a plain string. |
+| `wrap` | `true`, `false` | inherited from `ItemConfig.wrap` | `false`: single line. In card modes, clips with ellipsis + hover tooltip. In table mode, column expands instead. `true`: multi-line wrapping. |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before display. Does not mutate the entity. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replaces text rendering with a named renderer. `type` is bypassed when set. |
+
+## Mode-Specific Notes
+
+- `width` and `align` apply in table mode only; they have no effect in grid or carousel card layouts.
+- `showLabel` applies in card-based layouts (grid, carousel, board); table always uses column headers.
+
+## See Also
+
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config) — full field contract
+- [number Field Type](/core/components/fields/number)
+- [textarea Field Type](/core/components/fields/textarea)
+- [Renderer Components Overview](/core/components/renderers/overview)

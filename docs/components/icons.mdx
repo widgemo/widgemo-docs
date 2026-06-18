@@ -1,0 +1,207 @@
+import { defaultRenderWidgemoIcon } from '@widgemo/widgemo-core';
+
+# Icon Reference
+
+Widgemo ships a built-in SVG icon set used across actions, badges, zones, and any field or renderer config that accepts an icon name. Pass the name string wherever an `icon` property is accepted — no imports required.
+
+```tsx
+// In a badge colorMap
+{ icon: 'check-circle', iconColor: '#16a34a' }
+
+// In an action config
+{ icon: 'edit', label: 'Edit' }
+```
+
+For registering custom icons (Lucide, Heroicons, FontAwesome, or your own SVGs), see [Custom Icons](/core/guides/custom-icons).
+
+---
+
+## Actions
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'plus', size: 20, color: 'currentColor' })} | `plus` | `add` |
+| {defaultRenderWidgemoIcon({ name: 'edit', size: 20, color: 'currentColor' })} | `edit` | `pencil` |
+| {defaultRenderWidgemoIcon({ name: 'delete', size: 20, color: 'currentColor' })} | `delete` | `trash` |
+| {defaultRenderWidgemoIcon({ name: 'view', size: 20, color: 'currentColor' })} | `view` | `eye` |
+| {defaultRenderWidgemoIcon({ name: 'view-slash', size: 20, color: 'currentColor' })} | `view-slash` | `eye-slash` |
+| {defaultRenderWidgemoIcon({ name: 'copy', size: 20, color: 'currentColor' })} | `copy` | — |
+| {defaultRenderWidgemoIcon({ name: 'share', size: 20, color: 'currentColor' })} | `share` | — |
+| {defaultRenderWidgemoIcon({ name: 'import', size: 20, color: 'currentColor' })} | `import` | `download` |
+| {defaultRenderWidgemoIcon({ name: 'upload', size: 20, color: 'currentColor' })} | `upload` | `export` |
+| {defaultRenderWidgemoIcon({ name: 'attachment', size: 20, color: 'currentColor' })} | `attachment` | — |
+| {defaultRenderWidgemoIcon({ name: 'refresh', size: 20, color: 'currentColor' })} | `refresh` | — |
+| {defaultRenderWidgemoIcon({ name: 'reload', size: 20, color: 'currentColor' })} | `reload` | — |
+| {defaultRenderWidgemoIcon({ name: 'pin', size: 20, color: 'currentColor' })} | `pin` | — |
+| {defaultRenderWidgemoIcon({ name: 'pin-slash', size: 20, color: 'currentColor' })} | `pin-slash` | — |
+
+## Navigation & Arrows
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'arrow-up', size: 20, color: 'currentColor' })} | `arrow-up` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-down', size: 20, color: 'currentColor' })} | `arrow-down` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-left', size: 20, color: 'currentColor' })} | `arrow-left` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-right', size: 20, color: 'currentColor' })} | `arrow-right` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-up-left', size: 20, color: 'currentColor' })} | `arrow-up-left` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-up-right', size: 20, color: 'currentColor' })} | `arrow-up-right` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-down-left', size: 20, color: 'currentColor' })} | `arrow-down-left` | — |
+| {defaultRenderWidgemoIcon({ name: 'arrow-down-right', size: 20, color: 'currentColor' })} | `arrow-down-right` | — |
+| {defaultRenderWidgemoIcon({ name: 'chevron-up', size: 20, color: 'currentColor' })} | `chevron-up` | — |
+| {defaultRenderWidgemoIcon({ name: 'chevron-down', size: 20, color: 'currentColor' })} | `chevron-down` | — |
+| {defaultRenderWidgemoIcon({ name: 'chevron-left', size: 20, color: 'currentColor' })} | `chevron-left` | — |
+| {defaultRenderWidgemoIcon({ name: 'chevron-right', size: 20, color: 'currentColor' })} | `chevron-right` | — |
+| {defaultRenderWidgemoIcon({ name: 'external-link', size: 20, color: 'currentColor' })} | `external-link` | `new-tab` |
+| {defaultRenderWidgemoIcon({ name: 'home', size: 20, color: 'currentColor' })} | `home` | — |
+| {defaultRenderWidgemoIcon({ name: 'menu', size: 20, color: 'currentColor' })} | `menu` | — |
+| {defaultRenderWidgemoIcon({ name: 'search', size: 20, color: 'currentColor' })} | `search` | — |
+
+## Views & Layout
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'table', size: 20, color: 'currentColor' })} | `table` | — |
+| {defaultRenderWidgemoIcon({ name: 'grid', size: 20, color: 'currentColor' })} | `grid` | — |
+| {defaultRenderWidgemoIcon({ name: 'board', size: 20, color: 'currentColor' })} | `board` | — |
+| {defaultRenderWidgemoIcon({ name: 'sort', size: 20, color: 'currentColor' })} | `sort` | — |
+| {defaultRenderWidgemoIcon({ name: 'filter', size: 20, color: 'currentColor' })} | `filter` | — |
+| {defaultRenderWidgemoIcon({ name: 'filter-off', size: 20, color: 'currentColor' })} | `filter-off` | — |
+| {defaultRenderWidgemoIcon({ name: 'group', size: 20, color: 'currentColor' })} | `group` | `grouping` |
+| {defaultRenderWidgemoIcon({ name: 'group-available', size: 20, color: 'currentColor' })} | `group-available` | — |
+| {defaultRenderWidgemoIcon({ name: 'align-left', size: 20, color: 'currentColor' })} | `align-left` | — |
+| {defaultRenderWidgemoIcon({ name: 'align-center', size: 20, color: 'currentColor' })} | `align-center` | — |
+| {defaultRenderWidgemoIcon({ name: 'align-right', size: 20, color: 'currentColor' })} | `align-right` | — |
+| {defaultRenderWidgemoIcon({ name: 'justify', size: 20, color: 'currentColor' })} | `justify` | — |
+
+## Status & Feedback
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'check-circle', size: 20, color: 'currentColor' })} | `check-circle` | `success` |
+| {defaultRenderWidgemoIcon({ name: 'x-circle', size: 20, color: 'currentColor' })} | `x-circle` | `error` |
+| {defaultRenderWidgemoIcon({ name: 'warning', size: 20, color: 'currentColor' })} | `warning` | — |
+| {defaultRenderWidgemoIcon({ name: 'info', size: 20, color: 'currentColor' })} | `info` | — |
+| {defaultRenderWidgemoIcon({ name: 'bell', size: 20, color: 'currentColor' })} | `bell` | `alert`, `notification` |
+| {defaultRenderWidgemoIcon({ name: 'clock', size: 20, color: 'currentColor' })} | `clock` | — |
+| {defaultRenderWidgemoIcon({ name: 'hourglass', size: 20, color: 'currentColor' })} | `hourglass` | — |
+| {defaultRenderWidgemoIcon({ name: 'loading', size: 20, color: 'currentColor' })} | `loading` | `spinner` |
+| {defaultRenderWidgemoIcon({ name: 'bug', size: 20, color: 'currentColor' })} | `bug` | `defect` |
+
+## Data & Charts
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'chart-bar', size: 20, color: 'currentColor' })} | `chart-bar` | — |
+| {defaultRenderWidgemoIcon({ name: 'chart-line', size: 20, color: 'currentColor' })} | `chart-line` | — |
+| {defaultRenderWidgemoIcon({ name: 'chart-pie', size: 20, color: 'currentColor' })} | `chart-pie` | — |
+| {defaultRenderWidgemoIcon({ name: 'speedometer', size: 20, color: 'currentColor' })} | `speedometer` | — |
+| {defaultRenderWidgemoIcon({ name: 'stock', size: 20, color: 'currentColor' })} | `stock` | — |
+| {defaultRenderWidgemoIcon({ name: 'budget', size: 20, color: 'currentColor' })} | `budget` | — |
+| {defaultRenderWidgemoIcon({ name: 'transfer', size: 20, color: 'currentColor' })} | `transfer` | — |
+
+## Files & Documents
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'document', size: 20, color: 'currentColor' })} | `document` | `file` |
+| {defaultRenderWidgemoIcon({ name: 'folder', size: 20, color: 'currentColor' })} | `folder` | — |
+| {defaultRenderWidgemoIcon({ name: 'folder-open', size: 20, color: 'currentColor' })} | `folder-open` | — |
+| {defaultRenderWidgemoIcon({ name: 'book', size: 20, color: 'currentColor' })} | `book` | — |
+| {defaultRenderWidgemoIcon({ name: 'image', size: 20, color: 'currentColor' })} | `image` | — |
+| {defaultRenderWidgemoIcon({ name: 'link', size: 20, color: 'currentColor' })} | `link` | — |
+| {defaultRenderWidgemoIcon({ name: 'unlink', size: 20, color: 'currentColor' })} | `unlink` | — |
+| {defaultRenderWidgemoIcon({ name: 'code', size: 20, color: 'currentColor' })} | `code` | `html` |
+| {defaultRenderWidgemoIcon({ name: 'thread', size: 20, color: 'currentColor' })} | `thread` | — |
+| {defaultRenderWidgemoIcon({ name: 'puzzle-piece', size: 20, color: 'currentColor' })} | `puzzle-piece` | — |
+
+## People & Social
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'user', size: 20, color: 'currentColor' })} | `user` | `profile` |
+| {defaultRenderWidgemoIcon({ name: 'users', size: 20, color: 'currentColor' })} | `users` | `team` |
+| {defaultRenderWidgemoIcon({ name: 'relationship', size: 20, color: 'currentColor' })} | `relationship` | — |
+| {defaultRenderWidgemoIcon({ name: 'glasses', size: 20, color: 'currentColor' })} | `glasses` | — |
+
+## Settings & System
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'settings', size: 20, color: 'currentColor' })} | `settings` | `config`, `cog` |
+| {defaultRenderWidgemoIcon({ name: 'close', size: 20, color: 'currentColor' })} | `close` | `x`, `cross` |
+| {defaultRenderWidgemoIcon({ name: 'lock', size: 20, color: 'currentColor' })} | `lock` | — |
+| {defaultRenderWidgemoIcon({ name: 'unlock', size: 20, color: 'currentColor' })} | `unlock` | — |
+| {defaultRenderWidgemoIcon({ name: 'key', size: 20, color: 'currentColor' })} | `key` | — |
+| {defaultRenderWidgemoIcon({ name: 'shield', size: 20, color: 'currentColor' })} | `shield` | — |
+| {defaultRenderWidgemoIcon({ name: 'server', size: 20, color: 'currentColor' })} | `server` | — |
+| {defaultRenderWidgemoIcon({ name: 'database', size: 20, color: 'currentColor' })} | `database` | — |
+| {defaultRenderWidgemoIcon({ name: 'cloud', size: 20, color: 'currentColor' })} | `cloud` | — |
+| {defaultRenderWidgemoIcon({ name: 'cloud-off', size: 20, color: 'currentColor' })} | `cloud-off` | — |
+| {defaultRenderWidgemoIcon({ name: 'wifi', size: 20, color: 'currentColor' })} | `wifi` | — |
+| {defaultRenderWidgemoIcon({ name: 'building', size: 20, color: 'currentColor' })} | `building` | — |
+| {defaultRenderWidgemoIcon({ name: 'globe', size: 20, color: 'currentColor' })} | `globe` | — |
+| {defaultRenderWidgemoIcon({ name: 'sun', size: 20, color: 'currentColor' })} | `sun` | `light-mode` |
+| {defaultRenderWidgemoIcon({ name: 'moon', size: 20, color: 'currentColor' })} | `moon` | `dark-mode` |
+| {defaultRenderWidgemoIcon({ name: 'contrast', size: 20, color: 'currentColor' })} | `contrast` | — |
+| {defaultRenderWidgemoIcon({ name: 'ellipsis-vertical', size: 20, color: 'currentColor' })} | `ellipsis-vertical` | — |
+| {defaultRenderWidgemoIcon({ name: 'ellipsis-horizontal', size: 20, color: 'currentColor' })} | `ellipsis-horizontal` | `more-horizontal` |
+
+## Location & Time
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'map', size: 20, color: 'currentColor' })} | `map` | — |
+| {defaultRenderWidgemoIcon({ name: 'location', size: 20, color: 'currentColor' })} | `location` | — |
+| {defaultRenderWidgemoIcon({ name: 'calendar', size: 20, color: 'currentColor' })} | `calendar` | — |
+| {defaultRenderWidgemoIcon({ name: 'goal', size: 20, color: 'currentColor' })} | `goal` | `target` |
+
+## Finance
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'dollar', size: 20, color: 'currentColor' })} | `dollar` | `dollar-sign`, `currency-dollar` |
+| {defaultRenderWidgemoIcon({ name: 'credit-card', size: 20, color: 'currentColor' })} | `credit-card` | — |
+| {defaultRenderWidgemoIcon({ name: 'cash', size: 20, color: 'currentColor' })} | `cash` | — |
+| {defaultRenderWidgemoIcon({ name: 'asset', size: 20, color: 'currentColor' })} | `asset` | `mortgage` |
+| {defaultRenderWidgemoIcon({ name: 'loan', size: 20, color: 'currentColor' })} | `loan` | — |
+| {defaultRenderWidgemoIcon({ name: 'real-estate', size: 20, color: 'currentColor' })} | `real-estate` | `house` |
+| {defaultRenderWidgemoIcon({ name: 'car', size: 20, color: 'currentColor' })} | `car` | — |
+| {defaultRenderWidgemoIcon({ name: 'crypto', size: 20, color: 'currentColor' })} | `crypto` | — |
+| {defaultRenderWidgemoIcon({ name: 'shopping-cart', size: 20, color: 'currentColor' })} | `shopping-cart` | — |
+
+## Shapes & Indicators
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'star', size: 20, color: 'currentColor' })} | `star` | — |
+| {defaultRenderWidgemoIcon({ name: 'heart', size: 20, color: 'currentColor' })} | `heart` | — |
+| {defaultRenderWidgemoIcon({ name: 'diamond', size: 20, color: 'currentColor' })} | `diamond` | — |
+| {defaultRenderWidgemoIcon({ name: 'circle', size: 20, color: 'currentColor' })} | `circle` | — |
+| {defaultRenderWidgemoIcon({ name: 'circle-fill', size: 20, color: 'currentColor' })} | `circle-fill` | — |
+| {defaultRenderWidgemoIcon({ name: 'circle-stripes', size: 20, color: 'currentColor' })} | `circle-stripes` | — |
+| {defaultRenderWidgemoIcon({ name: 'square', size: 20, color: 'currentColor' })} | `square` | — |
+| {defaultRenderWidgemoIcon({ name: 'check-square', size: 20, color: 'currentColor' })} | `check-square` | — |
+| {defaultRenderWidgemoIcon({ name: 'x-square', size: 20, color: 'currentColor' })} | `x-square` | — |
+
+## Media
+
+| Preview | Name | Aliases |
+|:---:|---|---|
+| {defaultRenderWidgemoIcon({ name: 'play', size: 20, color: 'currentColor' })} | `play` | — |
+| {defaultRenderWidgemoIcon({ name: 'pause', size: 20, color: 'currentColor' })} | `pause` | — |
+| {defaultRenderWidgemoIcon({ name: 'stop', size: 20, color: 'currentColor' })} | `stop` | — |
+
+---
+
+## Custom Icons
+
+Register any SVG, or wrap a third-party component (Lucide, Heroicons, FontAwesome), using `registerWidgemoIcon`. The registered name becomes usable anywhere a built-in name is accepted.
+
+See [Custom Icons](/core/guides/custom-icons) for the registration API and [Extension Architecture](/core/concepts/extension-architecture) for the full registry model.
+
+## See Also
+
+- [badge Renderer](/core/components/renderers/badge) — icon in a badge via `colorMap`
+- [rating Renderer](/core/components/renderers/rating) — icon as the rating symbol
+- [Custom Icons](/core/guides/custom-icons) — register your own icons
+- [Extension API](/core/reference/extension-api) — `registerWidgemoIcon` contract

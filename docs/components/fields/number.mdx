@@ -1,0 +1,251 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const numberData = [
+  { name: 'Aurora Chen',  score: 91.5,   sessions: 4820,  salary: 118000, change: 12.4  },
+  { name: 'Mateo Silva',  score: 74,     sessions: 1035,  salary: 95500,  change: -3.7  },
+  { name: 'Priya Nair',   score: 88.25,  sessions: 22410, salary: 107250, change: 5.0   },
+];
+
+export const numberBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',     type: 'text'   },
+          { key: 'score',    label: 'Score',    type: 'number' },
+          { key: 'sessions', label: 'Sessions', type: 'number' },
+          { key: 'salary',   label: 'Salary',   type: 'number' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const numberAlignConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',     label: 'Name',     type: 'text'  },
+          { key: 'score',    label: 'Score',    type: 'number', align: 'right' },
+          { key: 'sessions', label: 'Sessions', type: 'number', align: 'right' },
+          { key: 'salary',   label: 'Salary',   type: 'number', align: 'right' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const numberFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'score',
+            label: 'Score (2dp)',
+            type: 'number',
+            align: 'right',
+            formatter: (value) =>
+              typeof value === 'number' ? value.toFixed(2) : String(value ?? ''),
+          },
+          {
+            key: 'salary',
+            label: 'Salary (compact)',
+            type: 'number',
+            align: 'right',
+            formatter: (value) =>
+              typeof value === 'number'
+                ? new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+                : String(value ?? ''),
+          },
+          {
+            key: 'change',
+            label: 'Change (%)',
+            type: 'number',
+            align: 'right',
+            formatter: (value) =>
+              typeof value === 'number'
+                ? (value >= 0 ? '+' : '') + value.toFixed(1) + '%'
+                : String(value ?? ''),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const numberConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',  label: 'Name',  type: 'text' },
+          { key: 'score', label: 'Score', type: 'number', align: 'right' },
+          {
+            key: 'salary',
+            label: 'Salary (score ≥ 85)',
+            type: 'number',
+            align: 'right',
+            condition: (entity) => typeof entity.score === 'number' && entity.score >= 85,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# number Field Type
+
+`type: 'number'` renders a numeric value using `toLocaleString()`, which formats with locale-appropriate thousands separators. Non-numeric values fall back to a plain string. Use `formatter` when you need precision control, units, or sign display.
+
+## Core Examples
+
+### Basic Number Rendering
+
+<WidgemoShowcase
+  description="Score, sessions, and salary rendered as numbers. Thousands separators are applied automatically."
+  data={numberData}
+  config={numberBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+fields: [
+  { key: 'score',    label: 'Score',    type: 'number' },
+  { key: 'sessions', label: 'Sessions', type: 'number' },
+  { key: 'salary',   label: 'Salary',   type: 'number' },
+]
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Alignment
+
+Numeric columns are conventionally right-aligned so decimal points and digit groups visually stack. The default `align` is `'left'` — set `align: 'right'` on each number field.
+
+<WidgemoShowcase
+  description="Same fields with align: 'right'. Values line up on the right edge of each column."
+  data={numberData}
+  config={numberAlignConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'score',    label: 'Score',    type: 'number', align: 'right' },
+{ key: 'sessions', label: 'Sessions', type: 'number', align: 'right' },
+{ key: 'salary',   label: 'Salary',   type: 'number', align: 'right' },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` receives `(value, entity)` and returns the display value. Use it to control decimal places, compact notation, unit suffixes, or sign display.
+
+<WidgemoShowcase
+  description="Score to 2 decimal places; Salary in compact notation (e.g. 118K); Change with explicit sign and % suffix."
+  data={numberData}
+  config={numberFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'score',
+  label: 'Score (2dp)',
+  type: 'number',
+  align: 'right',
+  formatter: (value) =>
+    typeof value === 'number' ? value.toFixed(2) : String(value ?? ''),
+},
+{
+  key: 'salary',
+  label: 'Salary (compact)',
+  type: 'number',
+  align: 'right',
+  formatter: (value) =>
+    typeof value === 'number'
+      ? new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+      : String(value ?? ''),
+},
+{
+  key: 'change',
+  label: 'Change (%)',
+  type: 'number',
+  align: 'right',
+  formatter: (value) =>
+    typeof value === 'number'
+      ? (value >= 0 ? '+' : '') + value.toFixed(1) + '%'
+      : String(value ?? ''),
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it. Evaluated per row.
+
+<WidgemoShowcase
+  description="Salary column only renders for rows where Score is 85 or above. Mateo (74) gets no Salary cell."
+  data={numberData}
+  config={numberConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'salary',
+  label: 'Salary (score ≥ 85)',
+  type: 'number',
+  align: 'right',
+  condition: (entity) => typeof entity.score === 'number' && entity.score >= 85,
+},
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'number'` | — | Renders via `toLocaleString()`. Falls back to `String(value)` for non-numbers. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Use `'right'` for numeric columns to stack digit groups vertically. |
+| `formatter` | `(value, entity) => unknown` | unset | Transform before display: precision, units, sign, compact notation. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `width` | CSS length or number | unset | Column width in table mode. |
+| `wrap` | `true`, `false` | inherited | `false`: single line. `true`: wraps (rarely needed for numbers). |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+| `renderAs` | string | unset | Replace number rendering entirely. Useful with `currency`, `progress`, `deltaValue`, `rating`, `scoreMeter`, `sparkTrend`. |
+
+## Caveats
+
+- `toLocaleString()` output depends on the browser locale. For deterministic formatting in all locales, use `formatter` with an explicit `Intl.NumberFormat` locale.
+- There is no built-in `precision` option on `type: 'number'` — use `formatter` for decimal control.
+- `decimalAlign` is a `currency` renderer option, not a `FieldConfig` option for `type: 'number'`.
+
+## See Also
+
+- [currency Renderer](/core/components/renderers/currency)
+- [deltaValue Renderer](/core/components/renderers/delta-value)
+- [progress Renderer](/core/components/renderers/progress)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

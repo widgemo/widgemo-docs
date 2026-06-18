@@ -6,140 +6,199 @@ import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Configuration Model
 
-Widgemo configuration is easiest to understand as four nested layers:
+Widgemo configuration is four nested layers. Understanding the boundary between each layer is the core skill for working with the library.
 
-1. `Widgemo` props: runtime inputs such as `data`, `config`, `loading`, and `error`
-2. `zones`: page regions such as `header`, `content`, and `footer`
-3. `content`: how data is rendered (`mode`, filtering, sorting, gestures, pagination)
-4. `item` and `fields`: how one entity is laid out and how each value is displayed
+1. **Widgemo props** — runtime inputs: `data`, `config`, and optional sugar props (`loading`, `error`)
+2. **`zones`** — compose the Widgemo surface into named structural regions: `header` chrome, `content` data area, `footer` chrome
+3. **`content`** — controls what the data does and how it renders: mode, sorting, filtering, grouping, gestures, actions
+4. **`item` and `fields`** — `item` controls how a single record is arranged; `fields` control how each value appears
 
-This is the core mental model for the library.
+---
 
-- `zones` answer: where does this UI live?
-- `content` answers: how is the dataset rendered?
-- `item` answers: how is one record arranged?
-- `fields` answer: how does each value appear?
-
-export const configurationModelData = [
-  { name: 'Aurora Chen', role: 'Design Lead', status: 'active', salary: 142000 },
-  { name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending', salary: 131500 },
+export const configModelData = [
+  { id: 1, name: 'Priya Nair',    role: 'Engineering Lead', status: 'active',   revenue: 155000, trend: [60, 65, 70, 68, 72, 75, 80] },
+  { id: 2, name: 'Aurora Chen',   role: 'Design Lead',      status: 'active',   revenue: 142000, trend: [38, 44, 41, 55, 62, 58, 71] },
+  { id: 3, name: 'Mateo Silva',   role: 'Platform Eng',     status: 'active',   revenue: 131500, trend: [70, 64, 68, 60, 55, 58, 52] },
+  { id: 4, name: 'Jordan Reyes',  role: 'Data Science',     status: 'inactive', revenue: 112000, trend: [50, 45, 42, 40, 38, 36, 34] },
+  { id: 5, name: 'Sam Torres',    role: 'Growth',           status: 'pending',  revenue: 98000,  trend: [20, 25, 30, 28, 35, 40, 45] },
 ];
 
-export const configurationModelConfig = {
+export const configModelConfig = {
+  interactions: {
+    onEvent: (ctx) => {
+      if (ctx.entity) {
+        console.log('[Widgemo]', ctx.kind, ctx.interactionId, ctx.entity.name);
+      } else {
+        console.log('[Widgemo]', ctx.kind, ctx.interactionId, `(${ctx.data.length} rows)`);
+      }
+    },
+  },
   zones: {
     header: {
-      title: 'Team Directory',
-      subtitle: 'zones.header defines the top-level presentation chrome',
+      title: 'Team Performance',
+      subtitle: 'Q2 2026',
+      actions: [
+        { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+      ],
     },
     content: {
       mode: 'table',
-      sorting: [{ fieldKey: 'salary', direction: 'desc' }],
+      sorting: [{ fieldKey: 'revenue', direction: 'desc' }],
       item: {
         fields: [
-          { key: 'name', label: 'Name' },
-          { key: 'role', label: 'Role' },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
-          { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
+          { key: 'name',    label: 'Name',    type: 'text',   sortable: true },
+          { key: 'role',    label: 'Role',    type: 'text' },
+          { key: 'status',  label: 'Status',  type: 'text',   renderAs: 'badge',
+            renderAsOptions: { colorMap: { active: '#198754', pending: '#ffc107', inactive: '#6c757d' } } },
+          { key: 'revenue', label: 'Revenue', type: 'number', renderAs: 'currency',
+            renderAsOptions: { currency: 'USD' }, sortable: true },
+          { key: 'trend',   label: 'Trend',   renderAs: 'sparkTrend',
+            renderAsOptions: { width: 100, height: 32, showDeltaLabel: true } },
         ],
         layout: { type: 'auto' },
       },
     },
     footer: {
-      subtitle: 'fields control value rendering; content controls the dataset view',
+      subtitle: 'Updated today',
+      actions: [
+        { id: 'view-all', label: 'View All', icon: 'external-link', placement: 'pinned' },
+      ],
     },
   },
 };
 
 <WidgemoShowcase
-  title="Configuration Model Live Example"
-  description="This example shows the full nesting: header zone, content mode, item layout, and field renderers."
-  data={configurationModelData}
-  config={configurationModelConfig}
+  title="Configuration Model — Live Example"
+  description="Header with a zone action, content with a sorted table using badge, currency, and sparkTrend renderers, and a footer zone with its own action. Click Export or View All — the interaction is logged to the browser console."
+  data={configModelData}
+  config={configModelConfig}
 />
+
+---
 
 ## The Four Layers
 
-## 1. Widgemo Props
+### 1. Widgemo Props
 
-At the outermost level, you pass `data` and `config` into `<Widgemo>`.
+At the outermost level you pass `data` and `config` into `<Widgemo>`. Everything else lives inside `config`.
 
 ```tsx
-<Widgemo data={configurationModelData} config={configurationModelConfig} />
+import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+import '@widgemo/widgemo-core/style.css';
+
+const data = [
+  { id: 1, name: 'Priya Nair',   role: 'Engineering Lead', status: 'active',   revenue: 155000, trend: [60, 65, 70, 68, 72, 75, 80] },
+  { id: 2, name: 'Aurora Chen',  role: 'Design Lead',      status: 'active',   revenue: 142000, trend: [38, 44, 41, 55, 62, 58, 71] },
+  { id: 3, name: 'Mateo Silva',  role: 'Platform Eng',     status: 'active',   revenue: 131500, trend: [70, 64, 68, 60, 55, 58, 52] },
+  { id: 4, name: 'Jordan Reyes', role: 'Data Science',     status: 'inactive', revenue: 112000, trend: [50, 45, 42, 40, 38, 36, 34] },
+  { id: 5, name: 'Sam Torres',   role: 'Growth',           status: 'pending',  revenue: 98000,  trend: [20, 25, 30, 28, 35, 40, 45] },
+];
+
+<WidgemoThemeProvider theme="light">
+  <Widgemo data={data} config={config} />
+</WidgemoThemeProvider>
 ```
 
-This is the runtime shell. Everything else lives inside `config`.
+`data` is a plain array of objects — no special shape required. Notice that `id` is present in the data but will not appear in the Widgemo because it is not declared in `fields`. `trend` is an array of numbers; `sparkTrend` reads it as a series and derives the delta from first to last value.
 
-## 2. Zones
+`config` is a serialisable configuration object — no callbacks live in it except interaction handlers under `interactions.onEvent`.
 
-Zones organize the widget surface into named regions.
+---
+
+### 2. Zones
+
+Zones are the structural skeleton of the Widgemo surface. There are three named slots:
+
+- `header` — title, subtitle, and zone-level actions above the data
+- `content` — the dataset region (required)
+- `footer` — secondary chrome, summary text, or actions below the data
 
 ```tsx
-const zones = configurationModelConfig.zones;
-
-// zones from the live example above
 {
-  header: {
-    title: 'Team Directory',
-    subtitle: 'zones.header defines the top-level presentation chrome',
+  interactions: {
+    onEvent: (ctx) => {
+      if (ctx.entity) {
+        // item-action or item-click — entity is the specific row
+        console.log('[Widgemo]', ctx.kind, ctx.interactionId, ctx.entity.name);
+      } else {
+        // zone-action — no entity; data holds the full visible dataset
+        console.log('[Widgemo]', ctx.kind, ctx.interactionId, `(${ctx.data.length} rows)`);
+      }
+    },
   },
-  content: {
-    mode: 'table',
-    sorting: [{ fieldKey: 'salary', direction: 'desc' }],
-    item: { ... },
-  },
-  footer: {
-    subtitle: 'fields control value rendering; content controls the dataset view',
+  zones: {
+    header: {
+      title: 'Team Performance',
+      subtitle: 'Q2 2026',
+      actions: [
+        { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+      ],
+    },
+    content: { /* ... */ },
+    footer: {
+      subtitle: 'Updated today',
+      actions: [
+        { id: 'view-all', label: 'View All', icon: 'external-link', placement: 'pinned' },
+      ],
+    },
   },
 }
 ```
 
-Use zones when you want structure such as titles, actions, summaries, and supporting metadata around the main content.
+Header and footer are optional. The content zone is always required. `interactions.onEvent` at the top level of config is the single event sink for all zone and item actions — both the Export and View All buttons above route through it.
 
-## 3. Content
+Zones do not control where in your page the Widgemo lives. That is a hosting concern. Zones only control the internal structure of the Widgemo surface itself.
 
-`zones.content` defines how the dataset behaves and renders.
+---
+
+### 3. Content
+
+`zones.content` defines how the dataset renders and behaves.
 
 ```tsx
-const content = configurationModelConfig.zones.content;
-
-// content from the live example above
-{
+content: {
   mode: 'table',
-  sorting: [{ fieldKey: 'salary', direction: 'desc' }],
-  item: { ... },
-}
+  sorting: [{ fieldKey: 'revenue', direction: 'desc' }],
+  item: { /* ... */ },
+},
 ```
 
-This is where you choose the rendering mode and content-level behavior.
+`mode` picks the rendering strategy: `'table'`, `'grid'`, `'board'`, `'carousel'`, or `'chart'`. The content zone also hosts sorting, filtering, grouping, pagination, gestures, and per-item actions — all declared as config, not imperative logic.
 
-## 4. Item and Fields
+---
 
-`item` defines how a single entity is rendered. `fields` define each displayed value.
+### 4. Item and Fields
+
+`item` defines the layout of one entity. `fields` declare which values to show, how to label them, and how to render them.
 
 ```tsx
-const item = configurationModelConfig.zones.content.item;
-
-// item from the live example above
-{
+item: {
   fields: [
-    { key: 'name', label: 'Name' },
-    { key: 'role', label: 'Role' },
-    { key: 'status', label: 'Status', renderAs: 'badge' },
-    { key: 'salary', label: 'Salary', renderAs: 'currency', renderAsOptions: { currency: 'USD' } },
+    { key: 'name',    label: 'Name',    type: 'text',   sortable: true },
+    { key: 'role',    label: 'Role',    type: 'text' },
+    { key: 'status',  label: 'Status',  type: 'text',   renderAs: 'badge',
+      renderAsOptions: { colorMap: { active: '#198754', pending: '#ffc107', inactive: '#6c757d' } } },
+    { key: 'revenue', label: 'Revenue', type: 'number', renderAs: 'currency',
+      renderAsOptions: { currency: 'USD' }, sortable: true },
+    { key: 'trend',   label: 'Trend',   renderAs: 'sparkTrend',
+      renderAsOptions: { width: 100, height: 32, showDeltaLabel: true } },
   ],
   layout: { type: 'auto' },
-}
+},
 ```
 
-This is where you decide field order, renderers, labels, widths, and item layout.
+`key` maps to the entity property. `type` sets the sort comparator and default renderer. `renderAs` overrides the renderer. `renderAsOptions` configures it. Fields not listed in the array are not shown.
 
-## Practical Reading Order
+---
 
-When reading a Widgemo config, use this order:
+## Reading a Config
 
-1. Start with `zones` to understand the high-level shell
-2. Read `zones.content.mode` to understand the main rendering strategy
-3. Read `zones.content.item.layout` to understand per-record layout
-4. Read `zones.content.item.fields` to understand the actual values shown
+When you encounter an unfamiliar Widgemo config, use this order:
+
+1. **`zones`** — how many regions does the Widgemo have? What titles and actions do they carry?
+2. **`zones.content.mode`** — what is the primary rendering strategy?
+3. **`zones.content.item.layout`** — how are individual records arranged?
+4. **`zones.content.item.fields`** — what values are shown and how are they rendered?
+5. **`interactions.onEvent`** — what does the app do when something is clicked?
 
 

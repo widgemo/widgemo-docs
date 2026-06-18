@@ -89,6 +89,17 @@ export const gridResponsiveConfig = {
   },
 };
 
+export const gridMasonryData = [
+  { imageUrl: 'https://picsum.photos/seed/wgm-a/400/300' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-b/400/520' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-c/400/250' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-d/400/430' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-e/400/360' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-f/400/460' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-g/400/280' },
+  { imageUrl: 'https://picsum.photos/seed/wgm-h/400/390' },
+];
+
 export const gridDensePackingConfig = {
   zones: {
     content: {
@@ -96,17 +107,19 @@ export const gridDensePackingConfig = {
       modeConfig: {
         grid: {
           layoutMode: 'masonry',
-          minItemWidth: '210px',
+          minItemWidth: '180px',
           maxColumns: 4,
           gap: '0.75rem',
         },
       },
       item: {
         fields: [
-          { key: 'name', label: 'Name' },
-          { key: 'role', label: 'Role' },
-          { key: 'bio', label: 'Bio', wrap: true },
-          { key: 'status', label: 'Status', renderAs: 'badge' },
+          {
+            key: 'imageUrl',
+            label: '',
+            type: 'image',
+            imageOptions: { width: '100%', height: 'auto', objectFit: 'cover', borderRadius: 6 },
+          },
         ],
         layout: { type: 'auto' },
       },
@@ -171,27 +184,50 @@ export const gridGroupingConfig = {
   },
 };
 
+export const gridSearchConfig = {
+  zones: {
+    content: {
+      mode: 'grid',
+      search: {
+        enabled: true,
+        fields: ['name', 'role', 'team'],
+        placeholder: 'Search members...',
+      },
+      filtering: [
+        { fieldKey: 'status', operator: 'ne', value: 'inactive' },
+      ],
+      modeConfig: {
+        grid: {
+          minItemWidth: '230px',
+          maxColumns: 4,
+          gap: '1rem',
+        },
+      },
+      item: {
+        fields: gridFields,
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
 # Grid Mode
 
-## Mode Purpose and When to Use
+`modeConfig.grid` tiles items into a responsive card grid. Use grid when card-based browsing matters more than dense row scanning.
 
-`modeConfig.grid` controls how Widgemo tiles items into a responsive card grid.
-Use grid mode when card-based browsing and visual grouping are more important than dense row scanning.
+## Shared Behavior
 
-## Shared-Feature Boundary
-
-Shared behavior remains canonical in reference pages:
+Pagination, search, static filtering, actions, gestures, and groupings work the same as other modes — see the reference pages:
 
 - [Content Config: Pagination and Search](/core/reference/content-config#pagination-and-search)
-- [Content Config: Static Filtering and Sorting](/core/reference/content-config#static-filtering-and-sorting)
-- [Content Config: Actions and Interactions](/core/reference/content-config#actions-and-interactions)
+- [Content Config: Static Filtering](/core/reference/content-config#static-filtering-and-sorting)
+- [Content Config: Actions and Interactions](/core/reference/content-config#actions)
 - [Content Config: Grouping](/core/reference/content-config#grouping)
 - [Content Config: Shape](/core/reference/content-config#shape) for responsive, loading, and error fields
-- [Field Config](/core/reference/field-config) for item-level field rendering and layout rules
+- [Item Config](/core/reference/item-config) for item-level shape and layout rules
+- [Field Config](/core/reference/field-config) for field-level rendering schema and renderer options
 
 ## Core Examples
-
-### Grid Layout Examples
 
 ### Responsive Grid (Baseline)
 
@@ -199,7 +235,6 @@ This baseline emphasizes responsive wrapping with clear defaults for card width 
 
 
 <WidgemoShowcase
-  title="Responsive Grid"
   description="A straightforward grid with fixed minimum card width and a capped column count."
   data={gridModeData}
   config={gridResponsiveConfig}
@@ -207,16 +242,51 @@ This baseline emphasizes responsive wrapping with clear defaults for card width 
 
 <div style={{ marginBottom: '1rem' }} />
 
+```tsx
+modeConfig: {
+  grid: {
+    minItemWidth: '230px',
+    maxColumns: 4,
+    gap: '1rem',
+  },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
 ### Masonry Layout
 
-This example uses masonry layout to reduce visible vertical gaps when cards have variable heights.
+Masonry packing is most visible when card heights vary naturally. Here each card contains a single image at its natural aspect ratio.
 
 <WidgemoShowcase
-  title="Masonry Layout"
-  description="Uses layoutMode='masonry' with variable-height cards to produce a waterfall layout."
-  data={gridModeData}
+  description="Uses layoutMode='masonry' with cards of varying heights to produce a waterfall layout."
+  data={gridMasonryData}
   config={gridDensePackingConfig}
 />
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  grid: {
+    layoutMode: 'masonry',
+    minItemWidth: '180px',
+    maxColumns: 4,
+    gap: '0.75rem',
+  },
+}
+// Image field — natural aspect ratios drive card heights:
+item: {
+  fields: [
+    {
+      key: 'imageUrl',
+      label: '',
+      type: 'image',
+      imageOptions: { width: '100%', height: 'auto', objectFit: 'cover', borderRadius: 6 },
+    },
+  ],
+}
+```
 
 <div style={{ marginBottom: '1rem' }} />
 
@@ -225,11 +295,27 @@ This example uses masonry layout to reduce visible vertical gaps when cards have
 Use the alignment controls when card width, spacing, or packing needs to be tuned beyond the defaults.
 
 <WidgemoShowcase
-  title="Alignment Controls"
   description="Centers narrower cards inside each grid cell to make justifyItems and alignItems behavior visible."
   data={gridModeData}
   config={gridAlignmentConfig}
 />
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+modeConfig: {
+  grid: {
+    minItemWidth: '280px',
+    maxColumns: 3,
+    gap: '1.25rem',
+    justifyItems: 'center',
+    alignItems: 'start',
+  },
+}
+item: {
+  style: { maxWidth: '210px', width: '100%' },
+}
+```
 
 <div style={{ marginBottom: '1rem' }} />
 
@@ -238,7 +324,6 @@ Use the alignment controls when card width, spacing, or packing needs to be tune
 `zones.content.groupings` also applies to grid mode. In grid, grouping controls are rendered as grouped sections (not table header controls).
 
 <WidgemoShowcase
-  title="Grouped Grid"
   description="Groups cards by team with collapsible group sections and a custom group label renderer."
   data={gridModeData}
   config={gridGroupingConfig}
@@ -246,40 +331,55 @@ Use the alignment controls when card width, spacing, or packing needs to be tune
 
 <div style={{ marginBottom: '1rem' }} />
 
-## Mode Option Reference
+```tsx
+zones: {
+  content: {
+    groupings: [
+      {
+        fieldKey: 'team',
+        collapsible: true,
+        renderer: (groupValue, count, isCollapsed) =>
+          `${groupValue} team · ${count} members ${isCollapsed ? '▶' : '▼'}`,
+      },
+    ],
+  },
+}
+```
 
-| Option | Values | Default | Effect |
-|---|---|---|---|
-| `layoutMode` | `standard`, `masonry` | `standard` | Selects regular CSS grid or masonry layout strategy. |
-| `gap` | any CSS length | `1rem` | Sets spacing between cards. |
-| `minItemWidth` | any CSS length | `220px` | Sets minimum card width before wrapping. |
-| `maxColumns` | any number >= 1 | unset | Caps the maximum number of columns. |
-| `autoFlow` | `row`, `column`, `dense` | `row` | Controls packing direction and density behavior. |
-| `justifyItems` | `start`, `end`, `center`, `stretch` | browser default | Controls horizontal card alignment inside each grid cell. |
-| `alignItems` | `start`, `end`, `center`, `stretch` | browser default | Controls vertical card alignment inside each grid cell. |
+<div style={{ marginBottom: '1rem' }} />
 
-For grouping contract details and mode applicability, see [Content Config: Grouping](/core/reference/content-config#grouping).
+### Search and Filtering
 
-For item-level card layout/field rendering details, see [Field Config](/core/reference/field-config).
+A search bar renders above the grid when `config.search` is enabled. Static filtering pre-excludes records before render — the grid simply shows fewer cards. This example pre-excludes inactive members and adds a live search over name, role, and team.
 
-## Mode-Specific Caveats
+<WidgemoShowcase
+  description="Search bar above the card grid with a static filter pre-applied to exclude inactive members."
+  data={gridModeData}
+  config={gridSearchConfig}
+/>
 
-- `autoFlow: dense` can visually reorder packing to fill gaps; use with care if strict visual sequence matters.
-- Grouping in grid renders grouped sections, not table-style header controls.
+<div style={{ marginBottom: '1rem' }} />
 
-## Coverage Summary
+```tsx
+zones: {
+  content: {
+    search: {
+      enabled: true,
+      fields: ['name', 'role', 'team'],
+      placeholder: 'Search members...',
+    },
+    filtering: [
+      { fieldKey: 'status', operator: 'ne', value: 'inactive' },
+    ],
+  },
+}
+```
 
-Every grid setting is represented by at least one live example on this page:
-
-- `minItemWidth`, `maxColumns`, `gap`: Responsive Grid (Baseline)
-- `layoutMode`: Masonry Layout
-- `autoFlow`: documented in Grid Option Reference (best visualized when card footprints vary)
-- `justifyItems`, `alignItems`: Alignment Controls
-- `groupings` in grid mode: Grouped Grid
-- shared content settings with grid (`search`, `pagination`, `filtering`, `sorting`, `actions`, `gestures`): Shared-Feature Boundary links above
+<div style={{ marginBottom: '1rem' }} />
 
 ## See Also
 
+- [Grid Mode Config](/core/reference/mode-config/grid) — full `modeConfig.grid` options, caveats, and coverage summary
 - [Content Config](/core/reference/content-config)
 - [Field Config](/core/reference/field-config)
 - [Table Mode](/core/concepts/modes/table)

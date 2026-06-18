@@ -1,0 +1,169 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const fieldDemoData = [
+  {
+    name: 'Aurora Chen',
+    score: 78,
+    active: true,
+    joined: '2024-03-15',
+    color: '#6366f1',
+    avatar: 'https://picsum.photos/seed/wgm-aurora/40/40',
+    status: 'active',
+    budget: 4200,
+    change: 12,
+    rating: 4,
+  },
+  {
+    name: 'Mateo Silva',
+    score: 45,
+    active: false,
+    joined: '2023-11-02',
+    color: '#10b981',
+    avatar: 'https://picsum.photos/seed/wgm-mateo/40/40',
+    status: 'pending',
+    budget: 7800,
+    change: -5,
+    rating: 3,
+  },
+  {
+    name: 'Priya Nair',
+    score: 91,
+    active: true,
+    joined: '2022-07-20',
+    color: '#f59e0b',
+    avatar: 'https://picsum.photos/seed/wgm-priya/40/40',
+    status: 'inactive',
+    budget: 1500,
+    change: 3,
+    rating: 5,
+  },
+];
+
+export const fieldTypesConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'name (text)', type: 'text' },
+          { key: 'status', label: 'status (text)', type: 'text' },
+          { key: 'score', label: 'score (number)', type: 'number' },
+          { key: 'budget', label: 'budget (number)', type: 'number' },
+          { key: 'rating', label: 'rating (number)', type: 'number' },
+          { key: 'change', label: 'change (number)', type: 'number' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const renderAsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'name (text)', type: 'text' },
+          { key: 'status', label: 'status → badge', renderAs: 'badge' },
+          { key: 'score', label: 'score → progress', renderAs: 'progress', renderAsOptions: { height: '12px' } },
+          { key: 'budget', label: 'budget → currency', renderAs: 'currency' },
+          { key: 'rating', label: 'rating → rating', renderAs: 'rating' },
+          { key: 'change', label: 'change → deltaValue', renderAs: 'deltaValue', renderAsOptions: { suffixPercent: true } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# Field Components Overview
+
+Field components define how individual item values are displayed inside any mode. Fields are stable across mode switches — the same field config works in a table row, a grid card, or a carousel slide.
+
+Canonical references:
+
+- [Item Config](/core/reference/item-config) — `ItemConfig` shape and item layout
+- [Field Config](/core/reference/field-config) — `FieldConfig` schema and built-in catalogs
+- [Field Rendering Reference](/core/guides/field-rendering-decisions) — `type` vs `renderAs` guidance
+
+## When to Use Each Layer
+
+| Layer | Use when | Config key |
+|---|---|---|
+| `type` | The field has a known semantic category (date, image, boolean…) | `fields[].type` |
+| `renderAs` | You need a specific visual presentation for any value | `fields[].renderAs` |
+| Custom renderAs | You need a reusable visual renderer not covered by the built-ins | [Extension Architecture](/core/concepts/extension-architecture) |
+| Custom field type | Domain behavior should be reusable and registered first-class | [Custom Field Types](/core/extensions/custom-field-types) |
+
+If both `type` and `renderAs` are set on the same field, `renderAs` controls display — the type switch is skipped entirely. However, `type` still has two concrete effects: it determines wrap clipping behavior (`image` type is excluded from `wrap=false` clip treatment; `email` and `url` types apply forced word-breaking under `wrap=true`), and it acts as a fallback display if the `renderAs` renderer returns nothing. Set `type` alongside `renderAs` when the field's data category matters for wrap behavior or for documentation clarity.
+
+## Built-in Field Types
+
+Field types are set with `fields[].type`. Each column renders a field using its native type — plain text, a formatted number, and so on.
+
+<WidgemoShowcase
+  description="Six fields, no renderAs — each value is rendered by its type alone."
+  data={fieldDemoData}
+  config={fieldTypesConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+| Group | Types |
+|---|---|
+| Core | `text`, `number`, `boolean`, `textarea`, `select`, `reference` |
+| Contact and Media | `email`, `url`, `image`, `swatch` |
+| Temporal | `date`, `time`, `datetime`, `timestamp`, `duration` |
+
+## Built-in renderAs Renderers
+
+`renderAs` controls how a value looks, independent of its type. The table below shows the exact same fields as above — only the column headers and visual output change.
+
+<WidgemoShowcase
+  description="Same six fields, same data — now each column applies a renderAs renderer instead of relying on the type alone."
+  data={fieldDemoData}
+  config={renderAsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+| Renderer | Best for |
+|---|---|
+| `badge` | Status labels, category tags |
+| `progress` | Percentage or capacity values |
+| `currency` | Monetary amounts with locale formatting |
+| `rating` | Star or icon-based score display |
+| `deltaValue` | Signed change values with trend color |
+| `sparkTrend` | Array-valued trend lines |
+| `scoreMeter` | Numeric score with a visual meter |
+| `compositionBar` | Multi-segment proportion bars |
+| `link` | URLs or email addresses as clickable links |
+| `jsonPreview` | Collapsible JSON object preview |
+
+## Field Guides
+
+- [text](/core/components/fields/text)
+- [number](/core/components/fields/number)
+- [boolean](/core/components/fields/boolean)
+- [select](/core/components/fields/select)
+- [reference](/core/components/fields/reference)
+- [textarea](/core/components/fields/textarea)
+- [email](/core/components/fields/email)
+- [url](/core/components/fields/url)
+- [image](/core/components/fields/image)
+- [swatch](/core/components/fields/swatch)
+- [date](/core/components/fields/date)
+- [time](/core/components/fields/time)
+- [datetime](/core/components/fields/datetime)
+- [timestamp](/core/components/fields/timestamp)
+- [duration](/core/components/fields/duration)
+- [Temporal Fields Guide](/core/components/fields/temporal-fields)
+
+## See Also
+
+- [Field Config](/core/reference/field-config) — canonical field contract
+- [Renderer Components Overview](/core/components/renderers/overview) — built-in and custom renderers
+- [Custom Field Types](/core/extensions/custom-field-types) — domain-level extension

@@ -1,0 +1,465 @@
+---
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+# Item Config
+
+`ItemConfig` defines how each entity is presented inside the active content mode.
+
+`zones.content.item` is the bridge between:
+
+- **field semantics and rendering** (`fields[]`, `type`, `renderAs`)
+- **item composition** (`layout`, `template`)
+- **item-level styling behavior** (`style`, `conditionalBorder`, `conditionalBackgroundColor`, `wrap`)
+
+For field-level options and renderer catalogs, see [Field Config](/core/reference/field-config).
+
+For mode-specific controls (table/grid/carousel/board/chart), see [Mode Config Reference](/core/reference/mode-config/table).
+
+For `type` vs `renderAs` resolution rules, see [Field Rendering Reference](/core/guides/field-rendering-decisions).
+
+## ItemConfig Interface
+
+```ts
+interface ItemConfig<T> {
+  fields: FieldConfig[];
+  layout?: ItemLayout;
+  style?: React.CSSProperties | string;
+  template?: ItemTemplate;
+  conditionalBorder?: (entity: T) => { thickness?: number; color: string; placement?: 'left' | 'right' | 'top' | 'bottom' | 'all' } | null;
+  cardOptions?: {
+    border?: boolean;
+    borderStyle?: string;
+    borderWidth?: string;
+    borderColor?: string;
+    borderRadius?: string;
+    backgroundColor?: string;
+    boxShadow?: string;
+    padding?: string;
+  };
+  conditionalBackgroundColor?: (entity: T) => string | { backgroundColor: string; color?: string } | undefined;
+  wrap?: boolean;
+  actionOverflow?: {
+    maxInline?: number | { mobile: number; tablet: number; desktop: number };
+    menuLabel?: string;
+    menuTooltip?: string;
+    indicator?: 'pulse' | 'scale' | 'color-shift' | 'none';
+  };
+}
+```
+
+## SectionConfig Interface
+
+```ts
+interface SectionConfig {
+  title?: string;
+  fields: string[];
+  layout?: ItemLayout;
+  className?: string;
+}
+```
+
+## Fields Relationship
+
+`ItemConfig.fields` is required and uses `FieldConfig[]`.
+
+```tsx
+item: {
+  fields: [
+    { key: 'name', label: 'Name', type: 'text' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+    { key: 'joinedAt', label: 'Joined', type: 'date', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date' } },
+  ],
+  layout: { type: 'auto' },
+}
+```
+
+## Item Layout
+
+`ItemConfig.layout` controls how fields are arranged within each item card.
+
+- In grid/board/carousel mode, item layout is applied directly to each rendered item.
+- In table mode, item layout applies when using rich-cell item rendering patterns (for example, section-based rich cells), not plain traditional cell rendering.
+
+### Interactive Configurations
+
+#### Auto
+
+<WidgemoShowcase
+  title="Item Layout: Auto"
+  description="Default field flow with no explicit flex/grid/section grouping."
+  data={[
+    {
+      id: 1,
+      name: 'Aurora Chen',
+      email: 'aurora@widgemo.dev',
+      role: 'Design Lead',
+      department: 'Design Systems',
+      status: 'active',
+      avatar: 'https://i.pravatar.cc/120?img=47',
+    },
+    {
+      id: 2,
+      name: 'Mateo Silva',
+      email: 'mateo@widgemo.dev',
+      role: 'Platform Engineer',
+      department: 'Core Platform',
+      status: 'pending',
+      avatar: 'https://i.pravatar.cc/120?img=12',
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Auto Layout',
+        subtitle: 'item.layout.type = auto',
+      },
+      content: {
+        mode: 'grid',
+        modeConfig: { grid: { maxColumns: 1 } },
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'email', label: 'Email', type: 'email' },
+            { key: 'role', label: 'Role', renderAs: 'badge' },
+            { key: 'department', label: 'Department' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+```tsx
+item: {
+  fields: [
+    { key: 'name', label: 'Name' },
+    { key: 'email', label: 'Email', type: 'email' },
+    { key: 'role', label: 'Role', renderAs: 'badge' },
+    { key: 'department', label: 'Department' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+  ],
+  layout: { type: 'auto' },
+}
+```
+
+#### Flex
+
+<WidgemoShowcase
+  title="Item Layout: Flex"
+  description="Single-row alignment with avatar, identity, and status fields."
+  data={[
+    {
+      id: 1,
+      name: 'Aurora Chen',
+      role: 'Lead',
+      status: 'active',
+      department: 'Design Ops',
+      avatar: 'https://i.pravatar.cc/120?img=47',
+    },
+    {
+      id: 2,
+      name: 'Mateo Silva',
+      role: 'Platform',
+      status: 'pending',
+      department: 'Core Platform',
+      avatar: 'https://i.pravatar.cc/120?img=12',
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Flex Layout',
+        subtitle: 'item.layout.type = flex (direction: row)',
+      },
+      content: {
+        mode: 'grid',
+        modeConfig: { grid: { maxColumns: 1 } },
+        item: {
+          fields: [
+            { key: 'avatar', label: 'Avatar', type: 'image', showLabel: false, width: 48, imageOptions: { circular: true, width: 48, height: 48 } },
+            { key: 'name', label: 'Name', showLabel: false, width: '8.5rem', wrap: false },
+            { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false, width: '6rem', wrap: false },
+            { key: 'status', label: 'Status', renderAs: 'badge', showLabel: false, width: '5.5rem', wrap: false },
+            { key: 'department', label: 'Dept', showLabel: false, width: '9rem' },
+          ],
+          layout: {
+            type: 'flex',
+            flex: {
+              direction: 'row',
+              wrap: true,
+              justify: 'flex-start',
+              align: 'center',
+            },
+          },
+        },
+      },
+    },
+  }}
+/>
+
+```tsx
+item: {
+  fields: [
+    { key: 'avatar', label: 'Avatar', type: 'image', showLabel: false, width: 48,
+      imageOptions: { circular: true, width: 48, height: 48 } },
+    { key: 'name', label: 'Name', showLabel: false, width: '8.5rem', wrap: false },
+    { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false, width: '6rem', wrap: false },
+    { key: 'status', label: 'Status', renderAs: 'badge', showLabel: false, width: '5.5rem', wrap: false },
+    { key: 'department', label: 'Dept', showLabel: false, width: '9rem' },
+  ],
+  layout: {
+    type: 'flex',
+    flex: {
+      direction: 'row',
+      wrap: true,
+      justify: 'flex-start',
+      align: 'center',
+    },
+  },
+}
+```
+
+#### CSS Grid with Template Areas
+
+<WidgemoShowcase
+  title="Item Layout: Grid Areas"
+  description="Area tokens map directly to field keys; repeated area names create spanning fields."
+  data={[
+    {
+      id: 1,
+      name: 'Aurora Chen',
+      email: 'aurora@wg.dev',
+      role: 'Design Lead',
+      department: 'Design Systems',
+      avatar: 'https://i.pravatar.cc/120?img=47',
+    },
+    {
+      id: 2,
+      name: 'Mateo Silva',
+      email: 'mateo@wg.dev',
+      role: 'Platform Engineer',
+      department: 'Core Platform',
+      avatar: 'https://i.pravatar.cc/120?img=12',
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Grid Areas Layout',
+        subtitle: 'item.layout.type = grid with named areas',
+      },
+      content: {
+        mode: 'grid',
+        modeConfig: { grid: { maxColumns: 1 } },
+        item: {
+          fields: [
+            { key: 'avatar', label: 'Avatar', type: 'image', showLabel: false, imageOptions: { circular: true, width: 56, height: 56 } },
+            { key: 'name', label: 'Name', showLabel: false, wrap: false },
+            { key: 'email', label: 'Email', type: 'email', showLabel: false, wrap: false },
+            { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false, wrap: false },
+            { key: 'department', label: 'Dept', showLabel: false, wrap: false },
+          ],
+          layout: {
+            type: 'grid',
+            grid: {
+              columns: '56px minmax(10rem, 1.35fr) minmax(8rem, 1fr)',
+              gap: '0.75rem 1rem',
+              areas: [
+                '"avatar name role"',
+                '"avatar email department"',
+              ],
+            },
+          },
+        },
+      },
+    },
+  }}
+/>
+
+How `grid.areas` maps to rendered fields:
+
+- Each token in `areas` must match a field `key` exactly.
+- A field is rendered once per item; repeating the same token in multiple cells makes that one field span those cells.
+- If a field key is not present in `areas`, the browser auto-places that field in the grid flow.
+- If an `areas` token has no matching field key, that named area remains empty.
+
+```tsx
+item: {
+  fields: [
+    { key: 'avatar', label: 'Avatar', type: 'image', showLabel: false,
+      imageOptions: { circular: true, width: 56, height: 56 } },
+    { key: 'name', label: 'Name', showLabel: false, wrap: false },
+    { key: 'email', label: 'Email', type: 'email', showLabel: false, wrap: false },
+    { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false, wrap: false },
+    { key: 'department', label: 'Dept', showLabel: false, wrap: false },
+  ],
+  layout: {
+    type: 'grid',
+    grid: {
+      columns: '56px minmax(10rem, 1.35fr) minmax(8rem, 1fr)',
+      gap: '0.75rem 1rem',
+      areas: [
+        '"avatar name role"',
+        '"avatar email department"',
+      ],
+    },
+  },
+}
+```
+
+#### Sections
+
+<WidgemoShowcase
+  title="Item Layout: Sections"
+  description="Fields grouped into titled sections for structured card content."
+  data={[
+    {
+      id: 1,
+      name: 'Aurora Chen',
+      email: 'aurora@wg.dev',
+      role: 'Design Lead',
+      department: 'Design Systems',
+      status: 'active',
+      progress: 91,
+    },
+    {
+      id: 2,
+      name: 'Mateo Silva',
+      email: 'mateo@wg.dev',
+      role: 'Platform Engineer',
+      department: 'Core Platform',
+      status: 'pending',
+      progress: 76,
+    },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Sections Layout',
+        subtitle: 'item.layout.type = sections',
+      },
+      content: {
+        mode: 'grid',
+        modeConfig: { grid: { maxColumns: 1 } },
+        item: {
+          cardOptions: {
+            backgroundColor: '#1f2430',
+            borderColor: '#3b4252',
+            borderRadius: '10px',
+            padding: '14px',
+          },
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'email', label: 'Email', type: 'email' },
+            { key: 'role', label: 'Role', renderAs: 'badge' },
+            { key: 'department', label: 'Department' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'progress', label: 'Progress', renderAs: 'progress' },
+          ],
+          layout: {
+            type: 'sections',
+            sections: [
+              {
+                title: '1. Contact',
+                className: 'wg-item-section wg-item-section--contact',
+                fields: ['name', 'email'],
+                layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+              },
+              {
+                title: '2. Role & Team',
+                className: 'wg-item-section wg-item-section--team',
+                fields: ['role', 'department'],
+                layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+              },
+              {
+                title: '3. Metrics',
+                className: 'wg-item-section wg-item-section--metrics',
+                fields: ['status', 'progress'],
+                layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+              },
+            ],
+          },
+        },
+      },
+    },
+  }}
+/>
+
+Section-level visual differentiation is supported through `SectionConfig.className`. Apply classes per section, then style backgrounds, outlines, and spacing in your app or docs CSS.
+
+```tsx
+item: {
+  cardOptions: {
+    backgroundColor: '#1f2430',
+    borderColor: '#3b4252',
+    borderRadius: '10px',
+    padding: '14px',
+  },
+  fields: [
+    { key: 'name', label: 'Name' },
+    { key: 'email', label: 'Email', type: 'email' },
+    { key: 'role', label: 'Role', renderAs: 'badge' },
+    { key: 'department', label: 'Department' },
+    { key: 'status', label: 'Status', renderAs: 'badge' },
+    { key: 'progress', label: 'Progress', renderAs: 'progress' },
+  ],
+  layout: {
+    type: 'sections',
+    sections: [
+      {
+        title: '1. Contact',
+        className: 'wg-item-section wg-item-section--contact',
+        fields: ['name', 'email'],
+        layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+      },
+      {
+        title: '2. Role & Team',
+        className: 'wg-item-section wg-item-section--team',
+        fields: ['role', 'department'],
+        layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+      },
+      {
+        title: '3. Metrics',
+        className: 'wg-item-section wg-item-section--metrics',
+        fields: ['status', 'progress'],
+        layout: { type: 'grid', grid: { columns: '1fr', gap: '0.35rem' } },
+      },
+    ],
+  },
+}
+```
+
+```css
+.wg-item-section {
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.wg-item-section--contact {
+  background: rgba(45, 212, 191, 0.14);
+}
+
+.wg-item-section--team {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.wg-item-section--metrics {
+  background: rgba(245, 158, 11, 0.12);
+}
+```
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Field Config](/core/reference/field-config)
+- [Field Rendering Reference](/core/guides/field-rendering-decisions)
+- [Mode Config: Table](/core/reference/mode-config/table)
+- [Mode Config: Grid](/core/reference/mode-config/grid)
+- [Mode Config: Carousel](/core/reference/mode-config/carousel)
+- [Mode Config: Board](/core/reference/mode-config/board)
+- [Mode Config: Chart](/core/reference/mode-config/chart)

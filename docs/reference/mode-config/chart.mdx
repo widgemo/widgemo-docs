@@ -1,0 +1,84 @@
+---
+---
+
+# Chart Mode Config
+
+`modeConfig.chart` controls series definitions, axes, grid, legends, tooltips, and orientation in chart mode.
+
+```tsx
+content: {
+  mode: 'chart',
+  modeConfig: {
+    chart: {
+      xAxis: 'month',
+      height: 300,
+      showLegend: true,
+      series: [
+        { key: 'revenue', type: 'bar' },
+        { key: 'visits',  type: 'line' },
+      ],
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `xAxis` | string | `'name'` | Selects the label field used for chart categories. |
+| `height` | number | `300` | Sets the chart height in pixels. |
+| `showLegend` | `true`, `false` | `true` | Shows or hides the legend. |
+| `legendAlign` | `left`, `center`, `right` | `center` | Aligns the legend. |
+| `showGrid` | `true`, `false` | `true` | Shows or hides the cartesian grid. |
+| `showLabels` | `true`, `false` | `false` | Shows or hides data labels on bars, lines, and polar segments. |
+| `colors` | string array | theme tokens | Overrides the default series color palette. |
+| `orientation` | `vertical`, `horizontal` | `vertical` | Flips bar charts to horizontal. Only applies when all series are `bar`. |
+| `lineThickness` | number (`0.5`–`20`) | `3.5` | Sets the default stroke width for line and area series. Can be overridden per series. |
+| `showDots` | `true`, `false` | `false` | Shows or hides line/area data points. Can be overridden per series. |
+| `areaGradient` | `true`, `false` | `true` | Enables or disables gradient fills for area series. Can be overridden per series. |
+| `showTooltip` | `true`, `false` | `true` | Enables or disables hover tooltips. |
+| `donutInnerRadiusRatio` | number (`0.2`–`0.9`) | `0.58` | Controls the donut hole size. Can be overridden per series. |
+| `tooltip.position` | `top`, `bottom`, `left`, `right`, `top-right`, `top-left`, `bottom-right`, `bottom-left` | `top-right` | Sets tooltip placement. |
+| `tooltip.render` | `(context) => ReactNode` | unset | Replaces the built-in tooltip content. |
+
+### Per-series overrides
+
+`color`, `lineThickness`, `showDots`, `areaGradient`, and `donutInnerRadiusRatio` can be set on individual series entries to override the chart-level default for that series only:
+
+```tsx
+chart: {
+  showDots: false,        // default for all series
+  lineThickness: 1.5,
+  series: [
+    { key: 'revenue', type: 'line', showDots: true, color: '#6366f1', lineThickness: 3 }, // overrides
+    { key: 'visits',  type: 'line' }, // inherits chart defaults
+  ],
+}
+```
+
+## Mode-Specific Caveats
+
+- `orientation` applies only when all series are `bar`.
+- `donutInnerRadiusRatio` applies only to donut series.
+- Only one `pie` or `donut` series is supported per chart.
+- Mixing polar (`pie`, `donut`) and cartesian (`bar`, `line`, `area`) series in the same chart is not supported.
+- Sorting (`config.sorting`) is not supported in chart mode. Pre-sort your data before passing it in if a specific order is needed.
+
+## Coverage Summary
+
+Every chart option is mapped to at least one example or subsection on the [Chart Mode](/core/concepts/modes/chart) guide page:
+
+- `xAxis`, `height`, `showLegend`, `showGrid`: Bar Chart, Line Chart, Area Chart, Pie Chart, Donut Chart
+- `legendAlign`, `showLabels`, `colors`, `showTooltip`, `tooltip.position`, `tooltip.render`: Chart Options Reference
+- `orientation`: Horizontal Bars example
+- `lineThickness`, `showDots`, `areaGradient`: Per-Series Overrides, Line/Area Chart
+- `donutInnerRadiusRatio`: Donut Chart, Per-Series Overrides
+
+## See Also
+
+- [Chart Mode](/core/concepts/modes/chart) — examples and configuration references
+- [Content Config](/core/reference/content-config) — `modeConfig`
+- [Field Config](/core/reference/field-config)
+- [compositionBar vs Chart Mode](/core/components/renderers/composition-bar-guide#when-to-use-compositionbar-vs-chart-mode)

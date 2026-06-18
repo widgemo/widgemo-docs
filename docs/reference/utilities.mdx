@@ -1,0 +1,187 @@
+---
+---
+
+# Utilities
+
+Utility functions exported from `@widgemo/widgemo-core` that are useful outside the core rendering pipeline.
+
+## Exports
+
+| Export | Kind | Purpose |
+|---|---|---|
+| `widgemoColors` | Namespace object | Color manipulation and palette helpers |
+| `parseTemporalValue` | Function | Parse raw temporal values into `Date` |
+| `parseDurationValue` | Function | Normalize raw durations into milliseconds |
+| `isTemporalParseMode` | Function | Validate `TemporalParseMode` strings |
+| `generateId` | Function | Create stable-ish generated ids |
+| `isValidEmail` | Function | Validate email syntax |
+
+---
+
+## `widgemoColors`
+
+Color utilities grouped on the `widgemoColors` named export. Useful for building theme-consistent custom renderers, tooltips, and palettes.
+
+```tsx
+import { widgemoColors } from '@widgemo/widgemo-core';
+```
+
+### `lightenDarkenColor(hex, amount)`
+
+Lighten or darken a hex color by a fixed amount. Positive values lighten, negative values darken.
+
+```tsx
+const lighter = widgemoColors.lightenDarkenColor('#3b82f6', 40);  // '#74aaf9' (approx)
+const darker  = widgemoColors.lightenDarkenColor('#3b82f6', -40); // '#035cd3' (approx)
+```
+
+### `getContrastColor(hex)`
+
+Returns `'#000000'` or `'#ffffff'` — whichever gives better readability against the supplied background.
+
+```tsx
+const textColor = widgemoColors.getContrastColor('#1e293b'); // '#ffffff'
+const textOnLight = widgemoColors.getContrastColor('#f1f5f9'); // '#000000'
+```
+
+Useful for overlaying a label or icon on a dynamic background color.
+
+### `generatePalette(hex, options?)`
+
+Generate an array of tints and shades from a base color. Returns a `Palette` object.
+
+```tsx
+const palette = widgemoColors.generatePalette('#6366f1', { steps: 5 });
+// palette.tints  → ['#e0e7ff', '#c7d2fe', '#a5b4fc', '#818cf8', '#6366f1']
+// palette.shades → ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81']
+```
+
+`generatePalette` returns a `Palette` object.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `steps` | `number` | `5` | Number of tint/shade steps to generate. |
+| `includeBase` | `boolean` | `true` | Whether to include the base color in the output. |
+
+Types: `import type { Palette, PaletteOptions } from '@widgemo/widgemo-core'`
+
+---
+
+## Temporal utilities
+
+Helper functions for parsing and validating raw temporal values. Used internally by the date, time, datetime, timestamp, and duration renderers. Exposed for host applications that need to pre-process or validate temporal data.
+
+```tsx
+import { parseTemporalValue, parseDurationValue, isTemporalParseMode } from '@widgemo/widgemo-core';
+```
+
+### Export summary
+
+| Export | Signature | Returns |
+|---|---|---|
+| `parseTemporalValue` | `(value, parseMode) => Date \| null` | Parsed `Date` or `null` |
+| `parseDurationValue` | `(value, unit) => number` | Milliseconds |
+| `isTemporalParseMode` | `(value) => boolean` | Type-guard result |
+
+### `parseTemporalValue(value, parseMode)`
+
+Parse a raw value into a `Date` given a `TemporalParseMode`. Returns `null` if parsing fails.
+
+```tsx
+import { parseTemporalValue } from '@widgemo/widgemo-core';
+
+parseTemporalValue(1718467200000, 'epoch-ms');    // Date (2024-06-15T...)
+parseTemporalValue(1718467200, 'epoch-sec');      // Date
+parseTemporalValue('2024-06-15', 'iso-date');     // Date
+parseTemporalValue('14:30:00', 'iso-time');       // Date (time fields only)
+parseTemporalValue('2024-06-15T14:30:00Z', 'iso-datetime'); // Date
+parseTemporalValue('not-a-date', 'iso-date');     // null
+```
+
+`TemporalParseMode` values: `'epoch-ms' | 'epoch-sec' | 'iso-date' | 'iso-datetime' | 'iso-time' | 'any'`
+
+`'any'` attempts multiple parse strategies — avoid for epoch values where the numeric range is ambiguous. See [Timestamp Renderer](/core/components/renderers/timestamp) for context.
+
+### `parseDurationValue(value, unit)`
+
+Convert a raw duration number to milliseconds given a `DurationUnit`.
+
+```tsx
+import { parseDurationValue } from '@widgemo/widgemo-core';
+
+parseDurationValue(90,   'sec');  // 90000
+parseDurationValue(1.5,  'min');  // 90000
+parseDurationValue(2,    'hour'); // 7200000
+parseDurationValue(3600000, 'ms'); // 3600000
+```
+
+`DurationUnit` values: `'ms' | 'sec' | 'min' | 'hour' | 'day'`
+
+### `isTemporalParseMode(value)`
+
+Type-guard — returns `true` if `value` is a valid `TemporalParseMode` string.
+
+```tsx
+import { isTemporalParseMode } from '@widgemo/widgemo-core';
+
+isTemporalParseMode('epoch-ms');   // true
+isTemporalParseMode('epoch-sec');  // true
+isTemporalParseMode('daily');      // false
+```
+
+Useful for validating user-supplied config at runtime boundaries.
+
+---
+
+## General utilities
+
+Small helpers exposed from the core package.
+
+| Export | Signature | Purpose |
+|---|---|---|
+| `generateId` | `() => string` | Generate a stable-ish identifier string |
+| `isValidEmail` | `(value) => boolean` | Validate email syntax |
+
+### `generateId()`
+
+Generate a stable ID string. Used internally for element IDs and interaction identifiers.
+
+```tsx
+import { generateId } from '@widgemo/widgemo-core';
+
+const id = generateId(); // 'wdg-a4f2c1' (format may vary)
+```
+
+### `isValidEmail(value)`
+
+Returns `true` if `value` is a syntactically valid email address. Used internally by the `email` field type.
+
+```tsx
+import { isValidEmail } from '@widgemo/widgemo-core';
+
+isValidEmail('user@example.com'); // true
+isValidEmail('not-an-email');     // false
+```
+
+---
+
+## Theme utilities
+
+Theme utility functions are documented on [Theme API](/core/reference/theme-api). Quick reference:
+
+| Function | Description |
+|---|---|
+| `getTheme(name?)` | Retrieve a registered theme by name, with fallback to the default registry theme. |
+| `registerTheme(name, theme)` | Register a custom `WidgemoTheme`. |
+| `mergeZoneTheme(base, overrides)` | Merge a partial `ZoneTheme` into a resolved theme. |
+
+Import: `import { getTheme, registerTheme, mergeZoneTheme } from '@widgemo/widgemo-core'`
+
+---
+
+## See Also
+
+- [Theme API](/core/reference/theme-api) — `WidgemoThemeProvider`, `registerTheme`, and zone theme types
+- [Extension API](/core/reference/extension-api) — `widgemoRegistry` and `advanced`
+- [Date Renderer](/core/components/renderers/date), [Timestamp Renderer](/core/components/renderers/timestamp), [Duration Renderer](/core/components/renderers/duration) — temporal renderer context for parse modes
+- [All Exports](/core/reference/all-exports) — complete named export index

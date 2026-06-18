@@ -59,10 +59,14 @@ export const zeroConfig = {
 
 # Quick Start
 
+## Purpose
+
 Pass `data` as a top-level prop and describe the layout in `config`. Mode-specific settings live under `modeConfig.<mode>`.
 
+## Core Example
+
 <WidgemoShowcase
-  title="Example Widget"
+  title="Example Widgemo"
   data={quickStartData}
   config={quickStartConfig}
 />
@@ -108,11 +112,13 @@ function App() {
 }
 ```
 
-## With a custom theme
+## Variants
+
+### With a custom theme
 
 Pass a `WidgemoTheme` object to override tokens or zone styles:
 
-### Example Widget
+### Example Widgemo
 
 <WidgemoThemeProvider theme={customTheme}>
   <div className="widgemo-showcase__widget">
@@ -139,12 +145,12 @@ Pass a `WidgemoTheme` object to override tokens or zone styles:
 </WidgemoThemeProvider>
 ```
 
-## Zero-config table
+### Zero-config table
 
 Fields are inferred from data keys — the minimum viable config:
 
 <WidgemoShowcase
-  title="Example Widget"
+  title="Example Widgemo"
   data={zeroConfigData}
   config={zeroConfig}
 />
@@ -165,9 +171,18 @@ const config = {
 <Widgemo data={data} config={config} />
 ```
 
-## Using Widgemo in an Existing App
+## Integration Path
 
 If you are adding Widgemo to an already-running product (instead of starting from scratch), continue with the integration guide:
 
-- [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app)
+- [Adopting Widgemo](/core/guides/adopting-widgemo)
+
+## Next Steps
+
+Use this progression to move from first render to production-safe configuration:
+
+1. [Your First Widgemo](/core/getting-started/your-first-widgemo)
+2. [Modes Overview](/core/concepts/modes-overview)
+3. [Content Config](/core/reference/content-config) and [Field Config](/core/reference/field-config) as canonical contracts
+4. [Common Setup Pitfalls](/core/getting-started/common-setup-pitfalls)
 

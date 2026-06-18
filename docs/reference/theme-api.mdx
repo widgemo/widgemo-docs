@@ -3,11 +3,38 @@
 
 # Theme API
 
-Theme-related exports from `@widgemo/widgemo-core`:
+Theme-related exports from `@widgemo/widgemo-core`.
+
+## Exports
+
+| Export | Kind | Purpose |
+|---|---|---|
+| `WidgemoThemeProvider` | Component | Applies scoped theme variables to a subtree |
+| `useWidgemoTheme` | Hook | Reads the resolved theme from context |
+| `getTheme(name?)` | Function | Retrieves a theme from the named registry |
+| `registerTheme(name, theme)` | Function | Registers a named theme in the runtime registry |
+| `mergeZoneTheme(base, overrides)` | Function | Shallow-merges `ZoneTheme` overrides safely |
+| `defaultWidgemoTheme` | Object (`WidgemoTheme`) | Public default light preset alias |
+
+---
 
 ## `WidgemoThemeProvider`
 
-Wrap your component tree to apply a theme:
+Wrap a subtree to apply scoped theme variables and context.
+
+### Props
+
+| Prop | Type | Default | Behavior |
+|---|---|---|---|
+| `theme` | `'light' \| 'dark' \| 'auto' \| WidgemoTheme` | `'light'` | Selects preset or custom theme object |
+| `className` | `string` | `''` | Added to the provider wrapper (`widgemo-theme-scope ...`) |
+| `children` | `ReactNode` | required | Rendered inside provider scope |
+
+### Behavior notes
+
+- `theme="auto"` evaluates once per render using `window.matchMedia('(prefers-color-scheme: dark)')`.
+- `auto` does not subscribe to operating-system preference changes.
+- The provider injects CSS vars into a wrapper element, so theme scope is local to that subtree.
 
 ```tsx
 import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
@@ -22,13 +49,11 @@ import { WidgemoThemeProvider } from '@widgemo/widgemo-core';
 <WidgemoThemeProvider theme={{ colors: { actionButtonBg: '#0f172a' } }}>…</WidgemoThemeProvider>
 ```
 
-`theme="auto"` is evaluated at render time from `window.matchMedia('(prefers-color-scheme: dark)')` and does not subscribe to live OS preference changes.
-
-Full widget dark/light theming is guaranteed through `WidgemoThemeProvider`.
+---
 
 ## `useWidgemoTheme`
 
-Access the resolved theme inside any component:
+Returns the resolved `WidgemoTheme` from context.
 
 ```tsx
 import { useWidgemoTheme } from '@widgemo/widgemo-core';
@@ -39,11 +64,25 @@ function MyHeader() {
 }
 ```
 
-Without a provider, `useWidgemoTheme()` returns an empty theme object (`{}`).
+Without a surrounding provider, it returns `{}`.
 
-## `registerTheme` / `getTheme`
+---
 
-Register named themes for reuse:
+## `registerTheme(name, theme)` and `getTheme(name?)`
+
+Runtime theme registry helpers.
+
+### `registerTheme(name, theme)`
+
+Registers a named `WidgemoTheme` for retrieval via `getTheme`.
+
+### `getTheme(name?)`
+
+Retrieves a theme by name.
+
+- `getTheme('my-theme')` returns the registered theme if present.
+- `getTheme()` uses `'default'`.
+- Unknown names fall back to the registry default.
 
 ```tsx
 import { registerTheme, getTheme } from '@widgemo/widgemo-core';
@@ -64,11 +103,17 @@ const config = {
 };
 ```
 
-`config.theme` contributes to runtime zone/action theme layering. Use `WidgemoThemeProvider` for full-surface dark/light theming.
+`config.theme` participates in runtime theming at widget/config level. Use `WidgemoThemeProvider` for subtree-scoped CSS variable theming.
+
+---
 
 ## `mergeZoneTheme`
 
-Merge partial zone theme overrides safely:
+Safely merges zone-level overrides.
+
+- Override keys win.
+- Existing base keys are preserved.
+- Undefined base is handled by returning overrides.
 
 ```tsx
 import { mergeZoneTheme } from '@widgemo/widgemo-core';
@@ -76,11 +121,11 @@ import { mergeZoneTheme } from '@widgemo/widgemo-core';
 const merged = mergeZoneTheme(baseTheme, overrides);
 ```
 
-`mergeZoneTheme` performs a safe shallow merge for zone theme objects: override keys win, unchanged base keys are preserved, and an undefined base is handled safely.
+---
 
 ## `defaultWidgemoTheme`
 
-Provider light preset alias (`defaultLightTheme`) exported from the public API. Useful as a base for custom theme objects:
+Public default light preset alias (from `defaultLightTheme`). Useful as a base for custom theme objects.
 
 ```tsx
 import { defaultWidgemoTheme } from '@widgemo/widgemo-core';
@@ -88,7 +133,13 @@ import { defaultWidgemoTheme } from '@widgemo/widgemo-core';
 console.log(defaultWidgemoTheme);
 ```
 
-## `WidgemoTheme` Interface
+Note: this export is the provider light preset alias. Registry `getTheme('default')` resolves the registry default object.
+
+---
+
+## Types
+
+### `WidgemoTheme`
 
 ```ts
 interface WidgemoTheme {
@@ -109,3 +160,43 @@ interface WidgemoTheme {
   action?: ActionTheme;
 }
 ```
+
+### `ZoneTheme`
+
+`ZoneTheme` controls zone-level inline style properties for header/footer rendering.
+
+| Field | Type |
+|---|---|
+| `titleFontSize` | `string` |
+| `padding` | `string` |
+| `backgroundColor` | `string` |
+| `borderColor` | `string` |
+| `borderWidth` | `string` |
+| `borderStyle` | `string` |
+| `borderRadius` | `string` |
+| `titleColor` | `string` |
+| `subtitleColor` | `string` |
+| `iconColor` | `string` |
+| `iconSize` | `number` |
+
+### `ActionTheme`
+
+`ActionTheme` controls action button and menu presentation.
+
+| Field | Type |
+|---|---|
+| `buttonBg` | `string` |
+| `buttonColor` | `string` |
+| `buttonBorder` | `string` |
+| `buttonBorderRadius` | `string` |
+| `buttonPadding` | `string` |
+| `buttonHoverBg` | `string` |
+| `menuBg` | `string` |
+| `menuBorder` | `string` |
+
+## See Also
+
+- [Theming](/core/concepts/theming)
+- [CSS Variable Reference](/core/reference/css-variables)
+- [Widgemo Config](/core/reference/widgemo-config)
+- [Zone Config](/core/reference/zone-config)

@@ -1,0 +1,161 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const dateData = [
+  { name: 'Aurora Chen',  joined: '2023-03-15', contract: '2024-12-31' },
+  { name: 'Mateo Silva',  joined: '2022-07-04', contract: '2025-06-30' },
+  { name: 'Priya Nair',   joined: '2024-01-22', contract: null },
+];
+
+export const dateBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',    label: 'Name',    type: 'text' },
+          { key: 'joined',  label: 'Joined',  renderAs: 'date', renderAsOptions: { parseMode: 'iso-date' } },
+          { key: 'contract', label: 'Contract ends', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', fallbackText: 'Permanent' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datePresetsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',   label: 'Name',   type: 'text' },
+          { key: 'joined', label: 'short',  renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'short' } },
+          { key: 'joined', label: 'medium', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'medium' } },
+          { key: 'joined', label: 'long',   renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'long' } },
+          { key: 'joined', label: 'full',   renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'full' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const dateLocaleConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',   label: 'Name',  type: 'text' },
+          { key: 'joined', label: 'en-US', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'en-US',  formatPreset: 'long' } },
+          { key: 'joined', label: 'de-DE', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'de-DE',  formatPreset: 'long' } },
+          { key: 'joined', label: 'ja-JP', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'ja-JP',  formatPreset: 'long' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# date Renderer
+
+`renderAs: 'date'` formats a date-only value using `Intl.DateTimeFormat`. Set `parseMode` to tell the renderer how to interpret the raw value.
+
+## Core Examples
+
+### Basic Date
+
+<WidgemoShowcase
+  description="ISO date strings formatted with the default medium preset. A null contract date uses a custom fallbackText."
+  data={dateData}
+  config={dateBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'joined',   renderAs: 'date', renderAsOptions: { parseMode: 'iso-date' } }
+{ key: 'contract', renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', fallbackText: 'Permanent' } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Format Presets
+
+`formatPreset` maps to `Intl.DateTimeFormat` option sets. The same date displayed across all four presets:
+
+<WidgemoShowcase
+  description="short / medium / long / full presets applied to the same ISO date value."
+  data={dateData}
+  config={datePresetsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'short'  } }  // 3/15/23
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'medium' } }  // Mar 15, 2023 (default)
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'long'   } }  // March 15, 2023
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', formatPreset: 'full'   } }  // Wednesday, March 15, 2023
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Locale
+
+`locale` accepts any BCP 47 locale tag. Output follows the locale's date ordering and month names:
+
+<WidgemoShowcase
+  description="Same date rendered in US English, German, and Japanese."
+  data={dateData}
+  config={dateLocaleConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'long' } }
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'de-DE', formatPreset: 'long' } }
+{ renderAs: 'date', renderAsOptions: { parseMode: 'iso-date', locale: 'ja-JP', formatPreset: 'long' } }
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `TemporalParseMode` | required | How to parse the raw value. See parse modes below. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag for `Intl.DateTimeFormat`. |
+| `timezone` | string | `'local'` | `'local'`, `'utc'`, or any IANA timezone (e.g. `'America/New_York'`). |
+| `formatPreset` | `'short'` \| `'medium'` \| `'long'` \| `'full'` | `'medium'` | Preset `Intl` option set for date display. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Full `Intl.DateTimeFormat` options. Merged over `formatPreset`; explicit `timeZone` inside `formatOptions` takes precedence over `timezone`. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `parseMode` values
+
+| Value | Parses |
+|---|---|
+| `'iso-date'` | `YYYY-MM-DD` strings |
+| `'iso-datetime'` | ISO 8601 datetime strings |
+| `'epoch-ms'` | Unix timestamp in milliseconds |
+| `'epoch-sec'` | Unix timestamp in seconds |
+| `'iso-time'` | `HH:MM[:SS]` strings (anchored to 1970-01-01) |
+| `'any'` | Auto-detect: tries epoch heuristic, then ISO patterns |
+
+## Caveats
+
+- `parseMode` is required. Without it the renderer outputs `fallbackText` immediately without attempting to parse.
+- `iso-date` input is parsed as local midnight (`YYYY-MM-DDT00:00:00`). Combined with a non-local `timezone` in `formatOptions`, the displayed date may shift by one day.
+- `formatOptions` is deep-merged over `formatPreset` output. A `timeZone` key inside `formatOptions` takes full precedence over the `timezone` option.
+- `Date` objects are accepted directly by all parse modes and bypass the parse step.
+- All options accept `(entity) => value` functions for per-row dynamic values.
+
+## See Also
+
+- [datetime Renderer](/core/components/renderers/datetime)
+- [timestamp Renderer](/core/components/renderers/timestamp)
+- [date Field Type](/core/components/fields/date)
+- [Field Config](/core/reference/field-config)

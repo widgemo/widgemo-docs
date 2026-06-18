@@ -1,0 +1,179 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const sparkData = [
+  { name: 'Aurora Chen', trend: [52, 58, 61, 70, 68, 74, 78], change: 12.4 },
+  { name: 'Mateo Silva', trend: [60, 55, 50, 47, 44, 46, 45], change: -5.2 },
+  { name: 'Priya Nair', trend: [80, 82, 85, 87, 89, 90, 91], change: 3.1 },
+];
+
+export const sparkBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'trend',
+            label: 'Trend',
+            renderAs: 'sparkTrend',
+            renderAsOptions: { width: 108, height: 34, strokeWidth: 1.6, showDeltaLabel: true },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const sparkSingleConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'change',
+            label: 'Change (single value)',
+            renderAs: 'sparkTrend',
+            renderAsOptions: { width: 108, height: 34, showDeltaLabel: true },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const sparkStyledConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'trend',
+            label: 'Trend (styled)',
+            renderAs: 'sparkTrend',
+            renderAsOptions: {
+              width: 120,
+              height: 40,
+              strokeWidth: 2.2,
+              showDeltaLabel: false,
+              positiveColor: '#0284c7',
+              negativeColor: '#b91c1c',
+              neutralColor: '#94a3b8',
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# sparkTrend Renderer
+
+`renderAs: 'sparkTrend'` renders a compact SVG sparkline. It accepts either an array of data points or a single numeric delta. A `showDeltaLabel` option renders a small numeric change label beneath the line.
+
+## Core Examples
+
+### Array Series
+
+Pass an array of numbers as the field value. The delta is computed as `last - first`. The sparkline direction and color follow the sign of the delta. The renderer also accepts a `{ series: number[] }` object shape.
+
+<WidgemoShowcase
+  description="7-point trend arrays per row. Positive trend is green, negative red, flat grey."
+  data={sparkData}
+  config={sparkBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Data: trend: [52, 58, 61, 70, 68, 74, 78]
+{
+  key: 'trend',
+  renderAs: 'sparkTrend',
+  renderAsOptions: { width: 108, height: 34, strokeWidth: 1.6, showDeltaLabel: true },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Single Numeric Delta
+
+If the field value is a single number (or a 1-element array), the renderer builds a seeded pseudo-random series of 18 points with a directional bias matching the sign of the delta. The seed is derived from a stable entity identifier, so each row always produces the same spark shape for the same entity.
+
+<WidgemoShowcase
+  description="A scalar change value drives sparkline direction and color. Each row gets a unique but stable noise curve derived from the entity seed."
+  data={sparkData}
+  config={sparkSingleConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Data: change: 12.4 (a plain number, not an array)
+{ key: 'change', renderAs: 'sparkTrend', renderAsOptions: { showDeltaLabel: true } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Custom Colors and Size
+
+<WidgemoShowcase
+  description="Blue/crimson palette, wider canvas, thicker stroke, delta label hidden."
+  data={sparkData}
+  config={sparkStyledConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'trend',
+  renderAs: 'sparkTrend',
+  renderAsOptions: {
+    width: 120,
+    height: 40,
+    strokeWidth: 2.2,
+    showDeltaLabel: false,
+    positiveColor: '#0284c7',
+    negativeColor: '#b91c1c',
+    neutralColor: '#94a3b8',
+  },
+}
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `width` | number | `108` | SVG canvas width in px. |
+| `height` | number | `34` | SVG canvas height in px. |
+| `strokeWidth` | number | `1.6` | Line thickness. |
+| `showDeltaLabel` | boolean | `true` | Render a small numeric delta label below the sparkline. |
+| `positiveColor` | string | `'#35d4a1'` | Stroke color when delta > 0. |
+| `negativeColor` | string | `'#e67e7e'` | Stroke color when delta < 0. |
+| `neutralColor` | string | `'#718096'` | Stroke color when delta = 0. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- The field value accepts a plain `number[]`, a `{ series: number[] }` object, or a scalar number. Arrays with fewer than 2 valid numeric elements fall back to the seeded single-value path.
+- When given a single numeric delta, the sparkline shape is an 18-point seeded noise curve with a directional bias — not a simple 2-point line. The seed is derived from a stable entity identifier, so the curve is consistent per row across renders.
+- The delta label always appends `%` (e.g. `+12.4%`) regardless of whether the underlying value is actually a percentage. Omit `showDeltaLabel` or set it to `false` if the `%` is misleading for your data.
+- Non-numeric and non-array values produce delta=0 and render as a flat-ish neutral-colored noise curve, not a strictly flat line.
+- `formatter` can pre-process the value before rendering. Use it to extract a sub-array from a complex object before passing it to the sparkline logic.
+
+## See Also
+
+- [deltaValue Renderer](/core/components/renderers/delta-value) — text-only signed delta with trend indicator
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

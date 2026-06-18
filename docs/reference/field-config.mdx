@@ -285,6 +285,71 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
   }}
 />
 
+---
+
+```tsx
+item: {
+  fields: [
+    { key: 'name', label: 'Name' },
+    {
+      key: 'salary',
+      label: 'Currency',
+      renderAs: 'currency',
+      renderAsOptions: {
+        currency: 'USD',
+        compact: true,
+        colorize: true,
+        negativeFormat: 'parentheses',
+      },
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      renderAs: 'badge',
+      renderAsOptions: {
+        style: 'badge',
+        size: 'sm',
+      },
+    },
+    {
+      key: 'settlementDate',
+      label: 'Date',
+      type: 'date',
+      renderAs: 'date',
+      renderAsOptions: {
+        parseMode: 'iso-date',
+        locale: 'en-US',
+      },
+    },
+    {
+      key: 'processingLatencySec',
+      label: 'Duration',
+      type: 'duration',
+      renderAs: 'duration',
+      renderAsOptions: {
+        unit: 'sec',
+        format: 'clock',
+      },
+    },
+  ],
+  layout: { type: 'auto' },
+}
+```
+
+```tsx
+// Type-first baseline (semantic type only)
+{ key: 'joinedAt', label: 'Joined', type: 'date' }
+
+// renderAs override (visual renderer takes precedence)
+{
+  key: 'joinedAt',
+  label: 'Joined',
+  type: 'date',
+  renderAs: 'badge',
+  renderAsOptions: { style: 'soft' },
+}
+```
+
 All built-in renderAs option objects also accept `className` from `BaseRenderAsOptions`.
 
 ## FieldConfig Interface
@@ -321,703 +386,62 @@ interface FieldConfig {
 - `visible` is currently enforced in table mode field filtering.
 - `span` applies to item layouts that use CSS grid field placement.
 
+## Built-in `type` Categories
+
+Use Components field-type pages for practical usage patterns:
+
+- Core: [text](/core/components/fields/text), [number](/core/components/fields/number), [boolean](/core/components/fields/boolean), [select](/core/components/fields/select), [reference](/core/components/fields/reference), [textarea](/core/components/fields/textarea)
+- Contact and media: [email](/core/components/fields/email), [url](/core/components/fields/url), [image](/core/components/fields/image), [swatch](/core/components/fields/swatch)
+- Temporal: [date](/core/components/fields/date), [time](/core/components/fields/time), [datetime](/core/components/fields/datetime), [timestamp](/core/components/fields/timestamp), [duration](/core/components/fields/duration)
+
+Precedence reminder:
+
+- `type` expresses data semantics.
+- `renderAs` controls visual output when present.
+
 ## Built-in `renderAs` Options
 
-### `badge`
+Use the Components renderer pages for per-renderer usage guidance and examples:
 
-```tsx
-{
-  key: 'status', label: 'Status', renderAs: 'badge',
-  renderAsOptions: {
-    colorMap: {
-      active:   { background: '#198754', text: '#fff' },
-      pending:  { background: '#ffc107', text: '#333' },
-      inactive: { background: '#6c757d', text: '#fff', icon: 'close', iconPosition: 'left' },
-    },
-    style: 'badge',  // 'badge' (default) | 'inline'
-    size: 'md',      // 'sm' | 'md' (default) | 'lg'
-    className: 'status-badge',
-  },
-}
-```
+- [badge](/core/components/renderers/badge)
+- [currency](/core/components/renderers/currency)
+- [progress](/core/components/renderers/progress)
+- [rating](/core/components/renderers/rating)
+- [link](/core/components/renderers/link)
+- [jsonPreview](/core/components/renderers/json-preview)
+- [deltaValue](/core/components/renderers/delta-value)
+- [sparkTrend](/core/components/renderers/spark-trend)
+- [scoreMeter](/core/components/renderers/score-meter)
+- [compositionBar](/core/components/renderers/composition-bar)
+- [date](/core/components/renderers/date)
+- [time](/core/components/renderers/time)
+- [datetime](/core/components/renderers/datetime)
+- [timestamp](/core/components/renderers/timestamp)
+- [duration](/core/components/renderers/duration)
 
-Use `style: 'badge'` for the filled pill treatment with background and border, or `style: 'inline'` for a lighter text-first treatment that keeps icon and text on one line without the pill chrome.
+### Renderer Contract Notes
 
-`iconPosition` can be `'left'`, `'right'`, or `'only'`.
+- `renderAs` takes precedence over `type`.
+- Temporal contract: `date`, `time`, `datetime`, and `timestamp` require `renderAsOptions.parseMode`; `duration` requires `renderAsOptions.unit`.
+- All built-in renderer option objects accept `className` from `BaseRenderAsOptions`.
+- `RenderAsOptions` in core types is the canonical option union, including custom renderer option support.
 
-Additional badge behavior implemented in core:
+### Related Guides
 
-- `colorMap` and `defaultColor` can be static values or functions of the current entity.
-- Badge color objects can use `background`, `text`, `color`, `textColor`, `icon`, `iconColor`, and `iconPosition`.
-- Empty values render as a `-` placeholder badge.
-
-### `currency`
-
-```tsx
-{
-  key: 'amount', label: 'Salary', renderAs: 'currency',
-  renderAsOptions: {
-    currency: 'USD',
-    locale: 'en-US',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-    compact: true,
-    compactThreshold: 1000,
-    showSymbol: true,
-    symbolPosition: 'prefix',
-    colorize: true,
-    positiveColor: '#198754',
-    negativeColor: '#dc3545',
-    zeroColor: '#6c757d',
-    negativeFormat: 'parentheses',
-    decimalAlign: true,
-  },
-}
-```
-
-- `currency` and `locale` drive the formatter.
-- `minimumFractionDigits` and `maximumFractionDigits` control decimal precision.
-- `compact` switches to compact notation once `compactThreshold` is reached.
-- `showSymbol` removes the currency symbol when false.
-- `symbolPosition` supports a best-effort prefix or suffix adjustment for common symbols.
-- `colorize` can tint positive, negative, and zero values with `positiveColor`, `negativeColor`, and `zeroColor`.
-- `negativeFormat: 'parentheses'` wraps negative values in parentheses.
-- `decimalAlign` keeps the decimal presentation consistent for table cells.
-
-### `progress`
-
-```tsx
-{
-  key: 'progress', label: 'Progress', renderAs: 'progress',
-  renderAsOptions: {
-    color: (entity) => entity.progress >= 80 ? '#198754' : '#ffc107',
-    backgroundColor: '#e9ecef',
-    height: 10,
-    showPercentage: true,
-    textColor: '#111827',
-  },
-}
-```
-
-- `color` sets the fill color.
-- `backgroundColor` sets the track color.
-- `height` controls the bar height.
-- `showPercentage` toggles the centered percentage label.
-- `textColor` controls the percentage label color.
-
-### `rating`
-
-```tsx
-{
-  key: 'rating', label: 'Rating', renderAs: 'rating',
-  renderAsOptions: {
-    max: 5,
-    color: '#ffd700',
-    emptyColor: '#dee2e6',
-    size: 18,
-    icon: 'star',
-  },
-}
-```
-
-- `max` sets the number of rating icons.
-- `size` controls the icon size.
-- `color` sets the filled icon color.
-- `emptyColor` sets the unfilled icon color.
-- `icon` chooses the registered icon name used for each step.
-
-### `link`
-
-```tsx
-{
-  key: 'url', label: 'Profile', renderAs: 'link',
-  renderAsOptions: {
-    text: (entity) => `View ${entity.name}`,
-    url:  (entity) => `/users/${entity.id}`,
-    newTab: true,
-    externalWarning: true,
-  },
-}
-```
-
-- `text` overrides the visible label; when omitted, the field value is used.
-- `url` overrides the destination; when omitted, the field value is used.
-- `newTab` opens the link in a new tab and adds `noopener noreferrer`.
-- `externalWarning` adds an external-link indicator when the URL is detected as external.
-- Email-like values without an explicit `url` are converted to `mailto:` links.
-
-### `jsonPreview`
-
-```tsx
-{
-  key: 'metadata', label: 'Metadata', renderAs: 'jsonPreview',
-  renderAsOptions: {
-    defaultCollapsed: true,
-    maxDepth: 3,
-  },
-}
-```
-
-- String values are parsed as JSON when possible.
-- Object and array values render as a collapsible tree.
-- `defaultCollapsed` starts nested nodes collapsed, while the root stays expanded.
-- `maxDepth` truncates deeper nesting.
-- Invalid JSON renders an error state instead of throwing.
-
-### `deltaValue`
-
-```tsx
-{
-  key: 'delta', label: 'Delta', renderAs: 'deltaValue',
-  renderAsOptions: {
-    trendIndicator: true,
-    fractionDigits: 1,
-    suffixPercent: true,
-    palette: {
-      positive: '#198754',
-      negative: '#dc3545',
-      neutral: '#6c757d',
-    },
-  },
-}
-```
-
-- `suffixPercent` appends a percent sign to the formatted value.
-- `trendIndicator` toggles the UP/DOWN/FLAT label prefix.
-- `fractionDigits` controls the decimal precision.
-- `palette` customizes the positive, negative, and neutral colors.
-
-### `sparkTrend`
-
-```tsx
-{
-  key: 'trend', label: 'Trend', renderAs: 'sparkTrend',
-  renderAsOptions: {
-    width: 108,
-    height: 34,
-    strokeWidth: 1.6,
-    positiveColor: '#35d4a1',
-    negativeColor: '#e67e7e',
-    neutralColor: '#6c757d',
-    showDeltaLabel: true,
-  },
-}
-```
-
-- Accepts either a numeric delta or a numeric series array/object with a `series` property.
-- A parsed series must contain at least two numeric points; otherwise sparkTrend falls back to a generated synthetic series.
-- The fallback series is deterministic per entity and is intended as a visual fallback, not as historical data.
-- `width` and `height` set the SVG dimensions.
-- `strokeWidth` controls the sparkline stroke.
-- `positiveColor`, `negativeColor`, and `neutralColor` choose the accent color by trend direction.
-- `showDeltaLabel` toggles the numeric label under the chart.
-
-### `scoreMeter`
-
-```tsx
-{
-  key: 'healthScore', label: 'Health', renderAs: 'scoreMeter',
-  renderAsOptions: {
-    density: 'regular',
-    showValue: true,
-    valueAsPercent: false,
-    decimals: 0,
-    tagPosition: 'top',
-    tagAlign: 'left',
-    valueAlign: 'right',
-    bands: [
-      { max: 35, label: 'Critical', color: '#dc3545', background: 'rgba(220, 53, 69, 0.16)' },
-      { max: 65, label: 'Watch',    color: '#fd7e14', background: 'rgba(253, 126, 20, 0.16)' },
-      { label: 'Healthy',           color: '#198754', background: 'rgba(25, 135, 84, 0.16)' },
-    ],
-  },
-}
-```
-
-- Values are clamped to the 0-100 range.
-- `density` switches between regular and compact sizing.
-- `showValue` toggles numeric score output.
-- `valueAsPercent` controls whether the value includes `%`.
-- `decimals` controls numeric precision.
-- `tagPosition` supports `top` and `bottom`.
-- `tagAlign` and `valueAlign` each support `left` or `right`.
-- `bands` maps score ranges to labels, colors, and backgrounds.
-- If `bands` is omitted, the default bands are `High` for `85-100`, `Good` for `70-84`, `Medium` for `55-69`, and `Low` below `55`.
-
-Alternative compact confidence-style usage:
-
-```tsx
-{
-  key: 'confidence', label: 'Confidence', renderAs: 'scoreMeter',
-  renderAsOptions: {
-    density: 'compact',
-    valueAsPercent: true,
-    tagPosition: 'bottom',
-    tagAlign: 'right',
-    valueAlign: 'left',
-    bands: [
-      { min: 85, label: 'High',   color: '#0d6efd' },
-      { min: 70, label: 'Good',   color: '#198754' },
-      { min: 55, label: 'Medium', color: '#fd7e14' },
-      { label: 'Low',             color: '#dc3545' },
-    ],
-  },
-}
-```
-
-### `compositionBar`
-
-```tsx
-{
-  key: 'portfolioMix', label: 'Portfolio Mix', renderAs: 'compositionBar',
-  renderAsOptions: {
-    // Segment source (optional, overrides field value)
-    segments: (entity) => [
-      { label: 'Cash', value: entity.cash, color: '#35d4a1' },
-      { label: 'Equities', value: entity.equities, color: '#4d94ff' },
-      { label: 'Debt', value: entity.debt, color: '#f56565' },
-    ],
-
-    // Visual style
-    style: 'segmented',     // default
-    segmentGap: '2px',      // default (segmented style)
-    cornerRadius: '999px',  // default
-    cornerScope: 'segment', // default: track | segment | both | none
-
-    // Legend/summary
-    legend: 'inline',       // default: inline | none
-    percentages: true,      // default (legend text only)
-    totals: false,          // default
-    total: (entity) => entity.portfolioTotal,
-
-    // Color palette
-    segmentColors: ['#4d94ff', '#35d4a1', '#f6ad55'], // alias of palette; takes precedence when both are set
-
-    // Layout sizing
-    barHeight: 12,          // default: 12px
-    gap: '0.4rem',          // default
-  },
-}
-```
-
-#### Resolution Order
-
-**Segment source**
-
-1. `renderAsOptions.segments`
-2. `fieldValue.segments`
-3. `fieldValue`
-
-**Segment color**
-
-1. `segment.color`
-2. `segmentColors` (alias palette)
-3. `palette`
-4. default palette
-
-**Total for percentage math**
-
-1. explicit `total` when it resolves to a positive number
-2. derived sum of valid segment values
-
-#### Data-Derived Input Rules
-
-- Accepted field value shapes:
-  - numeric array: `[45, 35, 20]`
-  - object array with `value`, `amount`, or `total`
-  - object with nested `segments` array
-- Label fallback order: `label` -> `name` -> `key` -> `Segment N`
-- Invalid, zero, or negative segment values are ignored
-- If no valid positive segments remain, renderer outputs `Invalid`
-
-#### Config-Driven Display Rules
-
-- `style`: defaults to `segmented`; use `continuous` for uninterrupted band
-- `segmentGap`: defaults to `2px`; relevant for segmented style
-- `cornerScope`: defaults to `segment` (`track`, `segment`, `both`, `none`)
-- `legend`: defaults to `inline`; `none` hides legend rows
-- `percentages`: defaults to `true`; only affects legend text
-- `totals`: defaults to `false`; when true renders `Total: ...`
-- `barHeight`: defaults to `12px`
-- `gap`: defaults to `0.4rem`
-- `segmentColors` and `palette` are aliases; `segmentColors` takes precedence when both are set
-- Default palette: `['#4d94ff', '#35d4a1', '#f6ad55', '#b794f4', '#f687b3', '#63b3ed']`
-
-### `date` / `time` / `datetime` / `timestamp` / `duration`
-
-For full contract details, option guidance, and a live mixed example, see the [Temporal Fields Guide](/core/guides/temporal-fields).
-
-```tsx
-{
-  key: 'settlementDate', label: 'Settlement Date', type: 'date', renderAs: 'date',
-  renderAsOptions: {
-    parseMode: 'iso-date',
-    locale: 'en-US',
-    timezone: 'local',
-    formatPreset: 'medium',
-  },
-}
-
-{
-  key: 'checkpointTime', label: 'Checkpoint Time', type: 'time', renderAs: 'time',
-  renderAsOptions: {
-    parseMode: 'iso-time',
-    locale: 'en-US',
-    timezone: 'utc',
-    showSeconds: true,
-    hour12: false,
-  },
-}
-
-{
-  key: 'postedAt', label: 'Posted At', type: 'datetime', renderAs: 'datetime',
-  renderAsOptions: {
-    parseMode: 'iso-datetime',
-    locale: 'en-US',
-    timezone: 'utc',
-    formatPreset: 'short',
-    relativeTime: true,
-    relativeDisplay: 'both',
-  },
-}
-
-{
-  key: 'updatedAtEpoch', label: 'Updated', type: 'timestamp', renderAs: 'timestamp',
-  renderAsOptions: {
-    parseMode: 'epoch-sec',
-    locale: 'en-US',
-    timezone: 'utc',
-    formatPreset: 'short',
-  },
-}
-
-{
-  key: 'processingLatencySec', label: 'Latency', type: 'duration', renderAs: 'duration',
-  renderAsOptions: {
-    unit: 'sec',
-    format: 'humanized',
-    precision: 3,
-    humanizedUnits: ['day', 'hour', 'minute', 'second'],
-  },
-}
-```
-
-- Temporal renderers are explicit-contract only.
-- `parseMode` values: `epoch-ms`, `epoch-sec`, `iso-date`, `iso-datetime`, `iso-time`, `any`.
-- `duration.unit` values: `ms`, `sec`, `min`, `hour`, `day`.
-- Temporal option surface includes `locale`, `timezone`, `formatPreset`, `formatOptions`, `relativeTime`, `relativeDisplay`, `showSeconds`, `hour12`, and `fallbackText`.
-- Duration-specific options include `format`, `humanizedUnits`, `precision`, `showSign`, and `fallbackText`.
-- Humanized duration note:
-  - `year` and `month` use fixed approximations (`365` days/year, `30` days/month) for elapsed-time display.
-  - For calendar-accurate intervals, precompute at the domain layer and render the resulting value.
-- Relative-time display modes:
-  - `relativeDisplay: 'relative'` (default) shows only relative text.
-  - `relativeDisplay: 'both'` shows absolute timestamp with a smaller relative line below.
+- Temporal renderer deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
 
 ## Item Layout
 
-`ItemConfig.layout` controls how fields are arranged within each item card.
+`ItemConfig.layout` has moved to [Item Config](/core/reference/item-config) to keep this page focused on field-level schema and renderer contracts.
 
-- In grid/board/carousel mode, item layout is applied directly to each rendered item.
-- In table mode, item layout applies when using rich-cell item rendering patterns (for example, section-based rich cells), not plain traditional cell rendering.
+Use [Field Rendering Reference](/core/guides/field-rendering-decisions) for `type` vs `renderAs` guidance.
 
-### Live Showcases
+## See Also
 
-#### Auto
-
-<WidgemoShowcase
-  title="Item Layout: Auto"
-  description="Default field flow with no explicit flex/grid/section grouping."
-  data={[
-    {
-      id: 1,
-      name: 'Aurora Chen',
-      email: 'aurora@widgemo.dev',
-      role: 'Design Lead',
-      department: 'Design Systems',
-      status: 'active',
-      avatar: 'https://i.pravatar.cc/120?img=47',
-    },
-    {
-      id: 2,
-      name: 'Mateo Silva',
-      email: 'mateo@widgemo.dev',
-      role: 'Platform Engineer',
-      department: 'Core Platform',
-      status: 'pending',
-      avatar: 'https://i.pravatar.cc/120?img=12',
-    },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Auto Layout',
-        subtitle: 'item.layout.type = auto',
-      },
-      content: {
-        mode: 'grid',
-        modeConfig: { grid: { maxColumns: 1 } },
-        item: {
-          fields: [
-            { key: 'name', label: 'Name' },
-            { key: 'email', label: 'Email', type: 'email' },
-            { key: 'role', label: 'Role', renderAs: 'badge' },
-            { key: 'department', label: 'Department' },
-            { key: 'status', label: 'Status', renderAs: 'badge' },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
-
-#### Flex
-
-<WidgemoShowcase
-  title="Item Layout: Flex"
-  description="Single-row alignment with avatar, identity, and status fields."
-  data={[
-    {
-      id: 1,
-      name: 'Aurora Chen',
-      role: 'Design Lead',
-      status: 'active',
-      department: 'Design Systems',
-      avatar: 'https://i.pravatar.cc/120?img=47',
-    },
-    {
-      id: 2,
-      name: 'Mateo Silva',
-      role: 'Platform Engineer',
-      status: 'pending',
-      department: 'Core Platform',
-      avatar: 'https://i.pravatar.cc/120?img=12',
-    },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Flex Layout',
-        subtitle: 'item.layout.type = flex (direction: row)',
-      },
-      content: {
-        mode: 'grid',
-        modeConfig: { grid: { maxColumns: 1 } },
-        item: {
-          fields: [
-            { key: 'avatar', label: 'Avatar', type: 'image', imageOptions: { circular: true, width: 48, height: 48 } },
-            { key: 'name', label: 'Name', showLabel: false },
-            { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false },
-            { key: 'status', label: 'Status', renderAs: 'badge', showLabel: false },
-            { key: 'department', label: 'Dept', showLabel: false },
-          ],
-          layout: {
-            type: 'flex',
-            flex: {
-              direction: 'row',
-              wrap: false,
-              justify: 'flex-start',
-              align: 'flex-start',
-            },
-          },
-        },
-      },
-    },
-  }}
-/>
-
-#### CSS Grid with Template Areas
-
-<WidgemoShowcase
-  title="Item Layout: Grid Areas"
-  description="Area tokens map directly to field keys; repeated area names create spanning fields."
-  data={[
-    {
-      id: 1,
-      name: 'Aurora Chen',
-      email: 'aurora@widgemo.dev',
-      role: 'Design Lead',
-      department: 'Design Systems',
-      avatar: 'https://i.pravatar.cc/120?img=47',
-    },
-    {
-      id: 2,
-      name: 'Mateo Silva',
-      email: 'mateo@widgemo.dev',
-      role: 'Platform Engineer',
-      department: 'Core Platform',
-      avatar: 'https://i.pravatar.cc/120?img=12',
-    },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Grid Areas Layout',
-        subtitle: 'item.layout.type = grid with named areas',
-      },
-      content: {
-        mode: 'grid',
-        modeConfig: { grid: { maxColumns: 1 } },
-        item: {
-          fields: [
-            { key: 'avatar', label: 'Avatar', type: 'image', imageOptions: { circular: true, width: 56, height: 56 } },
-            { key: 'name', label: 'Name', showLabel: false },
-            { key: 'email', label: 'Email', type: 'email', showLabel: false },
-            { key: 'role', label: 'Role', renderAs: 'badge', showLabel: false },
-            { key: 'department', label: 'Dept', showLabel: false, wrap: true },
-          ],
-          layout: {
-            type: 'grid',
-            grid: {
-              columns: '56px minmax(0,1fr) minmax(0,1fr)',
-              gap: '0.5rem 0.75rem',
-              areas: [
-                '"avatar name role"',
-                '"avatar email department"',
-              ],
-            },
-          },
-        },
-      },
-    },
-  }}
-/>
-
-#### Sections
-
-<WidgemoShowcase
-  title="Item Layout: Sections"
-  description="Fields grouped into titled sections for structured card content."
-  data={[
-    {
-      id: 1,
-      name: 'Aurora Chen',
-      email: 'aurora@widgemo.dev',
-      role: 'Design Lead',
-      department: 'Design Systems',
-      status: 'active',
-      progress: 91,
-    },
-    {
-      id: 2,
-      name: 'Mateo Silva',
-      email: 'mateo@widgemo.dev',
-      role: 'Platform Engineer',
-      department: 'Core Platform',
-      status: 'pending',
-      progress: 76,
-    },
-  ]}
-  config={{
-    zones: {
-      header: {
-        title: 'Sections Layout',
-        subtitle: 'item.layout.type = sections',
-      },
-      content: {
-        mode: 'grid',
-        modeConfig: { grid: { maxColumns: 1 } },
-        item: {
-          fields: [
-            { key: 'name', label: 'Name' },
-            { key: 'email', label: 'Email', type: 'email' },
-            { key: 'role', label: 'Role', renderAs: 'badge' },
-            { key: 'department', label: 'Department' },
-            { key: 'status', label: 'Status', renderAs: 'badge' },
-            { key: 'progress', label: 'Progress', renderAs: 'progress' },
-          ],
-          layout: {
-            type: 'sections',
-            sections: [
-              { title: 'Contact', fields: ['name', 'email'] },
-              { title: 'Role', fields: ['role', 'department'] },
-              { title: 'Metrics', fields: ['status', 'progress'] },
-            ],
-          },
-        },
-      },
-    },
-  }}
-/>
-
-### Auto (default)
-
-```tsx
-item: { fields: […], layout: { type: 'auto' } }
-```
-
-### Flex
-
-```tsx
-item: {
-  fields: […],
-  layout: {
-    type: 'flex',
-    flex: { direction: 'row', wrap: false, justify: 'flex-start', align: 'center' },
-  },
-}
-```
-
-### CSS Grid with Template Areas
-
-How `grid.areas` maps to rendered fields:
-
-- Each token in `areas` must match a field `key` exactly.
-- A field is rendered once per item; repeating the same token in multiple cells makes that one field span those cells.
-- If a field key is not present in `areas`, the browser auto-places that field in the grid flow.
-- If an `areas` token has no matching field key, that named area remains empty.
-
-Visual map for a two-row template:
-
-```text
-areas:
-  "avatar name   role"
-  "avatar email  department"
-
-Row 1: [ avatar ] [  name  ] [   role     ]
-Row 2: [ avatar ] [ email  ] [ department ]
-
-- avatar appears once in fields and spans both rows.
-- name, email, role, and department each render once.
-```
-
-```tsx
-item: {
-  fields: [
-    { key: 'avatar', label: 'Avatar', type: 'image', imageOptions: { circular: true, width: 48, height: 48 } },
-    { key: 'name',  label: 'Name',  showLabel: false },
-    { key: 'email', label: 'Email', type: 'email', showLabel: false },
-    { key: 'status', label: 'Status', renderAs: 'badge', showLabel: false },
-  ],
-  layout: {
-    type: 'grid',
-    grid: {
-      columns: '48px minmax(0,1fr) auto',
-      gap: '0.5rem 0.75rem',
-      areas: [
-        '"avatar name   name"',
-        '"avatar email  status"',
-      ],
-    },
-  },
-}
-```
-
-### Sections
-
-```tsx
-item: {
-  fields: [
-    { key: 'name', label: 'Name' }, { key: 'email', label: 'Email', type: 'email' },
-    { key: 'role', label: 'Role', renderAs: 'badge' }, { key: 'department', label: 'Department' },
-  ],
-  layout: {
-    type: 'sections',
-    sections: [
-      { title: 'Contact', fields: ['name', 'email'] },
-      { title: 'Role',    fields: ['role', 'department'] },
-    ],
-  },
-}
-```
+- [Content Config](/core/reference/content-config)
+- [Item Config](/core/reference/item-config)
+- [Field Rendering Reference](/core/guides/field-rendering-decisions)
+- [Field Components Overview](/core/components/fields/overview)
+- [Renderer Components Overview](/core/components/renderers/overview)
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [Custom renderAs](/core/extensions/renderas-customization)

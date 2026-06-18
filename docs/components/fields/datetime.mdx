@@ -1,0 +1,141 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const datetimeData = [
+  { operation: 'Payroll Sync', postedAt: '2026-05-29T08:15:10Z', confirmedAt: '2026-05-29T09:01:44Z' },
+  { operation: 'Reserve Sweep', postedAt: '2026-05-30T11:42:33Z', confirmedAt: null },
+  { operation: 'Invoice Clear', postedAt: '2026-06-11T14:05:01Z', confirmedAt: null },
+];
+
+export const datetimeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Posted At',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const datetimeConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'postedAt',
+            label: 'Posted At',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+          },
+          {
+            key: 'confirmedAt',
+            label: 'Confirmed',
+            type: 'datetime',
+            renderAs: 'datetime',
+            renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+            condition: (entity) => Boolean(entity.confirmedAt),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# datetime Field Type
+
+`type: 'datetime'` marks a field as a combined date-and-time value. Pair it with `renderAs: 'datetime'` and `parseMode: 'iso-datetime'` (for ISO 8601 strings) to render locale-aware output. Supports relative time display and timezone control.
+
+## Core Examples
+
+### Basic Datetime Rendering
+
+<WidgemoShowcase
+  description="ISO datetime string rendered with parseMode: 'iso-datetime', timezone: 'utc', and formatPreset: 'medium'."
+  data={datetimeData}
+  config={datetimeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'postedAt',
+  label: 'Posted At',
+  type: 'datetime',
+  renderAs: 'datetime',
+  renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Confirmed column only appears for Payroll Sync — the only row with a non-null confirmedAt value."
+  data={datetimeData}
+  config={datetimeConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'confirmedAt',
+  label: 'Confirmed',
+  type: 'datetime',
+  renderAs: 'datetime',
+  renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'medium' },
+  condition: (entity) => Boolean(entity.confirmedAt),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the datetime value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'datetime'` | — | Marks the field as a combined date-time value. Pair with `renderAs: 'datetime'`. |
+| `renderAs` | `'datetime'` | unset | Required for formatted output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'datetime'`
+
+`parseMode` is required — without it the field renders `'Invalid'`. All other display options (`formatPreset`, `locale`, `timezone`, `relativeTime`, `showSeconds`, `hour12`, `formatOptions`, etc.) are documented on the [datetime Renderer](/core/components/renderers/datetime) page.
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'`.
+- `parseMode: 'iso-datetime'` expects a full ISO 8601 datetime string including time component (e.g. `2026-05-29T08:15:10Z`). A date-only string like `2026-05-29` will not parse — use `type: 'date'` for date-only values.
+- `timezone` controls the **display timezone** only — the value is always stored and parsed as UTC-relative.
+- The `full` preset includes a timezone abbreviation (e.g. `UTC`, `PDT`). This requires the `timezone` option to be set explicitly.
+
+## See Also
+
+- [datetime Renderer](/core/components/renderers/datetime) — full `renderAsOptions` reference
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [date Field Type](/core/components/fields/date)
+- [timestamp Field Type](/core/components/fields/timestamp)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

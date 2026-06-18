@@ -1,0 +1,44 @@
+# Extending Widgemo Overview
+
+Use this section when built-in config is no longer enough and you need to register new behavior through `widgemoRegistry`.
+
+## Extension Paths
+
+| Extension path | Use when | Registry/API surface |
+|---|---|---|
+| Custom `renderAs` | A field value needs a new visual treatment | `registerWidgemoRenderAs` |
+| Custom field type | A reusable domain field needs its own semantic type | `registerWidgemoFieldType` |
+| Custom mode | The content area needs a new layout strategy | `registerWidgemoMode` |
+| Custom icon | Config should reference icon names from your own icon set | `registerWidgemoIcon` |
+| Lifecycle hook | You need runtime interception at named core hook points | `registerWidgemoHook` |
+
+## Choose the Smallest Surface
+
+| Goal | Prefer | Why |
+|---|---|---|
+| Change how one value looks | [Custom renderAs](/core/extensions/renderas-customization) | Smallest and most config-friendly extension |
+| Reuse a domain-specific field category | [Custom Field Types](/core/extensions/custom-field-types) | Adds semantic meaning, not just presentation |
+| Replace table/grid/board/carousel/chart with a new layout | [Custom Modes](/core/guides/custom-modes) | Moves the whole content area to a new renderer |
+| Use branded or domain-specific icon names in config | [Custom Icons](/core/guides/custom-icons) | Keeps config icon references stable and reusable |
+| Intercept runtime lifecycle events | [Extension API](/core/reference/extension-api#lifecycle-hooks) | Hook surface is separate from layout and field registration |
+
+## Recommended Order
+
+1. Exhaust built-in config first: `mode`, `fields`, `renderAs`, actions, theming.
+2. Read [Extension API](/core/reference/extension-api) for the exact registry contracts.
+3. Pick one extension surface and keep it narrowly scoped.
+4. Use namespaced registration names (`acme.timeline`, `acme.swatch`, `acme.flag`) to reduce collisions.
+
+## Section Map
+
+- [Custom renderAs](/core/extensions/renderas-customization)
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [Custom Modes](/core/guides/custom-modes)
+- [Custom Icons](/core/guides/custom-icons)
+
+## Related References
+
+- [Extension API](/core/reference/extension-api)
+- [Extension Architecture](/core/concepts/extension-architecture)
+- [Field Rendering Reference](/core/guides/field-rendering-decisions)
+- [Built-in Icons](/core/components/icons/built-in-icons)

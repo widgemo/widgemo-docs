@@ -1,0 +1,131 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const progressData = [
+  { name: 'Aurora Chen', completion: 78, sla: 95, quota: 42 },
+  { name: 'Mateo Silva', completion: 45, sla: 68, quota: 91 },
+  { name: 'Priya Nair', completion: 100, sla: 72, quota: 57 },
+];
+
+export const progressBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'completion', label: 'Completion', renderAs: 'progress', renderAsOptions: { height: '12px', showPercentage: true } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const progressStylingConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'sla',
+            label: 'SLA',
+            renderAs: 'progress',
+            renderAsOptions: {
+              height: '8px',
+              showPercentage: false,
+              color: (entity) => entity.sla >= 80 ? '#16a34a' : entity.sla >= 60 ? '#d97706' : '#dc2626',
+              backgroundColor: '#e5e7eb',
+            },
+          },
+          {
+            key: 'quota',
+            label: 'Quota',
+            renderAs: 'progress',
+            renderAsOptions: { height: '16px', showPercentage: true, color: '#6d28d9', textColor: '#ffffff' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# progress Renderer
+
+`renderAs: 'progress'` renders a numeric value (0–100) as a horizontal filled bar. Use it for completion percentages, SLA indicators, capacity gauges, or any bounded metric.
+
+## Core Examples
+
+### Basic Progress Bar
+
+<WidgemoShowcase
+  description="Completion percentage rendered as a progress bar with percentage label."
+  data={progressData}
+  config={progressBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'completion', renderAs: 'progress', renderAsOptions: { height: '12px', showPercentage: true } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Dynamic Color and Styling
+
+`color` accepts a function receiving the entity — use it to color the bar based on value thresholds. `textColor` controls the percentage label text color.
+
+<WidgemoShowcase
+  description="SLA bar: green ≥80, amber ≥60, red below. Quota bar: custom purple with white label."
+  data={progressData}
+  config={progressStylingConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'sla',
+  renderAs: 'progress',
+  renderAsOptions: {
+    height: '8px',
+    showPercentage: false,
+    color: (entity) =>
+      entity.sla >= 80 ? '#16a34a' : entity.sla >= 60 ? '#d97706' : '#dc2626',
+    backgroundColor: '#e5e7eb',
+  },
+},
+{
+  key: 'quota',
+  renderAs: 'progress',
+  renderAsOptions: { height: '16px', showPercentage: true, color: '#6d28d9', textColor: '#ffffff' },
+},
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `height` | `number` \| CSS string | `'20px'` | Height of the bar. Numbers are interpreted as px. |
+| `showPercentage` | boolean | `true` | Show numeric percentage label inside or beside the bar. |
+| `color` | string \| `(entity) => string` | `'#007bff'` | Fill color. Accepts a function for per-row dynamic coloring. |
+| `backgroundColor` | string \| `(entity) => string` | `'#e9ecef'` | Track background color. |
+| `textColor` | string \| `(entity) => string` | `'#000'` | Percentage label text color. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+## Caveats
+
+- Values are clamped to `[0, 100]`. A value of `150` renders a full bar without error.
+- Non-numeric values render as an empty bar (value treated as `0`).
+- For scores with semantic bands (e.g. Critical / Watch / Healthy), use [`scoreMeter`](/core/components/renderers/score-meter) instead — it adds labeled band chips.
+
+## See Also
+
+- [scoreMeter Renderer](/core/components/renderers/score-meter) — banded score display with labels
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

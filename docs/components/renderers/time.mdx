@@ -1,0 +1,155 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const timeData = [
+  { name: 'Aurora Chen', checkin: '09:15:42', scheduled: '09:00:00' },
+  { name: 'Mateo Silva', checkin: '14:30:00', scheduled: '14:00:00' },
+  { name: 'Priya Nair',  checkin: '08:05:11', scheduled: '08:00:00' },
+];
+
+export const timeBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',      label: 'Name',      type: 'text' },
+          { key: 'checkin',   label: 'Check-in',  renderAs: 'time', renderAsOptions: { parseMode: 'iso-time' } },
+          { key: 'scheduled', label: 'Scheduled', renderAs: 'time', renderAsOptions: { parseMode: 'iso-time' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timeSecondsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',    label: 'Name',          type: 'text' },
+          { key: 'checkin', label: '12h no seconds', renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', hour12: true,  showSeconds: false } },
+          { key: 'checkin', label: '24h with secs',  renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', hour12: false, showSeconds: true  } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const timeTimezoneConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',    label: 'Name',              type: 'text' },
+          { key: 'checkin', label: 'Local',             renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'local' } },
+          { key: 'checkin', label: 'UTC',               renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'utc', showSeconds: true } },
+          { key: 'checkin', label: 'America/New_York',  renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'America/New_York', showSeconds: true } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# time Renderer
+
+`renderAs: 'time'` formats a time-only value using `Intl.DateTimeFormat`. Set `parseMode` to tell the renderer how to interpret the raw value.
+
+## Core Examples
+
+### Basic Time
+
+<WidgemoShowcase
+  description="ISO time strings formatted with locale defaults — hours and minutes, no seconds."
+  data={timeData}
+  config={timeBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'checkin', renderAs: 'time', renderAsOptions: { parseMode: 'iso-time' } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### 12h / 24h and Seconds
+
+`hour12` forces 12- or 24-hour output. `showSeconds` adds the seconds component:
+
+<WidgemoShowcase
+  description="Same check-in time displayed as 12h without seconds and 24h with seconds."
+  data={timeData}
+  config={timeSecondsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', hour12: true,  showSeconds: false } }
+{ renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', hour12: false, showSeconds: true  } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Timezone
+
+`timezone` accepts `'local'`, `'utc'`, or any IANA zone string. Affects the displayed clock time:
+
+<WidgemoShowcase
+  description="Same ISO time string displayed in local, UTC, and America/New_York timezones."
+  data={timeData}
+  config={timeTimezoneConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'local' } }
+{ renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'utc',              showSeconds: true } }
+{ renderAs: 'time', renderAsOptions: { parseMode: 'iso-time', timezone: 'America/New_York', showSeconds: true } }
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `parseMode` | `TemporalParseMode` | required | How to parse the raw value. |
+| `locale` | string | `'en-US'` | BCP 47 locale tag for `Intl.DateTimeFormat`. |
+| `timezone` | string | `'local'` | `'local'`, `'utc'`, or IANA zone (e.g. `'Europe/Berlin'`). |
+| `showSeconds` | boolean | `false` | Include the seconds component in the output. |
+| `hour12` | boolean | locale default | `true` forces AM/PM; `false` forces 24-hour. Omit to use locale default. |
+| `formatOptions` | `Intl.DateTimeFormatOptions` | unset | Full `Intl.DateTimeFormat` options — merged over defaults. `timeZone` inside `formatOptions` takes precedence over `timezone`. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value cannot be parsed. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `parseMode` values
+
+| Value | Parses |
+|---|---|
+| `'iso-time'` | `HH:MM[:SS[.mmm]]` strings (anchored to 1970-01-01) |
+| `'iso-datetime'` | ISO 8601 datetime strings |
+| `'epoch-ms'` | Unix timestamp in milliseconds |
+| `'epoch-sec'` | Unix timestamp in seconds |
+| `'any'` | Auto-detect |
+
+## Caveats
+
+- `parseMode` is required. Without it the renderer outputs `fallbackText` immediately.
+- `iso-time` values are anchored to `1970-01-01`. Applying a timezone that converts the time across midnight may produce unexpected dates — though for time-only display this is generally invisible.
+- `hour12: undefined` (the default) defers to the locale. Set explicitly to `true` or `false` to override.
+- `formatOptions` merged over built-in options. A `timeZone` key inside `formatOptions` takes full precedence over the `timezone` option.
+- All options accept `(entity) => value` functions for per-row dynamic values.
+
+## See Also
+
+- [datetime Renderer](/core/components/renderers/datetime)
+- [date Field Type](/core/components/fields/date)
+- [Field Config](/core/reference/field-config)

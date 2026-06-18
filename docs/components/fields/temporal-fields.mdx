@@ -1,0 +1,186 @@
+---
+sidebar_position: 16
+---
+
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+# Temporal Fields Guide
+
+Widgemo's temporal rendering is **explicit-contract by design**: you declare the source format (`parseMode` for dates, `unit` for durations) and the renderer uses it to parse and display the value correctly. There is no implicit fallback guessing.
+
+This guide covers the cross-cutting concerns that apply to all five temporal field types. For type-specific options and live demos, see the individual pages:
+
+- [date](/core/components/fields/date) — ISO date strings (`YYYY-MM-DD`)
+- [time](/core/components/fields/time) — time-of-day strings (`HH:mm:ss`)
+- [datetime](/core/components/fields/datetime) — ISO datetime strings (`YYYY-MM-DDTHH:mm:ssZ`)
+- [timestamp](/core/components/fields/timestamp) — Unix epoch values (seconds or milliseconds)
+- [duration](/core/components/fields/duration) — elapsed-time numeric values
+
+## Why the Contract Exists
+
+Different backend systems store temporal values differently:
+
+| Source | Example |
+|---|---|
+| ISO date | `"2026-05-29"` |
+| ISO datetime | `"2026-05-29T08:15:10Z"` |
+| ISO time | `"08:15:10"` |
+| Unix seconds | `1780042510` |
+| Unix milliseconds | `1780042810000` |
+
+Without an explicit `parseMode`, the renderer cannot reliably distinguish a Unix epoch-sec value (`1780042510`) from a Unix epoch-ms value (`1780042810000`) — they differ by a factor of 1000, and a wrong guess would display a date 30+ years off. Making the source format explicit prevents silent mis-parsing and incorrect sort order.
+
+## All Temporal Types in One Table
+
+<WidgemoShowcase
+  description="All five temporal types in a single table — date, time, datetime, timestamp (epoch-sec and epoch-ms), and duration."
+  data={[
+    {
+      operation: 'Payroll Sync',
+      settlementDate: '2026-05-29',
+      checkpointTime: '08:15:10',
+      postedAt: '2026-05-29T08:15:10Z',
+      updatedAtEpochSec: 1780042510,
+      ingestedAtEpochMs: 1780042810000,
+      processingSec: 3661,
+    },
+    {
+      operation: 'Reserve Sweep',
+      settlementDate: '2026-05-30',
+      checkpointTime: '11:42:33',
+      postedAt: '2026-05-30T11:42:33Z',
+      updatedAtEpochSec: 1780141353,
+      ingestedAtEpochMs: 1780141633000,
+      processingSec: 915,
+    },
+    {
+      operation: 'Invoice Clear',
+      settlementDate: '2026-06-11',
+      checkpointTime: '14:05:01',
+      postedAt: '2026-06-11T14:05:01Z',
+      updatedAtEpochSec: 1780236301,
+      ingestedAtEpochMs: 1780236541000,
+      processingSec: 172,
+    },
+  ]}
+  config={{
+    zones: {
+      content: {
+        mode: 'table',
+        modeConfig: { table: { showHeader: true, hover: true } },
+        item: {
+          fields: [
+            { key: 'operation', label: 'Operation', type: 'text' },
+            {
+              key: 'settlementDate',
+              label: 'Date',
+              type: 'date',
+              renderAs: 'date',
+              renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'short' },
+            },
+            {
+              key: 'checkpointTime',
+              label: 'Time',
+              type: 'time',
+              renderAs: 'time',
+              renderAsOptions: { parseMode: 'iso-time', locale: 'en-US', showSeconds: false, hour12: false },
+            },
+            {
+              key: 'postedAt',
+              label: 'Datetime',
+              type: 'datetime',
+              renderAs: 'datetime',
+              renderAsOptions: { parseMode: 'iso-datetime', locale: 'en-US', timezone: 'utc', formatPreset: 'short' },
+            },
+            {
+              key: 'updatedAtEpochSec',
+              label: 'Timestamp (sec)',
+              type: 'timestamp',
+              renderAs: 'timestamp',
+              renderAsOptions: { parseMode: 'epoch-sec', locale: 'en-US', timezone: 'utc', formatPreset: 'short' },
+            },
+            {
+              key: 'processingSec',
+              label: 'Duration',
+              type: 'duration',
+              renderAs: 'duration',
+              renderAsOptions: { unit: 'sec', format: 'humanized', precision: 2 },
+            },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+## Sorting Behavior
+
+Table sorting for temporal fields is contract-aware:
+
+- **date, time, datetime, timestamp** — sort chronologically when a valid `parseMode` is declared and `sortable: true` is set on the field. Without `parseMode`, sort falls back to generic string/number comparison.
+- **duration** — sorts numerically when `unit` is declared and `sortable: true` is set.
+
+```tsx
+{
+  key: 'postedAt',
+  label: 'Posted At',
+  type: 'datetime',
+  renderAs: 'datetime',
+  sortable: true,  // enables column header click-to-sort
+  renderAsOptions: { parseMode: 'iso-datetime', timezone: 'utc', formatPreset: 'short' },
+}
+```
+
+Pre-sort the table on initial load via `zones.content.sorting`:
+
+```tsx
+zones: {
+  content: {
+    mode: 'table',
+    sorting: [{ fieldKey: 'postedAt', direction: 'desc' }],
+    // ...
+  }
+}
+```
+
+## Duration Approximation Units
+
+`format: 'humanized'` with `year` or `month` in `humanizedUnits` uses fixed approximations:
+- `1 year = 365 days`
+- `1 month = 30 days`
+
+These are calendar approximations, not exact. For financial or legal intervals where calendar accuracy matters (e.g. "3 months from contract date"), compute the display string in the host app and render it as `type: 'text'`.
+
+## parseMode Quick Reference
+
+| parseMode | Accepts | Example value |
+|---|---|---|
+| `iso-date` | `YYYY-MM-DD` | `"2026-05-29"` |
+| `iso-time` | `HH:mm:ss` | `"08:15:10"` |
+| `iso-datetime` | ISO 8601 with time | `"2026-05-29T08:15:10Z"` |
+| `epoch-sec` | Unix timestamp in seconds | `1780042510` |
+| `epoch-ms` | Unix timestamp in milliseconds | `1780042810000` |
+| `any` | Tries formats in order | Use only when source format is unknown |
+
+:::caution
+`parseMode: 'any'` attempts multiple parse strategies and is less reliable than explicit modes. Use it only when the source format is genuinely variable.
+:::
+
+## duration unit Quick Reference
+
+| unit | Interprets raw value as |
+|---|---|
+| `ms` | milliseconds |
+| `sec` | seconds |
+| `min` | minutes |
+| `hour` | hours |
+| `day` | days |
+
+## Migration Checklist
+
+1. For every `type: 'date'` field, add `renderAs: 'date'` and `renderAsOptions.parseMode`.
+2. For epoch-style values, use `type: 'timestamp'` and set `parseMode: 'epoch-sec'` or `'epoch-ms'` depending on the source.
+3. For every `type: 'duration'` field, add `renderAs: 'duration'` and `renderAsOptions.unit`.
+4. Validate sort order on each temporal column in table mode.
+5. If a temporal column sorts unexpectedly, confirm that `parseMode`/`unit` is set — sort falls back to generic comparison without it.

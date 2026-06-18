@@ -1,84 +1,291 @@
 ---
-sidebar_position: 4
+sidebar_position: 1
 ---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Adopting Widgemo
 
-This guide covers adoption patterns for teams integrating widgemo-core into an existing product. For detailed adoption briefs and agent-ready prompts, see the [adoption docs on GitHub](https://github.com/widgemo/widgemo-core/tree/main/docs/adoption).
+This guide is for teams adding `@widgemo/widgemo-core` to an already-running application — not a greenfield build. The goal is not a full rewrite. The goal is a controlled, incremental replacement of existing table, card, and list surfaces with Widgemo, one widget at a time, while keeping the rest of the app undisturbed.
 
-## Adoption Phases
+---
 
-### Phase 1: Discovery
+## 1. Install and Verify Dependencies
 
-Run a read-only discovery pass over the codebase. The goal is to produce an Adoption Brief: a source-of-truth document recording each widget's current patterns before any code is touched.
-
-Key questions:
-
-- Where are data tables and card views currently rendered?
-- What are the column and field definitions for each view?
-- Which views already have sorting, filtering, or pagination?
-- Are custom renderers, badges, or status cells in use?
-
-### Phase 2: Adoption Brief
-
-Create one adoption brief per widget. Include:
-
-```md
-### Widget: [name]
-
-**Data source**: [where data comes from]
-**Current component**: [current table/list component in use]
-**Fields**: [field list with type and renderAs equivalent]
-**Actions**: [per-item and zone-level actions]
-**Mode**: table | grid | carousel | board
-**Sorting**: [default sort field and direction]
-**Filtering**: [static or user-controlled filters]
-**Migration complexity**: low | medium | high
+```bash
+npm install @widgemo/widgemo-core
 ```
 
-### Phase 3: Refactor
+`@widgemo/widgemo-core` requires React 18+ and React DOM as peer dependencies. Verify they are already present:
 
-Apply widgemo-core incrementally. Prefer a 1:1 replacement for each widget before expanding.
+```bash
+npm list react react-dom
+```
 
-- Keep the data-fetch layer unchanged and pass data directly to `<Widgemo>`.
-- Replace layout components in isolation; do not combine with unrelated UI restructuring.
-- Start with `mode: 'table'` and `layout: { type: 'auto' }` before customizing.
-- Add `devMode: true` in development to validate config shape and field coverage.
-- Remove `devMode` before merging.
+If either is missing or below v18, install or update them before proceeding.
 
-## Minimum Viable Config
+---
+
+## 2. Import the Stylesheet
+
+Import the Widgemo stylesheet once at your app root (e.g. `main.tsx`, `App.tsx`, or your global CSS entry point):
 
 ```tsx
-import { Widgemo } from '@widgemo/widgemo-core';
-import '@widgemo/widgemo-core/dist/widgemo-theme.css';
-
-<Widgemo
-	data={rows}
-	config={{
-		zones: {
-			header: { title: 'Widget Title' },
-			content: {
-				mode: 'table',
-				item: {
-					fields: [
-						{ key: 'id', label: 'ID' },
-						{ key: 'name', label: 'Name' },
-					],
-					layout: { type: 'auto' },
-				},
-			},
-		},
-	}}
-/>
+import '@widgemo/widgemo-core/style.css';
 ```
 
-## Agent-Ready Prompts
+This must load before any Widgemo component renders. Importing it more than once has no effect, but importing it after the component renders will cause a flash of unstyled content.
 
-The `docs/adoption/` folder in widgemo-core includes copy-paste prompts:
+---
+
+## 3. Make Theming Decisions Early
+
+This is the step most teams skip, and it causes the most friction later.
+
+Widgemo ships with a default light and dark theme that works out of the box. In many apps, the default will look noticeably off compared to the surrounding UI — different button colors, border radii, background tones, or typography. Aligning Widgemo's visual style to your existing app is much easier to do at the start than to retrofit after several widgets are live.
+
+### The basics: wrap with `WidgemoThemeProvider`
+
+Every Widgemo instance should be inside a `WidgemoThemeProvider`. The provider is where you control theming.
+
+```tsx
+import { Widgemo, WidgemoThemeProvider } from '@widgemo/widgemo-core';
+
+function MyWidget({ rows }) {
+  return (
+    <WidgemoThemeProvider theme="light">
+      <Widgemo data={rows} config={config} />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+If your app already has a dark mode, pass `theme="auto"` to follow the system preference, or wire it to your own theme state:
+
+```tsx
+<WidgemoThemeProvider theme={userPrefersDark ? 'dark' : 'light'}>
+```
+
+### Customising to match your app
+
+For apps with a strong existing visual identity, pass a theme object to override specific tokens:
+
+```tsx
+<WidgemoThemeProvider theme={{
+  colors: {
+    actionButtonBg: '#1a1a2e',
+    actionButtonColor: '#ffffff',
+  },
+  zone: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: '0.5rem',
+  },
+}}>
+  <Widgemo data={rows} config={config} />
+</WidgemoThemeProvider>
+```
+
+You can also apply per-Widgemo overrides via `config.zones.content.themeOverrides` when individual Widgemos need to deviate from the shared provider theme.
+
+For teams with a design system or CSS custom property library, Widgemo's `--widgemo-*` CSS variables can be overridden globally:
+
+```css
+/* In your global stylesheet, after importing widgemo-core/style.css */
+:root {
+  --widgemo-color-actionButtonBg: #1a1a2e;
+  --widgemo-action-button-border-radius: 0.25rem;
+}
+```
+
+**Reference:** [Theming Concepts](/core/concepts/theming) · [Theme API](/core/reference/theme-api)
+
+---
+
+## 4. Replace One Surface at a Time
+
+Do not plan a big-bang migration. Pick the simplest existing table or card list and replace it first.
+
+**Rollout order that minimises risk:**
+
+1. Pick a read-heavy, low-interaction surface (a simple data list with no actions) as the first target.
+2. Keep your existing data fetching and state management entirely unchanged — pass the same data array to `<Widgemo>`.
+3. Start with `mode: 'table'` and `layout: { type: 'auto' }`. Widgemo will infer field labels from data keys.
+4. Declare explicit `fields` only when you need to control labels, types, or rendering.
+5. Once that Widgemo is stable, move to the next surface.
+
+```tsx
+// Before: your existing component
+function AccountsTable({ rows }) {
+  return (
+    <table>
+      <thead>…</thead>
+      <tbody>{rows.map(r => <tr key={r.id}>…</tr>)}</tbody>
+    </table>
+  );
+}
+
+// After: direct replacement, same data prop
+function AccountsTable({ rows }) {
+  return (
+    <WidgemoThemeProvider theme="light">
+      <Widgemo
+        data={rows}
+        config={{
+          zones: {
+            header: { title: 'Accounts' },
+            content: {
+              mode: 'table',
+              item: {
+                fields: [
+                  { key: 'name',   label: 'Account' },
+                  { key: 'owner',  label: 'Owner'   },
+                  { key: 'status', label: 'Status', renderAs: 'badge' },
+                ],
+                layout: { type: 'auto' },
+              },
+            },
+          },
+        }}
+      />
+    </WidgemoThemeProvider>
+  );
+}
+```
+
+<WidgemoShowcase
+  title="Minimum Viable Replacement"
+  description="A realistic first replacement: existing data unchanged, rendering moved to Widgemo."
+  data={[
+    { id: 1, name: 'Acme North', status: 'active',  owner: 'Aurora' },
+    { id: 2, name: 'Acme South', status: 'pending', owner: 'Mateo'  },
+  ]}
+  config={{
+    zones: {
+      header: { title: 'Accounts', subtitle: 'Same data, new rendering primitive' },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Account' },
+            { key: 'owner',  label: 'Owner'   },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+---
+
+## 5. Wire Actions and Interactions to Existing App Logic
+
+This is where Widgemo connects back to your app. Actions (buttons on items or zones) and gestures (item clicks, drags) fire an `InteractionContext` payload to a single handler. You decide what to do with it.
+
+### Zone and item actions
+
+Declare actions in `config`, and route their events to existing handlers via `interactions.onEvent`:
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      if (ctx.interactionId === 'edit-account') {
+        openEditModal(ctx.entity);     // your existing function
+      }
+      if (ctx.interactionId === 'delete-account') {
+        deleteAccount(ctx.entity.id); // your existing function
+      }
+    },
+  },
+  zones: {
+    content: {
+      mode: 'table',
+      actions: [
+        { id: 'edit-account',   label: 'Edit',   icon: 'edit',   placement: 'pinned' },
+        { id: 'delete-account', label: 'Delete', icon: 'delete', placement: 'menu', variant: 'danger' },
+      ],
+      item: { fields: […], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+The `InteractionContext` includes `kind` (whether it was an item action, zone action, or gesture), `interactionId`, `interactionLabel`, `entity` (the row that was acted on), and `data` (the full visible dataset).
+
+### Item-click gestures
+
+If your existing table rows are clickable (navigate to a detail view, open a panel), declare an `item-click` gesture:
+
+```tsx
+const config = {
+  interactions: {
+    onEvent: (ctx) => {
+      if (ctx.kind === 'item-click') {
+        router.push(`/accounts/${ctx.entity.id}`); // your existing navigation
+      }
+    },
+  },
+  zones: {
+    content: {
+      mode: 'table',
+      gestures: [{ type: 'item-click' }],
+      item: { fields: […], layout: { type: 'auto' } },
+    },
+  },
+};
+```
+
+**Reference:** [Content Config: Actions and Interactions](/core/reference/content-config#actions) · [Content Config: Gestures](/core/reference/content-config#gestures)
+
+---
+
+## 6. Progressive Discovery and Enrichment
+
+Once a Widgemo is live and stable, you can progressively enrich it without risk:
+
+- Add `renderAs` to fields for richer visual output (badges, progress bars, currency, links)
+- Add `sortable: true` to fields that should be user-sortable
+- Add `config.zones.content.filtering` or `sorting` for declarative data behavior
+- Switch `mode` from `table` to `grid` or `board` if the data suits a different layout
+- Add `modeConfig` to tune mode-specific options
+
+Each of these is an additive config change. Nothing in your data layer or interaction handlers changes.
+
+---
+
+## Practical Checklist
+
+| Step | Done? |
+|---|---|
+| `@widgemo/widgemo-core` installed | ☐ |
+| Peer dependencies (React 18+) verified | ☐ |
+| Stylesheet imported at app root | ☐ |
+| `WidgemoThemeProvider` wrapping each Widgemo | ☐ |
+| Theme tokens reviewed against app brand | ☐ |
+| First surface replaced and validated | ☐ |
+| Actions wired to existing app handlers | ☐ |
+| Gestures wired where rows were previously clickable | ☐ |
+
+---
+
+## Further Reading
+
+- [Theming Concepts](/core/concepts/theming) — presets, token overrides, per-zone overrides
+- [Theme API](/core/reference/theme-api) — `WidgemoThemeProvider`, `registerTheme`, `useWidgemoTheme`
+- [Content Config](/core/reference/content-config) — actions, gestures, sorting, filtering, grouping
+- [Field Config](/core/reference/field-config) — field types and `renderAs` options
+- [Migration and Compatibility](/core/release-notes/upgrading/migration-compatibility)
+
+## AI-Assisted Adoption
+
+The `docs/adoption/` folder in the [widgemo-core GitHub repo](https://github.com/widgemo/widgemo-core/tree/main/docs/adoption) contains copy-paste prompts for AI coding agents:
 
 | File | Purpose |
-| --- | --- |
+|---|---|
 | `AGENT_PROMPTS_ADOPTION.md` | Discovery, refactor, and validation prompts |
 | `ADOPTION_DISCOVERY.md` | Read-only discovery instructions |
 | `ADOPTION_REFACTOR.md` | Refactor implementation rules |
 | `ADOPTION_BRIEF_TEMPLATE.md` | Source-of-truth brief template |
+

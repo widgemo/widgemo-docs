@@ -18,13 +18,16 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
  */
 const sidebars: SidebarsConfig = {
   coreDocsSidebar: [
-    'intro',
     {
       type: 'category',
       label: 'Getting Started',
       items: [
+        'getting-started/introduction',
         'getting-started/installation',
         'getting-started/quick-start',
+        'getting-started/your-first-widgemo',
+        'getting-started/common-setup-pitfalls',
+        'guides/adopting-widgemo',
       ],
     },
     {
@@ -32,6 +35,16 @@ const sidebars: SidebarsConfig = {
       label: 'Concepts',
       items: [
         'concepts/configuration-model',
+        'concepts/theming',
+        'concepts/devmode',
+        'concepts/extension-architecture',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Components',
+      items: [
+        'components/overview',
         {
           type: 'category',
           label: 'Modes',
@@ -45,18 +58,52 @@ const sidebars: SidebarsConfig = {
             'concepts/modes/responsive-switching',
           ],
         },
-        'concepts/theming',
-        'concepts/devmode',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Guides',
-      items: [
-        'guides/integrate-into-existing-app',
-        'guides/adopting-widgemo',
-        'guides/temporal-fields',
-        'guides/composition-bar',
+        {
+          type: 'category',
+          label: 'Field Types',
+          items: [
+            'components/fields/overview',
+            'components/fields/text',
+            'components/fields/number',
+            'components/fields/boolean',
+            'components/fields/select',
+            'components/fields/reference',
+            'components/fields/textarea',
+            'components/fields/email',
+            'components/fields/url',
+            'components/fields/image',
+            'components/fields/swatch',
+            'components/fields/date',
+            'components/fields/time',
+            'components/fields/datetime',
+            'components/fields/timestamp',
+            'components/fields/duration',
+            'components/fields/temporal-fields',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Field Renderers',
+          items: [
+            'components/renderers/overview',
+            'components/renderers/badge',
+            'components/renderers/currency',
+            'components/renderers/progress',
+            'components/renderers/rating',
+            'components/renderers/link',
+            'components/renderers/json-preview',
+            'components/renderers/delta-value',
+            'components/renderers/spark-trend',
+            'components/renderers/score-meter',
+            'components/renderers/composition-bar',
+            'components/renderers/date',
+            'components/renderers/time',
+            'components/renderers/datetime',
+            'components/renderers/timestamp',
+            'components/renderers/duration',
+          ],
+        },
+        'components/icons',
       ],
     },
     {
@@ -65,48 +112,57 @@ const sidebars: SidebarsConfig = {
       items: [
         'reference/widgemo-props',
         'reference/widgemo-config',
+        {
+          type: 'doc',
+          id: 'reference/zone-config',
+          label: 'Zone Config (Header & Footer)',
+        },
         'reference/content-config',
+        'reference/item-config',
+        'reference/loading-state',
+        'reference/error-state',
+        {
+          type: 'category',
+          label: 'Mode Config',
+          items: [
+            'reference/mode-config/table',
+            'reference/mode-config/grid',
+            'reference/mode-config/carousel',
+            'reference/mode-config/board',
+            'reference/mode-config/chart',
+          ],
+        },
         'reference/field-config',
         'reference/action-config',
+          'guides/field-rendering-decisions',
         'reference/css-variables',
         'reference/host-css-table-layout',
         'reference/theme-api',
+        'reference/extension-api',
+        'reference/utilities',
+        {
+          type: 'doc',
+          id: 'reference/all-exports',
+          label: 'All Exports',
+        },
       ],
     },
     {
       type: 'category',
-      label: 'Extensions',
+      label: 'Extending Widgemo',
       items: [
-        'concepts/extension-architecture',
-        {
-          type: 'category',
-          label: 'Task: Build Extension Foundation',
-          items: [
-            'reference/extension-api',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Task: Customize Field Rendering',
-          items: [
-            'extensions/renderas-customization',
-            'extensions/custom-field-types',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Task: Add Behavior and Icons',
-          items: [
-            'guides/custom-modes',
-            'guides/custom-icons',
-          ],
-        },
+        'customization/overview',
+        'extensions/renderas-customization',
+        'extensions/custom-field-types',
+        'guides/custom-modes',
+        'guides/custom-icons',
       ],
     },
     {
       type: 'category',
       label: 'Release Notes',
       items: [
+        'changelog',
         'release-notes/upgrading/migration-compatibility',
       ],
     },

@@ -1,0 +1,271 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const urlData = [
+  { name: 'Aurora Chen', role: 'Design Lead', profile: 'https://profiles.example.com/aurora-chen', docs: 'https://docs.example.com/team/aurora' },
+  { name: 'Mateo Silva', role: 'Platform Engineer', profile: 'https://profiles.example.com/mateo-silva', docs: 'https://docs.example.com/team/mateo' },
+  { name: 'Priya Nair', role: 'Operations', profile: 'https://profiles.example.com/priya-nair', docs: null },
+];
+
+export const urlBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          { key: 'profile', label: 'Profile URL', type: 'url' },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const urlLinkConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'profile',
+            label: 'Profile',
+            type: 'url',
+            renderAs: 'link',
+            renderAsOptions: { text: 'View profile', newTab: true, externalWarning: true },
+          },
+          {
+            key: 'docs',
+            label: 'Docs',
+            type: 'url',
+            renderAs: 'link',
+            renderAsOptions: { text: (entity) => entity.name + ' docs', newTab: true },
+            condition: (entity) => Boolean(entity.docs),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const urlFormatterConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'profile',
+            label: 'Profile URL',
+            type: 'url',
+            wrap: true,
+          },
+          {
+            key: 'profile',
+            label: 'Username',
+            type: 'text',
+            formatter: (value) => {
+              const parts = String(value ?? '').replace(/\/$/, '').split('/');
+              return parts[parts.length - 1] ?? '';
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const urlConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          { key: 'role', label: 'Role', type: 'text' },
+          {
+            key: 'docs',
+            label: 'Docs',
+            type: 'url',
+            renderAs: 'link',
+            renderAsOptions: { text: 'Open docs', newTab: true },
+            condition: (entity) => Boolean(entity.docs),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# url Field Type
+
+`type: 'url'` renders a web address as plain text. Adding `renderAs: 'link'` upgrades it to a clickable `<a>` element with optional custom label text, new-tab behaviour, and an external-link warning indicator.
+
+## Core Examples
+
+### Basic URL Field
+
+<WidgemoShowcase
+  description="Profile URL rendered as plain text in table mode."
+  data={urlData}
+  config={urlBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'profile', label: 'Profile URL', type: 'url' }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Clickable Link
+
+`renderAs: 'link'` renders the value as an `<a>` element using the raw value as `href`. Use `renderAsOptions.text` to show a human-readable label instead of the raw URL. Set `externalWarning: true` to render an `↗` indicator on external links.
+
+`text` can be a static string or a function receiving the full entity — useful for per-row labels.
+
+<WidgemoShowcase
+  description="Profile column shows a static 'View profile' label for all rows with an external-link indicator. Docs column uses a per-row label from the entity name. Priya's null docs field is hidden via condition."
+  data={urlData}
+  config={urlLinkConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'profile',
+  label: 'Profile',
+  type: 'url',
+  renderAs: 'link',
+  renderAsOptions: { text: 'View profile', newTab: true, externalWarning: true },
+},
+{
+  key: 'docs',
+  label: 'Docs',
+  type: 'url',
+  renderAs: 'link',
+  renderAsOptions: { text: (entity) => entity.name + ' docs', newTab: true },
+  condition: (entity) => Boolean(entity.docs),
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Formatter
+
+`formatter` transforms the raw value before display. Common uses: extract a path segment (username, slug), strip query strings, or normalize trailing slashes.
+
+<WidgemoShowcase
+  description="Profile URL shown with wrap: true; username extracted from the last path segment into a separate column."
+  data={urlData}
+  config={urlFormatterConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'profile',
+  label: 'Profile URL',
+  type: 'url',
+  wrap: true,
+},
+{
+  key: 'profile',
+  label: 'Username',
+  type: 'text',
+  formatter: (value) => {
+    const parts = String(value ?? '').replace(/\/$/, '').split('/');
+    return parts[parts.length - 1] ?? '';
+  },
+},
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+`condition` receives the full entity and returns `true` to show the field or `false` to hide it entirely. Use it to suppress rows where the URL is null or empty.
+
+<WidgemoShowcase
+  description="Docs link is hidden for Priya whose docs value is null. Aurora and Mateo show clickable links."
+  data={urlData}
+  config={urlConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'docs',
+  label: 'Docs',
+  type: 'url',
+  renderAs: 'link',
+  renderAsOptions: { text: 'Open docs', newTab: true },
+  condition: (entity) => Boolean(entity.docs),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'url'` | — | Renders as plain text. Use `renderAs: 'link'` for a clickable `<a>` element. |
+| `wrap` | `true`, `false` | inherited from `ItemConfig.wrap` | `false`: single line, clips with ellipsis in card modes. `true`: wraps — uses **forced word-breaking** since URLs have no natural break points. |
+| `formatter` | `(value, entity) => unknown` | unset | Transforms the raw value before display. Does not mutate the entity. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `renderAs` | `'link'` | unset | Renders as a clickable `<a>` element using the raw value as `href`. |
+| `renderAsOptions` | `LinkRenderAsOptions` | unset | Options forwarded to the link renderer (see table below). |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+| `showLabel` | `true`, `false` | `true` when `label` is set | Shows or hides the label in card/grid layouts. |
+
+### `renderAsOptions` for `renderAs: 'link'`
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `text` | `string` or `(entity) => string` | raw URL | Display text for the link. |
+| `url` | `string` or `(entity) => string` | raw value | Override the `href` (useful when the field value is not itself the URL). |
+| `newTab` | `boolean` | `false` | Opens link in a new tab with `rel="noopener noreferrer"`. |
+| `externalWarning` | `boolean` | `false` | Appends an `↗` icon to external links. |
+| `className` | `string` | unset | Additional CSS class on the `<a>` element. |
+
+## Caveats
+
+- `url` shares the same base renderer as `text`, `textarea`, and `email` — it outputs `<span className="field-text">` when rendered as plain text.
+- `wrap: true` applies **forced word-breaking** for url fields specifically, since long URLs have no natural break points.
+- Unlike `type: 'email'`, there is no automatic URL prefix. The raw value is used as `href` as-is — ensure values include the full scheme (`https://`).
+- If the `href` is not a valid URL (fails the internal URL validation), `renderAs: 'link'` falls back to plain text rendering.
+- No client-side URL format validation is performed on the raw value.
+
+## Why url vs text?
+
+They render identically today without `renderAs: 'link'`. The distinction matters for:
+
+**Forced word-breaking** — `wrap: true` on url applies `overflow-wrap: break-word` to handle the absence of natural break points in long URLs. `type: 'text'` uses natural word boundaries only.
+
+**Semantic intent** — `type: 'url'` communicates that the value is a web address to other developers and future tooling.
+
+**Forward compatibility** — future inline editing will render `<input type="url">` for url fields and `<input type="text">` for text fields.
+
+## See Also
+
+- [email Field Type](/core/components/fields/email)
+- [text Field Type](/core/components/fields/text)
+- [link Renderer](/core/components/renderers/link)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

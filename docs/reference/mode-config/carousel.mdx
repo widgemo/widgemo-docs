@@ -1,0 +1,58 @@
+---
+---
+
+# Carousel Mode Config
+
+`modeConfig.carousel` controls item sizing, navigation, indicators, looping, and auto-play behavior in carousel mode.
+
+```tsx
+content: {
+  mode: 'carousel',
+  modeConfig: {
+    carousel: {
+      itemWidth: 300,
+      gap: 16,
+      showArrows: true,
+      showIndicators: true,
+      infinite: true,
+    },
+  },
+  item: { fields: […], layout: { type: 'auto' } },
+},
+```
+
+## Options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `itemWidth` | number | unset | Sets the width of each card. |
+| `itemHeight` | number, `'auto'` | `'auto'` | Sets the item height, or lets items grow naturally with `auto`. |
+| `gap` | number | unset | Sets spacing between carousel items. |
+| `showIndicators` | `true`, `false` | unset | Shows or hides dot indicators. |
+| `showArrows` | `true`, `false` | unset | Shows or hides navigation arrows. |
+| `infinite` | `true`, `false` | unset | Enables looping at the ends. |
+| `revolving` | `true`, `false` | `true` when `infinite` is enabled | Changes how looping behaves when `infinite` is enabled. |
+| `autoPlay` | `true`, `false` | unset | Enables automatic slide advance. |
+| `autoPlayInterval` | number (milliseconds) | unset | Sets the auto-play interval in milliseconds. |
+| `dragThreshold` | number | unset | Sets the drag distance needed to change slides. |
+
+## Mode-Specific Caveats
+
+- `revolving` only applies when `infinite` is enabled.
+- `itemHeight: 'auto'` can create variable card heights, which changes perceived slide rhythm.
+- Sorting (`config.sorting`) is not supported in carousel mode. Pre-sort your data before passing it in if a specific order is needed.
+
+## Coverage Summary
+
+Every carousel option is represented by at least one example on the [Carousel Mode](/core/concepts/modes/carousel) guide page:
+
+- `itemWidth`, `itemHeight`, `gap`, `showIndicators`, `showArrows`, `infinite`, `revolving`, `dragThreshold`: Manual Navigation, Auto-Playing Carousel
+- `autoPlay`, `autoPlayInterval`: Auto-Playing Carousel
+- `groupings` in carousel mode: Grouping
+
+## See Also
+
+- [Carousel Mode](/core/concepts/modes/carousel) — examples and configuration references
+- [Content Config](/core/reference/content-config) — `modeConfig`, `groupings`
+- [Action Config](/core/reference/action-config)
+- [Grid Mode](/core/concepts/modes/grid)

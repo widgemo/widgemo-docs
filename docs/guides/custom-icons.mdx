@@ -2,36 +2,19 @@
 sidebar_position: 3
 ---
 
-import { defaultRenderWidgemoIcon } from '@widgemo/widgemo-core';
-import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+# Custom Icons
 
-# Custom Icons Guide
+Use this page to extend or override icons in the Widgemo icon registry.
 
-widgemo-core uses a named icon registry. Any built-in icon name can be overridden, and new names can be added.
+If you need the built-in icon catalog, use [Built-in Icons](/core/components/icons/built-in-icons).
 
-<WidgemoShowcase
-	title="Icon Naming in Config"
-	description="Actions reference icon names from the icon registry, which makes custom icon packs swappable without changing business logic."
-	data={[
-		{ action: 'Edit', iconName: 'edit', scope: 'item' },
-		{ action: 'Delete', iconName: 'delete', scope: 'item' },
-	]}
-	config={{
-		zones: {
-			content: {
-				mode: 'table',
-				item: {
-					fields: [
-						{ key: 'action', label: 'Action' },
-						{ key: 'iconName', label: 'Icon Name' },
-						{ key: 'scope', label: 'Scope', renderAs: 'badge' },
-					],
-					layout: { type: 'auto' },
-				},
-			},
-		},
-	}}
-/>
+## When to Use Custom Icons
+
+| Situation | Prefer custom icons? | Why |
+|---|---|---|
+| Your app uses a branded or shared icon set | Yes | Config can reference stable icon names |
+| You want to replace a built-in icon globally | Yes | Re-register the same name |
+| You only need existing built-ins | No | Use the built-in catalog directly |
 
 ## Register a Custom Icon
 
@@ -52,221 +35,21 @@ widgemoRegistry.registerWidgemoIcon({
 });
 ```
 
-The icon component receives `{ size?, className?, color? }`. Returning `null` falls back to the built-in SVG.
+The icon component receives `{ size?, className?, color? }`.
 
-## Built-in Icon Names
+## Registration Contract
 
-The list below reflects all currently available built-in icon names in core.
-Within each category, icons are sorted alphabetically. `Other` is intentionally shown last.
+`registerWidgemoIcon` accepts an `IconRegistryEntry`:
 
-export const builtInIconCategories = [
-	{
-		category: 'Actions & Utilities',
-		icons: [
-			{ icon: 'add', names: ['add', 'plus'] },
-			{ icon: 'attachment', names: ['attachment'] },
-			{ icon: 'close', names: ['close', 'x', 'cross'] },
-			{ icon: 'copy', names: ['copy'] },
-			{ icon: 'delete', names: ['delete', 'trash'] },
-			{ icon: 'edit', names: ['edit', 'pencil'] },
-			{ icon: 'ellipsis-horizontal', names: ['ellipsis-horizontal', 'more-horizontal'] },
-			{ icon: 'ellipsis-vertical', names: ['ellipsis-vertical'] },
-			{ icon: 'export', names: ['export', 'upload'] },
-			{ icon: 'filter', names: ['filter'] },
-			{ icon: 'filter-off', names: ['filter-off'] },
-			{ icon: 'import', names: ['import', 'download'] },
-			{ icon: 'menu', names: ['menu'] },
-			{ icon: 'pin', names: ['pin'] },
-			{ icon: 'pin-slash', names: ['pin-slash'] },
-			{ icon: 'refresh', names: ['refresh'] },
-			{ icon: 'reload', names: ['reload'] },
-			{ icon: 'search', names: ['search'] },
-			{ icon: 'settings', names: ['settings', 'config', 'cog'] },
-			{ icon: 'share', names: ['share'] },
-			{ icon: 'sort', names: ['sort'] },
-			{ icon: 'view', names: ['view', 'eye'] },
-			{ icon: 'view-slash', names: ['view-slash', 'eye-slash'] },
-		],
-	},
-	{
-		category: 'Alignment & Layout',
-		icons: [
-			{ icon: 'align-center', names: ['align-center'] },
-			{ icon: 'align-left', names: ['align-left'] },
-			{ icon: 'align-right', names: ['align-right'] },
-			{ icon: 'group', names: ['group', 'grouping'] },
-			{ icon: 'group-available', names: ['group-available'] },
-			{ icon: 'justify', names: ['justify'] },
-		],
-	},
-	{
-		category: 'Arrows & Navigation',
-		icons: [
-			{ icon: 'arrow-down', names: ['arrow-down'] },
-			{ icon: 'arrow-down-left', names: ['arrow-down-left'] },
-			{ icon: 'arrow-down-right', names: ['arrow-down-right'] },
-			{ icon: 'arrow-left', names: ['arrow-left'] },
-			{ icon: 'arrow-right', names: ['arrow-right'] },
-			{ icon: 'arrow-up', names: ['arrow-up'] },
-			{ icon: 'arrow-up-left', names: ['arrow-up-left'] },
-			{ icon: 'arrow-up-right', names: ['arrow-up-right'] },
-			{ icon: 'chevron-down', names: ['chevron-down'] },
-			{ icon: 'chevron-left', names: ['chevron-left'] },
-			{ icon: 'chevron-right', names: ['chevron-right'] },
-			{ icon: 'chevron-up', names: ['chevron-up'] },
-			{ icon: 'external-link', names: ['external-link', 'new-tab'] },
-			{ icon: 'home', names: ['home'] },
-		],
-	},
-	{
-		category: 'Charts & Modes',
-		icons: [
-			{ icon: 'board', names: ['board'] },
-			{ icon: 'chart-bar', names: ['chart-bar'] },
-			{ icon: 'chart-line', names: ['chart-line'] },
-			{ icon: 'chart-pie', names: ['chart-pie'] },
-			{ icon: 'grid', names: ['grid'] },
-			{ icon: 'speedometer', names: ['speedometer'] },
-			{ icon: 'table', names: ['table'] },
-		],
-	},
-	{
-		category: 'Content & People',
-		icons: [
-			{ icon: 'book', names: ['book'] },
-			{ icon: 'calendar', names: ['calendar'] },
-			{ icon: 'code', names: ['code', 'html'] },
-			{ icon: 'document', names: ['document'] },
-			{ icon: 'file', names: ['file'] },
-			{ icon: 'folder', names: ['folder'] },
-			{ icon: 'folder-open', names: ['folder-open'] },
-			{ icon: 'glasses', names: ['glasses'] },
-			{ icon: 'globe', names: ['globe'] },
-			{ icon: 'image', names: ['image'] },
-			{ icon: 'link', names: ['link'] },
-			{ icon: 'location', names: ['location'] },
-			{ icon: 'map', names: ['map'] },
-			{ icon: 'puzzle-piece', names: ['puzzle-piece'] },
-			{ icon: 'relationship', names: ['relationship'] },
-			{ icon: 'unlink', names: ['unlink'] },
-			{ icon: 'user', names: ['user', 'profile'] },
-			{ icon: 'users', names: ['users', 'team'] },
-		],
-	},
-	{
-		category: 'Finance & Commerce',
-		icons: [
-			{ icon: 'asset', names: ['asset', 'mortgage'] },
-			{ icon: 'budget', names: ['budget'] },
-			{ icon: 'car', names: ['car'] },
-			{ icon: 'cash', names: ['cash'] },
-			{ icon: 'credit-card', names: ['credit-card'] },
-			{ icon: 'crypto', names: ['crypto'] },
-			{ icon: 'currency-dollar', names: ['currency-dollar', 'dollar-sign', 'dollar'] },
-			{ icon: 'loan', names: ['loan'] },
-			{ icon: 'real-estate', names: ['real-estate', 'house'] },
-			{ icon: 'shopping-cart', names: ['shopping-cart'] },
-			{ icon: 'stock', names: ['stock'] },
-			{ icon: 'transfer', names: ['transfer'] },
-		],
-	},
-	{
-		category: 'Infrastructure & Security',
-		icons: [
-			{ icon: 'building', names: ['building'] },
-			{ icon: 'bug', names: ['bug', 'defect'] },
-			{ icon: 'cloud', names: ['cloud'] },
-			{ icon: 'cloud-off', names: ['cloud-off'] },
-			{ icon: 'database', names: ['database'] },
-			{ icon: 'key', names: ['key'] },
-			{ icon: 'lock', names: ['lock'] },
-			{ icon: 'server', names: ['server'] },
-			{ icon: 'shield', names: ['shield'] },
-			{ icon: 'unlock', names: ['unlock'] },
-			{ icon: 'wifi', names: ['wifi'] },
-		],
-	},
-	{
-		category: 'Status & Feedback',
-		icons: [
-			{ icon: 'bell', names: ['bell', 'alert', 'notification'] },
-			{ icon: 'check-circle', names: ['check-circle', 'success'] },
-			{ icon: 'check-square', names: ['check-square'] },
-			{ icon: 'clock', names: ['clock'] },
-			{ icon: 'contrast', names: ['contrast'] },
-			{ icon: 'heart', names: ['heart'] },
-			{ icon: 'hourglass', names: ['hourglass'] },
-			{ icon: 'info', names: ['info'] },
-			{ icon: 'loading', names: ['loading', 'spinner'] },
-			{ icon: 'moon', names: ['moon', 'dark-mode'] },
-			{ icon: 'pause', names: ['pause'] },
-			{ icon: 'play', names: ['play'] },
-			{ icon: 'star', names: ['star'] },
-			{ icon: 'stop', names: ['stop'] },
-			{ icon: 'sun', names: ['sun', 'light-mode'] },
-			{ icon: 'warning', names: ['warning'] },
-			{ icon: 'x-circle', names: ['x-circle', 'error'] },
-			{ icon: 'x-square', names: ['x-square'] },
-		],
-	},
-	{
-		category: 'Other',
-		icons: [
-			{ icon: 'circle', names: ['circle'] },
-			{ icon: 'circle-fill', names: ['circle-fill'] },
-			{ icon: 'circle-stripes', names: ['circle-stripes'] },
-			{ icon: 'diamond', names: ['diamond'] },
-			{ icon: 'goal', names: ['goal', 'target'] },
-			{ icon: 'square', names: ['square'] },
-			{ icon: 'thread', names: ['thread'] },
-		],
-	},
-];
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Icon name used in config |
+| `component` | `ComponentType<{ className?, size?, color? }> \| ((props) => ReactNode)` | Icon renderer |
+| `defaultProps` | `Record<string, unknown>` | Optional default props |
 
-{builtInIconCategories.map((section) => (
-	<div key={section.category} style={{ marginTop: '1.25rem' }}>
-		<h3>{section.category}</h3>
-		<div
-			style={{
-				display: 'grid',
-				gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-				gap: '0.75rem',
-				marginTop: '0.5rem',
-			}}
-		>
-			{section.icons.map((group) => (
-				<div
-					key={group.icon}
-					style={{
-						border: '1px solid var(--ifm-color-emphasis-300)',
-						borderRadius: '10px',
-						padding: '0.6rem 0.75rem',
-						display: 'flex',
-						alignItems: 'center',
-						gap: '0.6rem',
-						background: 'var(--ifm-background-surface-color)',
-					}}
-				>
-					<span
-						aria-hidden
-						style={{
-							display: 'inline-flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							width: '22px',
-							height: '22px',
-							color: 'var(--ifm-color-primary)',
-							flexShrink: 0,
-						}}
-					>
-						{defaultRenderWidgemoIcon({ name: group.icon, size: 18 })}
-					</span>
-					<code style={{ fontSize: '0.76rem', lineHeight: 1.2 }}>{group.names.join(', ')}</code>
-				</div>
-			))}
-		</div>
-	</div>
-))}
+## Built-in Icon Catalog
+
+Use [Built-in Icons](/core/components/icons/built-in-icons) for the current built-in icon names and categories.
 
 ## Override a Built-in Icon
 
@@ -280,6 +63,12 @@ widgemoRegistry.registerWidgemoIcon({
 	),
 });
 ```
+
+## Fallback and Override Behavior
+
+- Unknown icon names fall back to Widgemo's default icon renderer.
+- Re-registering an existing name replaces the prior registration.
+- If a registered custom icon component returns `null`, that `null` is rendered; Widgemo does not apply a second fallback after a custom registration is resolved.
 
 ## Collision Behavior
 
@@ -304,5 +93,11 @@ zones: {
 	},
 }
 ```
+
+## See Also
+
+- Browse available names: [Built-in Icons](/core/components/icons/built-in-icons)
+- Review extension surface: [Extension API](/core/reference/extension-api)
+- See the registry model: [Extension Architecture](/core/concepts/extension-architecture)
 
 

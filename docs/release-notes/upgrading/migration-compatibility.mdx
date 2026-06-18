@@ -2,101 +2,49 @@
 sidebar_position: 1
 ---
 
-import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+# Versioning and Upgrade Policy
 
-# Migration and Compatibility
+Widgemo Core is currently in its first public release line.
 
-Use this page when you are upgrading or validating compatibility boundaries for existing Widgemo integrations.
+There are no migration guides yet because there are no prior released versions to migrate from.
 
-For first-time integration into an already built app, use [Integrate Widgemo Into an Existing App](/core/guides/integrate-into-existing-app).
+## Current State
 
-<WidgemoShowcase
-  title="Stable Root API Compatibility"
-  description="This example uses only stable root API surfaces, which is the recommended baseline for upgrade-safe integrations."
-  data={[
-    { module: 'Accounts', status: 'supported', api: 'stable-root' },
-    { module: 'Ledger', status: 'supported', api: 'stable-root' },
-  ]}
-  config={{
-    zones: {
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'module', label: 'Module' },
-            { key: 'api', label: 'API Surface', renderAs: 'badge' },
-            { key: 'status', label: 'Status', renderAs: 'badge' },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
+| Item | Status |
+|---|---|
+| First released version | `0.1.0` |
+| Available migration guides | None yet |
+| Backward-compatibility baseline | Starts at `0.1.0` |
 
-## API Surface
+## What Will Appear Here Later
 
-Current package: `@widgemo/widgemo-core`
+This page will be expanded when a released version introduces a migration-relevant change. Future entries will include:
 
-widgemo-core exposes two intentional API tiers:
+- affected versions (`from` -> `to`)
+- impacted APIs and config contracts
+- required vs optional migration steps
+- deprecation timelines
+- verification checklist
 
-- **Stable root API** — `@widgemo/widgemo-core`
-- **Advanced API** — `advanced` export and `@widgemo/widgemo-core/advanced` subpath
+## Upgrade Policy (Current)
 
-### Stable root exports
+- No upgrade playbook is required for `0.1.0` adopters yet.
+- Until migration notes exist, use the latest docs as the source of truth for current contracts.
+- If a future release requires changes, this page will contain version-scoped instructions.
 
-Use these for all new integrations:
+## Integration Safety Baseline
 
-- `Widgemo` component
-- `widgemoRegistry` namespace (`registerWidgemoIcon`, `registerWidgemoMode`, etc.)
-- `widgemoColors` utilities
-- `coreActions`, `createAction`, `createActions`
-- Theme: `WidgemoThemeProvider`, `useWidgemoTheme`, `defaultWidgemoTheme`, theme helpers
-- All public type exports
+For long-term stability:
 
-### Advanced exports
+- prefer root exports from `@widgemo/widgemo-core`
+- treat advanced subpath usage as deliberate and version-sensitive
+- keep extension registrations namespaced to reduce collisions
+- rely on documented config contracts in the Reference section
 
-Supported advanced exports grouped under `advanced`:
+## Related Docs
 
-- Core renderers: `ContainerRenderer`, `ActionsRenderer`, `ItemRenderer`, `FieldRenderer`, `ModalRenderer`
-- Mode components: `TableMode`, `GridMode`, `BoardMode`, `CarouselMode`
-- UI helpers: `ConfigIcon`, `PaginationControls`, `SearchBar`
-- Hooks/utilities: `usePagination`, `useFilter`, `applySearchFilter`, `applyStaticFilters`
-- State types: `AdvancedPaginationState`, `AdvancedFilterState`
-
-### Import pattern
-
-```ts
-import { Widgemo, widgemoRegistry } from '@widgemo/widgemo-core';
-import { advanced } from '@widgemo/widgemo-core/advanced';
-
-const { TableMode, usePagination } = advanced;
-```
-
-## Extension API
-
-For the supported registry extension surface and helper methods, see:
-
+- [Changelog](/core/changelog)
+- [All Exports](/core/reference/all-exports)
 - [Extension API](/core/reference/extension-api)
-
-## CSS Variable Compatibility
-
-CSS variables use the `--widgemo-*` prefix to avoid host-app collisions:
-
-```css
-:root {
-  --widgemo-text-color: #2c3e50;
-  --widgemo-bg-color: #ecf0f1;
-  --widgemo-primary-color: #3498db;
-  --widgemo-border-color: #bdc3c7;
-}
-```
-
-Use the `--widgemo-*` variables in current integrations.
-
-## Static Filter Contract
-
-Valid operators are `eq`, `ne`, `contains`, `startswith`, `gt`, and `lt`.
-
-Invalid operators throw an explicit error.
+- [Adopting Widgemo](/core/guides/adopting-widgemo)
 

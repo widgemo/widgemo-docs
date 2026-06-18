@@ -1,0 +1,143 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const durationData = [
+  { operation: 'Payroll Sync', latencySec: 3661, queueLagMs: 48250, reconciliationMin: 61.25, deltaRatioSec: 95.4 },
+  { operation: 'Reserve Sweep', latencySec: 915, queueLagMs: 129000, reconciliationMin: 15.4, deltaRatioSec: -45.7 },
+  { operation: 'Invoice Clear', latencySec: 172, queueLagMs: 7200, reconciliationMin: 2.86, deltaRatioSec: 12.1 },
+];
+
+export const durationClockConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'latencySec',
+            label: 'Latency',
+            type: 'duration',
+            renderAs: 'duration',
+            renderAsOptions: { unit: 'sec', format: 'clock' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const durationConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'latencySec',
+            label: 'Latency',
+            type: 'duration',
+            renderAs: 'duration',
+            renderAsOptions: { unit: 'sec', format: 'humanized', precision: 2 },
+          },
+          {
+            key: 'queueLagMs',
+            label: 'Queue Lag',
+            type: 'duration',
+            renderAs: 'duration',
+            renderAsOptions: { unit: 'ms', format: 'humanized', precision: 1, showSign: false },
+            condition: (entity) => entity.queueLagMs > 10000,
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# duration Field Type
+
+`type: 'duration'` marks a field as an elapsed-time value. Pair it with `renderAs: 'duration'` and a `unit` that matches the source value's magnitude. Three output formats are available: `clock` (`HH:MM:SS`), `humanized` ("2 hours 3 minutes"), and `decimal` (61.25).
+
+## Core Examples
+
+### Clock Format
+
+`format: 'clock'` renders duration as `HH:MM:SS`. Useful for timer-style displays and processing metrics.
+
+<WidgemoShowcase
+  description="Processing latency in seconds rendered as HH:MM:SS clock format."
+  data={durationData}
+  config={durationClockConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'latencySec',
+  label: 'Latency',
+  type: 'duration',
+  renderAs: 'duration',
+  renderAsOptions: { unit: 'sec', format: 'clock' },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Queue lag column only shown for rows where lag exceeds 10 seconds (Invoice Clear at 7.2s is hidden)."
+  data={durationData}
+  config={durationConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'queueLagMs',
+  label: 'Queue Lag',
+  type: 'duration',
+  renderAs: 'duration',
+  renderAsOptions: { unit: 'ms', format: 'humanized', precision: 1, showSign: false },
+  condition: (entity) => entity.queueLagMs > 10000,
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the duration value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'duration'` | — | Marks the field as an elapsed-time value. Pair with `renderAs: 'duration'`. |
+| `renderAs` | `'duration'` | unset | Required for formatted output. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting. Sorts numerically when `unit` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'duration'`
+
+`unit` is required — without it the field renders `'Invalid'`. All other display options (`format`, `humanizedUnits`, `precision`, `showSign`, `formatOptions`, `fallbackText`) are documented on the [duration Renderer](/core/components/renderers/duration) page.
+
+## Caveats
+
+- `unit` is **required**. Without it, the field renders `'Invalid'`.
+- `format: 'humanized'` with `year` or `month` units uses approximations: `1 year = 365 days`, `1 month = 30 days`. For calendar-accurate intervals, compute the display string in the host app and pass it as `type: 'text'`.
+- `showSign` defaults to `true` — this prefixes all positive values with `+`. Set `showSign: false` if you don't want sign indicators on positive values.
+- `format: 'decimal'` renders the value in the declared `unit` — a 3661-second value with `unit: 'sec'` and `precision: 2` renders `3661.00`, not `1.02 hours`. Convert units in the host app or use `humanized` format for multi-unit breakdown.
+- Table sorting on duration columns works numerically when `unit` is set and `sortable: true`.
+
+## See Also
+
+- [duration Renderer](/core/components/renderers/duration) — full `renderAsOptions` reference
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, best practices
+- [timestamp Field Type](/core/components/fields/timestamp)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

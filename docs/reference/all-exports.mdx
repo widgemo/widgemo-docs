@@ -1,0 +1,244 @@
+---
+---
+
+# All Exports
+
+This is an appendix — a flat index of every named export from `@widgemo/widgemo-core`. Use it when you've seen an import somewhere and want to know where it's documented.
+
+For usage, see the linked reference page for each entry.
+
+## Reading This Page
+
+| Column | Meaning |
+|---|---|
+| `Export` / `Type` | Public name exported from `@widgemo/widgemo-core` |
+| `Kind` | Runtime shape (`Component`, `Function`, `Hook`, `Object`, namespace) |
+| `Description` | Short contract summary |
+| `Docs` | Primary reference page |
+
+---
+
+## Components
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `Widgemo` | Component | The main component. | [Widgemo Props](/core/reference/widgemo-props) |
+| `WidgemoThemeProvider` | Component | Theme context provider. Wrap your app or subtree to share a named theme. | [Theme API](/core/reference/theme-api) |
+| `Tooltip` | Component | Shared tooltip UI primitive used inside custom renderers. | [Extension API — UI Primitives](/core/reference/extension-api#ui-primitives) |
+
+---
+
+## Namespaces
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `widgemoRegistry` | Namespace object | Plugin system — register and resolve icons, field types, `renderAs` renderers, hooks, and modes. | [Extension API — widgemoRegistry](/core/reference/extension-api#widgemoregistry-namespace) |
+| `widgemoColors` | Namespace object | Color utilities — lighten/darken, contrast, palette generation. | [Utilities — widgemoColors](/core/reference/utilities#widgemocolors) |
+| `advanced` | Namespace object | Lower-level renderer components and hooks for custom layout composition. May change between minor versions. | [Extension API — advanced](/core/reference/extension-api#advanced) |
+
+---
+
+## Action utilities
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `coreActions` | Object | Built-in action presets (`add`, `refresh`, `viewToggle`, `export`, `import`, `settings`, `view`, `edit`, `delete`, `filter`, `sort`, `search`). Spread a preset and override only per-widget fields. | [Action Config — coreActions](/core/reference/action-config#coreactions) |
+
+---
+
+## Temporal utilities
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `parseTemporalValue` | Function | Parse a raw value into a `Date` given a `TemporalParseMode`. Returns `null` on failure. | [Utilities — Temporal utilities](/core/reference/utilities#temporal-utilities) |
+| `parseDurationValue` | Function | Convert a raw duration number to milliseconds given a `DurationUnit`. | [Utilities — Temporal utilities](/core/reference/utilities#temporal-utilities) |
+| `isTemporalParseMode` | Function | Type-guard — returns `true` if a value is a valid `TemporalParseMode` string. | [Utilities — Temporal utilities](/core/reference/utilities#temporal-utilities) |
+
+---
+
+## Icon utilities
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `defaultRenderWidgemoIcon` | Function | Stateless icon renderer — does not touch the registry. Safe for SSG/SSR. | [Extension API — UI Primitives](/core/reference/extension-api#ui-primitives) |
+
+---
+
+## General utilities
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `isValidEmail` | Function | Returns `true` if a value is a syntactically valid email address. | [Utilities — General utilities](/core/reference/utilities#general-utilities) |
+| `generateId` | Function | Generate a stable ID string. | [Utilities — General utilities](/core/reference/utilities#general-utilities) |
+
+---
+
+## Theme utilities
+
+| Export | Kind | Description | Docs |
+|---|---|---|---|
+| `getTheme` | Function | Retrieve a registered theme by name. | [Theme API](/core/reference/theme-api) |
+| `registerTheme` | Function | Register a custom `WidgemoTheme`. | [Theme API](/core/reference/theme-api) |
+| `mergeZoneTheme` | Function | Merge a partial `ZoneTheme` into a resolved theme. | [Theme API](/core/reference/theme-api) |
+| `defaultWidgemoTheme` | Object | Public default light preset alias used as a base theme object. | [Theme API](/core/reference/theme-api) |
+| `useWidgemoTheme` | Hook | React hook — read the current theme from context. | [Theme API](/core/reference/theme-api) |
+
+---
+
+## Types
+
+### Core props and config
+
+| Type | Description | Docs |
+|---|---|---|
+| `WidgemoProps` | Component prop contract. | [Widgemo Props](/core/reference/widgemo-props) |
+| `WidgemoConfig` | Central configuration object. | [Widgemo Config](/core/reference/widgemo-config) |
+| `Entity` | `Record<string, unknown>` — one data row. | [Widgemo Props — data](/core/reference/widgemo-props#data) |
+| `ZoneConfig` | Header/footer zone shape. | [Zone Config](/core/reference/zone-config) |
+| `ZoneLayout` | Layout options for zone header/footer. | [Zone Config — ZoneLayout](/core/reference/zone-config#zonelayout) |
+| `ContentConfig` | Content zone shape. | [Content Config](/core/reference/content-config) |
+| `ContainerFrame` | Outer shell chrome controls. | [Widgemo Config — Container Frame](/core/reference/widgemo-config#container-frame) |
+| `DevModeConfig` | Dev inspector overlay config. | [Widgemo Config — devMode](/core/reference/widgemo-config#devmode) |
+
+### Field config
+
+| Type | Description | Docs |
+|---|---|---|
+| `FieldConfig` | Field definition shape. | [Field Config](/core/reference/field-config) |
+| `RenderAsOptions` | Union of all `renderAsOptions` shapes. | [Field Config](/core/reference/field-config) |
+| `BaseRenderAsOptions` | Base shape common to all `renderAs` options. | [Field Config](/core/reference/field-config) |
+| `LinkRenderAsOptions` | Options for `renderAs: 'link'`. | [Field Config](/core/reference/field-config) |
+| `ProgressRenderAsOptions` | Options for `renderAs: 'progress'`. | [Field Config](/core/reference/field-config) |
+| `RatingRenderAsOptions` | Options for `renderAs: 'rating'`. | [Field Config](/core/reference/field-config) |
+| `CurrencyRenderAsOptions` | Options for `renderAs: 'currency'`. | [Field Config](/core/reference/field-config) |
+| `BadgeRenderAsOptions` | Options for `renderAs: 'badge'`. | [Field Config](/core/reference/field-config) |
+| `JsonPreviewRenderAsOptions` | Options for `renderAs: 'jsonPreview'`. | [Field Config](/core/reference/field-config) |
+| `DeltaValueRenderAsOptions` | Options for `renderAs: 'deltaValue'`. | [Field Config](/core/reference/field-config) |
+| `DeltaValuePalette` | Color palette for delta value renderers. | [Field Config](/core/reference/field-config) |
+| `SparkTrendRenderAsOptions` | Options for `renderAs: 'sparkTrend'`. | [Field Config](/core/reference/field-config) |
+| `ScoreMeterRenderAsOptions` | Options for `renderAs: 'scoreMeter'`. | [Field Config](/core/reference/field-config) |
+| `ScoreBand` | Score band definition for `scoreMeter`. | [Field Config](/core/reference/field-config) |
+| `CompositionBarRenderAsOptions` | Options for `renderAs: 'compositionBar'`. | [Field Config](/core/reference/field-config) |
+| `CompositionBarSegment` | Segment definition for `compositionBar`. | [Field Config](/core/reference/field-config) |
+| `DateRenderAsOptions` | Options for `renderAs: 'date'`. | [Date Renderer](/core/components/renderers/date) |
+| `TimeRenderAsOptions` | Options for `renderAs: 'time'`. | [Time Renderer](/core/components/renderers/time) |
+| `DatetimeRenderAsOptions` | Options for `renderAs: 'datetime'`. | [Datetime Renderer](/core/components/renderers/datetime) |
+| `TimestampRenderAsOptions` | Options for `renderAs: 'timestamp'`. | [Timestamp Renderer](/core/components/renderers/timestamp) |
+| `DurationRenderAsOptions` | Options for `renderAs: 'duration'`. | [Duration Renderer](/core/components/renderers/duration) |
+| `TemporalRenderAsOptions` | Base shape for all temporal `renderAs` options. | [Field Config](/core/reference/field-config) |
+| `TemporalParseMode` | `'epoch-ms' \| 'epoch-sec' \| 'iso-date' \| 'iso-datetime' \| 'iso-time' \| 'any'` | [Utilities — Temporal utilities](/core/reference/utilities#temporal-utilities) |
+| `TemporalTimeZone` | Timezone string type used in temporal renderers. | [Datetime Renderer](/core/components/renderers/datetime) |
+| `DurationUnit` | `'ms' \| 'sec' \| 'min' \| 'hour' \| 'day'` | [Duration Renderer](/core/components/renderers/duration) |
+| `DurationHumanizedUnit` | Unit labels for humanized duration display. | [Duration Renderer](/core/components/renderers/duration) |
+
+### Item config
+
+| Type | Description | Docs |
+|---|---|---|
+| `ItemConfig` | Item rendering shape. | [Item Config](/core/reference/item-config) |
+| `ItemLayout` | Layout shape for items in a mode. | [Item Config](/core/reference/item-config) |
+| `ItemStyle` | Per-item conditional style config. | [Item Config](/core/reference/item-config) |
+| `ItemSection` | Section definition for multi-section item layouts. | [Item Config](/core/reference/item-config) |
+| `ItemTemplate` | Template shape for custom item rendering. | [Item Config](/core/reference/item-config) |
+| `SectionConfig` | Section config within an item, including optional `className` for section-level styling hooks. | [Item Config](/core/reference/item-config) |
+
+### Action config
+
+| Type | Description | Docs |
+|---|---|---|
+| `ActionConfig` | Action definition shape. | [Action Config](/core/reference/action-config) |
+| `IconConfig` | Icon definition used in actions and zone headers. | [Action Config](/core/reference/action-config) |
+
+### Mode config
+
+| Type | Description | Docs |
+|---|---|---|
+| `ModeConfig` | Union type for all mode config shapes. | [Content Config](/core/reference/content-config) |
+| `ModeLayout` | Layout shape for content zone modes. | [Content Config](/core/reference/content-config) |
+| `TableModeConfig` | Table-mode-specific config. | [Content Config](/core/reference/content-config) |
+| `BoardModeConfig` | Board-mode-specific config. | [Content Config](/core/reference/content-config) |
+| `BoardColumnsConfig` | Column set definition for board mode. | [Content Config](/core/reference/content-config) |
+| `BoardColumnConfig` | Single column definition for board mode. | [Content Config](/core/reference/content-config) |
+| `BoardAxisItemConfig` | Axis item for board mode. | [Content Config](/core/reference/content-config) |
+| `BoardSwimlaneConfig` | Swimlane definition for board mode. | [Content Config](/core/reference/content-config) |
+| `BoardSwimlanesConfig` | Swimlane set for board mode. | [Content Config](/core/reference/content-config) |
+| `ChartModeConfig` | Chart-mode-specific config. | [Content Config](/core/reference/content-config) |
+| `ChartSeriesConfig` | Series definition for chart mode. | [Content Config](/core/reference/content-config) |
+| `ChartSeriesType` | Union of supported chart series types. | [Content Config](/core/reference/content-config) |
+| `ChartTooltipContext` | Context passed to chart tooltip renderers. | [Content Config](/core/reference/content-config) |
+| `ChartTooltipPosition` | Position type for chart tooltips. | [Content Config](/core/reference/content-config) |
+
+### Content / sorting / filtering
+
+| Type | Description | Docs |
+|---|---|---|
+| `GestureConfig` | Gesture handler definition. | [Content Config — Gestures](/core/reference/content-config#gestures) |
+| `GroupingConfig` | Grouping definition for content zones. | [Content Config](/core/reference/content-config) |
+| `SortConfig` | Sort definition. | [Content Config](/core/reference/content-config) |
+| `SortDirection` | `'asc' \| 'desc'` | [Content Config](/core/reference/content-config) |
+| `FilterOperator` | Comparison operator for static filter rules. | [Content Config](/core/reference/content-config) |
+| `StaticFilterRule` | Single static filter rule applied to data. | [Content Config](/core/reference/content-config) |
+| `AggregateType` | Aggregate function type (`sum`, `avg`, etc.). | [Content Config](/core/reference/content-config) |
+
+### Interaction types
+
+| Type | Description | Docs |
+|---|---|---|
+| `InteractionContext` | Payload received by all action and gesture handlers. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
+| `InteractionKind` | Discriminant for interaction type. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
+| `InteractionScope` | Scope descriptor for an interaction. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
+| `InteractionEventHandler` | Function type for `interactions.onEvent`. | [Extension API — InteractionContext](/core/reference/extension-api#interactioncontext) |
+| `InteractionBoardLocation` | Board drag/drop location with `columnId`, optional `swimlaneValue`, and optional `index`. | [Extension API — InteractionContext](/core/reference/extension-api#board-location-fields) |
+
+### Registry entry types
+
+| Type | Description | Docs |
+|---|---|---|
+| `RenderAsRegistryEntry` | Shape for registering a custom `renderAs` renderer. | [Extension API](/core/reference/extension-api) |
+| `ModeRegistryEntry` | Shape for registering a custom mode. | [Extension API](/core/reference/extension-api) |
+| `IconRegistryEntry` | Shape for registering a custom icon. | [Extension API](/core/reference/extension-api) |
+| `FieldTypeRegistryEntry` | Shape for registering a custom field type. | [Extension API](/core/reference/extension-api) |
+| `HookRegistryEntry` | Shape for registering a lifecycle hook. | [Extension API](/core/reference/extension-api) |
+
+### Theme types
+
+| Type | Description | Docs |
+|---|---|---|
+| `WidgemoTheme` | Full theme shape. | [Theme API](/core/reference/theme-api) |
+| `ZoneTheme` | Per-zone theme overrides. | [Theme API](/core/reference/theme-api) |
+| `ActionTheme` | Action-specific theme overrides. | [Theme API](/core/reference/theme-api) |
+
+### Tooltip types
+
+| Type | Description | Docs |
+|---|---|---|
+| `TooltipProps` | Props for the `Tooltip` component. | [Extension API — UI Primitives](/core/reference/extension-api#ui-primitives) |
+| `TooltipPosition` | Union of valid tooltip positions. | [Extension API — UI Primitives](/core/reference/extension-api#ui-primitives) |
+
+### Color utility types
+
+| Type | Description | Docs |
+|---|---|---|
+| `Palette` | Return type of `widgemoColors.generatePalette`. | [Utilities — widgemoColors](/core/reference/utilities#widgemocolors) |
+| `PaletteOptions` | Options for `widgemoColors.generatePalette`. | [Utilities — widgemoColors](/core/reference/utilities#widgemocolors) |
+
+### Advanced state types
+
+| Type | Description | Docs |
+|---|---|---|
+| `AdvancedPaginationState` | State shape returned by `advanced.usePagination`. | [Extension API — advanced](/core/reference/extension-api#advanced) |
+| `AdvancedFilterState` | State shape returned by `advanced.useFilter`. | [Extension API — advanced](/core/reference/extension-api#advanced) |
+
+### Other utility types
+
+| Type | Description | Docs |
+|---|---|---|
+| `RenderIcon` | Function type for icon render callbacks. | [Extension API](/core/reference/extension-api) |
+
+---
+
+## See Also
+
+- [Utilities](/core/reference/utilities)
+- [Extension API](/core/reference/extension-api)
+- [Theme API](/core/reference/theme-api)

@@ -1,0 +1,27 @@
+# Components Overview
+
+Widgemo's component surface is organized into four layers, each controlling a different level of how data is presented. They are independently configurable and compose together in a single `config` object.
+
+| Layer | What it controls | Where in config | Section |
+|---|---|---|---|
+| **Mode** | The entire content area layout strategy | `zones.content.mode` | [Modes](/core/concepts/modes-overview) |
+| **Field type** | The semantic category of a value (date, number, relation, etc.) | `item.fields[].type` | [Fields](/core/components/fields/overview) |
+| **Renderer** (`renderAs`) | How a specific field value is visually presented | `item.fields[].renderAs` | [Renderers](/core/components/renderers/overview) |
+| **Icon** | Named icon glyphs used in actions and zone chrome | `actions[].icon` | [Icons](/core/components/icons/overview) |
+
+A field can have a `type` for semantic intent and a `renderAs` for visual override simultaneously — `renderAs` controls display, `type` carries the data category. Mode, field type, and renderer are all independently optional and do not require each other to be set.
+
+## Components vs Reference
+
+**Components pages** (this section) cover usage guidance: which type or renderer to pick for a given use case, what options are available, and interactive examples.
+
+**Reference pages** (`/core/reference/`) cover canonical API contracts: exact TypeScript types, allowed values, precedence rules, and default behavior. When you need to know *what* a field accepts, use Reference. When you need to know *which* to choose, use Components.
+
+## Where to Start
+
+| Goal | Start here |
+|---|---|
+| Choose a content layout | [Modes Overview](/core/concepts/modes-overview) |
+| Declare field semantics | [Field Components Overview](/core/components/fields/overview) |
+| Add visual treatments to values | [Renderer Components Overview](/core/components/renderers/overview) |
+| Use or add icons | [Icon Components Overview](/core/components/icons/overview) |

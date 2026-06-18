@@ -1,0 +1,232 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const scoreData = [
+  { name: 'Aurora Chen', score: 78, risk: 28, confidence: 91 },
+  { name: 'Mateo Silva', score: 45, risk: 72, confidence: 55 },
+  { name: 'Priya Nair', score: 91, risk: 15, confidence: 88 },
+];
+
+export const healthBands = [
+  { max: 35, label: 'Critical', color: '#dc2626', background: '#fee2e2' },
+  { max: 65, label: 'Watch',    color: '#d97706', background: '#fef9c3' },
+  { label: 'Healthy',           color: '#16a34a', background: '#dcfce7' },
+];
+
+export const riskBands = [
+  { max: 30, label: 'Low',    color: '#16a34a', background: '#dcfce7' },
+  { max: 60, label: 'Medium', color: '#d97706', background: '#fef9c3' },
+  { label: 'High',            color: '#dc2626', background: '#fee2e2' },
+];
+
+export const scoreBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'score',
+            label: 'Health Score',
+            renderAs: 'scoreMeter',
+            renderAsOptions: {
+              showValue: true,
+              bands: healthBands,
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const scoreMultiConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'score',
+            label: 'Health',
+            renderAs: 'scoreMeter',
+            renderAsOptions: { showValue: true, bands: healthBands, density: 'compact' },
+          },
+          {
+            key: 'risk',
+            label: 'Risk',
+            renderAs: 'scoreMeter',
+            renderAsOptions: { showValue: true, bands: riskBands, density: 'compact' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const scoreLayoutConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name', label: 'Name', type: 'text' },
+          {
+            key: 'confidence',
+            label: 'Confidence (tag bottom-right, value left)',
+            renderAs: 'scoreMeter',
+            renderAsOptions: {
+              showValue: true,
+              valueAsPercent: true,
+              tagPosition: 'bottom',
+              tagAlign: 'right',
+              valueAlign: 'left',
+              bands: healthBands,
+            },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# scoreMeter Renderer
+
+`renderAs: 'scoreMeter'` renders a bounded 0–100 score as a filled meter bar with a semantic band chip. Define `bands` to map score ranges to labels and colors — the chip auto-selects the matching band.
+
+## Core Examples
+
+### Basic Score Meter with Bands
+
+<WidgemoShowcase
+  description="Health score with three bands: Critical (score < 35), Watch (35–64), Healthy (65+)."
+  data={scoreData}
+  config={scoreBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+export const healthBands = [
+  { max: 35, label: 'Critical', color: '#dc2626', background: '#fee2e2' },
+  { max: 65, label: 'Watch',    color: '#d97706', background: '#fef9c3' },
+  { label: 'Healthy',           color: '#16a34a', background: '#dcfce7' },
+];
+
+{
+  key: 'score',
+  renderAs: 'scoreMeter',
+  renderAsOptions: { showValue: true, bands: healthBands },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Compact Density with Multiple Meters
+
+`density: 'compact'` reduces the bar height and minimum width — useful when displaying several meter columns side by side.
+
+<WidgemoShowcase
+  description="Health and Risk meters side by side in compact density."
+  data={scoreData}
+  config={scoreMultiConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ key: 'score', renderAs: 'scoreMeter', renderAsOptions: { showValue: true, bands: healthBands, density: 'compact' } },
+{ key: 'risk',  renderAs: 'scoreMeter', renderAsOptions: { showValue: true, bands: riskBands,   density: 'compact' } },
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Tag and Value Alignment
+
+Control where the band chip and numeric value are placed relative to the bar.
+
+<WidgemoShowcase
+  description="Chip positioned below-right, value left with a % suffix."
+  data={scoreData}
+  config={scoreLayoutConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'confidence',
+  renderAs: 'scoreMeter',
+  renderAsOptions: {
+    showValue: true,
+    valueAsPercent: true,
+    tagPosition: 'bottom',
+    tagAlign: 'right',
+    valueAlign: 'left',
+    bands: healthBands,
+  },
+}
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `bands` | `ScoreBand[]` | built-in 4-band palette | Ordered band definitions. Evaluated top-to-bottom; the first matching band wins. |
+| `density` | `'regular'` \| `'compact'` | `'regular'` | `'compact'` reduces bar height (`6px`) and minimum width (`92px`). |
+| `showValue` | boolean | `true` | Show the numeric score value next to the bar. |
+| `valueAsPercent` | boolean | `false` | Append `%` to the displayed value. |
+| `decimals` | number | `0` | Decimal places for the displayed value (clamped 0–6). |
+| `tagPosition` | `'top'` \| `'bottom'` | `'top'` | Band chip position relative to the bar. |
+| `tagAlign` | `'left'` \| `'right'` | `'left'` | Horizontal alignment of the band chip. |
+| `valueAlign` | `'left'` \| `'right'` | `'right'` | Horizontal alignment of the numeric value. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `ScoreBand` shape
+
+```ts
+{
+  min?: number;        // inclusive lower bound — score >= min
+  max?: number;        // exclusive upper bound for non-last bands — score < max
+                       // for the last band max is inclusive (acts as a hard cap)
+  label?: string;      // chip label text (default: 'State')
+  color?: string;      // used for BOTH chip text AND meter bar fill (default: '#4a5568')
+  background?: string; // chip background color (default: semi-transparent grey)
+}
+```
+
+:::caution `color` is used for both chip text and meter bar fill
+`color` drives two visual roles: the text inside the band chip and the filled portion of the meter bar. Choose a mid-to-dark tone that reads clearly in both contexts. Avoid very light colors (e.g. `#ffffff`) — they produce an invisible meter fill on light backgrounds. Use `background` for the chip's background tint and keep `color` as the shared accent.
+:::
+
+### Default bands (when `bands` is omitted)
+
+| Score range | Label | Color |
+|---|---|---|
+| ≥ 85 | High | `#2b6cb0` (blue) |
+| ≥ 70 | Good | `#2f855a` (green) |
+| ≥ 55 | Medium | `#c05621` (orange) |
+| catch-all | Low | `#c53030` (red) |
+
+## Caveats
+
+- Scores are clamped to `[0, 100]`. Values outside this range are clamped silently, not rejected.
+- Non-numeric values render the plain text `Invalid` with no color applied.
+- **Band matching** iterates top-to-bottom; the first band where both `min` and `max` conditions pass wins. For non-last bands, `max` is an exclusive upper bound (`score < max`) — a score exactly equal to `max` falls into the next band. For the last band, `max` becomes inclusive. `min` is always inclusive (`score >= min`).
+- **`color` dual role**: `color` sets both the chip text color and the meter bar fill. If no `bands` are provided, the built-in palette is used.
+- `decimals` is clamped to `[0, 6]`.
+- `formatter` can pre-process the value before rendering — useful to normalise values that arrive outside the 0–100 range.
+
+## See Also
+
+- [progress Renderer](/core/components/renderers/progress) — simple filled bar without bands
+- [rating Renderer](/core/components/renderers/rating) — discrete icon-based scores
+- [number Field Type](/core/components/fields/number)
+- [Field Config](/core/reference/field-config)

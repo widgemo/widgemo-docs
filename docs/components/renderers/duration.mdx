@@ -1,0 +1,197 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const durationData = [
+  { name: 'Aurora Chen', responseMs: 93600000, buildSec: 145, lagMs: -3600000 },
+  { name: 'Mateo Silva', responseMs: 7380000,  buildSec: 62,  lagMs: 900000   },
+  { name: 'Priya Nair',  responseMs: 172800000, buildSec: 301, lagMs: -120000  },
+];
+
+export const durationHumanizedConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',       label: 'Name',         type: 'text' },
+          { key: 'responseMs', label: 'Response time', renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized' } },
+          { key: 'responseMs', label: 'Precision 1',   renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized', precision: 1 } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const durationClockConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',       label: 'Name',       type: 'text' },
+          { key: 'buildSec',   label: 'Build time', renderAs: 'duration', renderAsOptions: { unit: 'sec', format: 'clock' } },
+          { key: 'responseMs', label: 'Response',   renderAs: 'duration', renderAsOptions: { unit: 'ms',  format: 'clock' } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const durationDecimalConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',  label: 'Name',       type: 'text' },
+          { key: 'lagMs', label: 'Lag (hours)', renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'decimal', formatOptions: { maximumFractionDigits: 2 } } },
+          { key: 'lagMs', label: 'Lag + sign',  renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'decimal', showSign: true, formatOptions: { maximumFractionDigits: 2 } } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const durationHumanizedUnitsConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'name',       label: 'Name',                type: 'text' },
+          { key: 'responseMs', label: 'Default units',        renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized' } },
+          { key: 'responseMs', label: 'hours + minutes only', renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized', humanizedUnits: ['hour', 'minute'] } },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# duration Renderer
+
+`renderAs: 'duration'` converts a numeric duration value to a human-friendly string. The `unit` option is required to specify the unit of the raw number. Three output formats are available: `humanized`, `clock`, and `decimal`.
+
+## Core Examples
+
+### Humanized
+
+`format: 'humanized'` (the default) breaks the duration into its largest named components. `precision` limits how many components appear:
+
+<WidgemoShowcase
+  description="Millisecond durations shown as humanized text. Default precision is 2 (e.g. '1 day 2 hours'); precision 1 shows only the largest unit."
+  data={durationData}
+  config={durationHumanizedConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized' } }               // "1 day 2 hours"
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized', precision: 1 } }  // "1 day"
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Clock Format
+
+`format: 'clock'` outputs `HH:MM:SS`. Useful for build times, lap times, and other measured intervals:
+
+<WidgemoShowcase
+  description="Second and millisecond durations in HH:MM:SS clock format."
+  data={durationData}
+  config={durationClockConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'duration', renderAsOptions: { unit: 'sec', format: 'clock' } }  // "0:02:25"
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms',  format: 'clock' } }  // "26:00:00"
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Decimal Format
+
+`format: 'decimal'` expresses the duration as a decimal number in the input unit. `showSign: true` adds a `+` prefix for positive values:
+
+<WidgemoShowcase
+  description="Lag values in decimal. Right column shows sign control — positive gets '+', negative shows '-'."
+  data={durationData}
+  config={durationDecimalConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'decimal', formatOptions: { maximumFractionDigits: 2 } } }
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'decimal', showSign: true } }
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Custom Humanized Units
+
+`humanizedUnits` restricts which components appear in humanized output. Useful to suppress days or seconds:
+
+<WidgemoShowcase
+  description="Same response-time values with default units vs. hours + minutes only."
+  data={durationData}
+  config={durationHumanizedUnitsConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized' } }
+{ renderAs: 'duration', renderAsOptions: { unit: 'ms', format: 'humanized', humanizedUnits: ['hour', 'minute'] } }
+```
+
+## Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `unit` | `DurationUnit` | **required** | Unit of the raw input value. |
+| `format` | `'humanized'` \| `'clock'` \| `'decimal'` | `'humanized'` | Output format. |
+| `precision` | number | `2` | `humanized` only — maximum number of components to show. |
+| `showSign` | boolean | `false` | `decimal` only — prefix positive values with `+`. |
+| `humanizedUnits` | `DurationHumanizedUnit[]` | `['day','hour','minute','second']` | `humanized` only — allowed component units. |
+| `formatOptions` | `Intl.NumberFormatOptions` | unset | `decimal` only — passed to `Intl.NumberFormat` for the decimal number. |
+| `fallbackText` | string | `'Invalid'` | Text shown when the value is not a finite number. |
+| `className` | string | unset | Additional CSS class on the root element. |
+
+### `DurationUnit` values
+
+| Value | Interprets raw number as |
+|---|---|
+| `'ms'` | Milliseconds |
+| `'sec'` | Seconds |
+| `'min'` | Minutes |
+| `'hour'` | Hours |
+| `'day'` | Days |
+
+### `DurationHumanizedUnit` values
+
+`'year'`, `'month'`, `'day'`, `'hour'`, `'minute'`, `'second'`, `'millisecond'`
+
+## Caveats
+
+- `unit` is required. Without it the renderer cannot convert the raw number and outputs `fallbackText`.
+- `format: 'humanized'` uses `precision` (default 2) to limit output to the largest N components. A value of `3600001` ms with `precision: 1` shows `"1 hour"`, not `"1 hour 1 millisecond"`.
+- Year and month are approximations: 1 year = 365 days, 1 month = 30 days.
+- `format: 'clock'` always produces `HH:MM:SS` with no sign prefix, even for negative values.
+- `showSign: true` only affects `format: 'decimal'`. For `humanized`, negatives show a leading `-`; for `clock`, sign is not shown.
+- All options accept `(entity) => value` functions for per-row dynamic values.
+
+## See Also
+
+- [timestamp Renderer](/core/components/renderers/timestamp)
+- [datetime Renderer](/core/components/renderers/datetime)
+- [Field Config](/core/reference/field-config)

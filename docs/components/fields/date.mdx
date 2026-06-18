@@ -1,0 +1,142 @@
+import { WidgemoShowcase } from '../../../src/components/WidgemoShowcase';
+
+export const dateData = [
+  { operation: 'Payroll Sync', dueDate: '2026-05-29', closedDate: '2026-06-02' },
+  { operation: 'Reserve Sweep', dueDate: '2026-06-05', closedDate: null },
+  { operation: 'Invoice Clear', dueDate: '2026-06-11', closedDate: null },
+];
+
+export const dateBasicConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Due Date',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+export const dateConditionConfig = {
+  zones: {
+    content: {
+      mode: 'table',
+      modeConfig: { table: { showHeader: true, hover: true } },
+      item: {
+        fields: [
+          { key: 'operation', label: 'Operation', type: 'text' },
+          {
+            key: 'dueDate',
+            label: 'Due Date',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+          },
+          {
+            key: 'closedDate',
+            label: 'Closed',
+            type: 'date',
+            renderAs: 'date',
+            renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+            condition: (entity) => Boolean(entity.closedDate),
+          },
+        ],
+        layout: { type: 'auto' },
+      },
+    },
+  },
+};
+
+# date Field Type
+
+`type: 'date'` marks a field as a calendar date value. Pair it with `renderAs: 'date'` and a `parseMode` to render it in a locale-aware, human-readable format. Without `renderAs`, the raw value is displayed as plain text.
+
+## Core Examples
+
+### Basic Date Rendering
+
+<WidgemoShowcase
+  description="ISO date string rendered with parseMode: 'iso-date' and formatPreset: 'medium'."
+  data={dateData}
+  config={dateBasicConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'dueDate',
+  label: 'Due Date',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+}
+```
+
+<div style={{ marginBottom: '1rem' }} />
+
+### Condition
+
+<WidgemoShowcase
+  description="Closed date column only appears for Payroll Sync (the only row with a non-null closedDate)."
+  data={dateData}
+  config={dateConditionConfig}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+{
+  key: 'closedDate',
+  label: 'Closed',
+  type: 'date',
+  renderAs: 'date',
+  renderAsOptions: { parseMode: 'iso-date', locale: 'en-US', formatPreset: 'medium' },
+  condition: (entity) => Boolean(entity.closedDate),
+}
+```
+
+## Field Options Reference
+
+| Option | Type | Default | Effect |
+|---|---|---|---|
+| `key` | string | required | Entity property to read the date value from. |
+| `label` | string | unset | Column header or card label. |
+| `type` | `'date'` | — | Marks the field as a calendar date. Pair with `renderAs: 'date'` for formatted output. |
+| `renderAs` | `'date'` | unset | Required for locale-aware date rendering. Without it, raw value renders as plain text. |
+| `condition` | `(entity) => boolean` | unset | Hides the field for rows where the function returns `false`. |
+| `sortable` | `boolean` | `false` | Enables column sorting in table mode. Sorts chronologically when `parseMode` is set. |
+| `width` | CSS length or number | unset | Sets column width in table mode. |
+| `align` | `'left'`, `'center'`, `'right'` | `'left'` | Text alignment in table mode. |
+
+### `renderAsOptions` for `renderAs: 'date'`
+
+`parseMode` is required — without it the field renders `'Invalid'`. All other display options (`formatPreset`, `locale`, `timezone`, `relativeTime`, `formatOptions`, etc.) are documented on the [date Renderer](/core/components/renderers/date) page.
+
+## Caveats
+
+- `parseMode` is **required**. Without it, the field renders `'Invalid'` regardless of the value.
+- `parseMode: 'iso-date'` expects `YYYY-MM-DD`. An ISO datetime string like `2026-05-29T08:00:00Z` will parse correctly with `'iso-datetime'` or `'any'`, not `'iso-date'`.
+- `timezone` controls the **display timezone**, not parsing. The underlying `Date` object is always UTC-based.
+- Table mode sorts chronologically when `parseMode` is declared and `sortable: true` is set. Without `parseMode`, sort falls back to generic string comparison.
+- `relativeTime` uses `Intl.RelativeTimeFormat` — output is locale-sensitive.
+
+## See Also
+
+- [Temporal Fields Guide](/core/components/fields/temporal-fields) — cross-type contracts, sorting behavior, migration checklist
+- [date Renderer](/core/components/renderers/date) — full `renderAsOptions` reference
+- [datetime Field Type](/core/components/fields/datetime)
+- [timestamp Field Type](/core/components/fields/timestamp)
+- [Item Config](/core/reference/item-config) — item-level shape and layout contract
+- [Field Config](/core/reference/field-config)

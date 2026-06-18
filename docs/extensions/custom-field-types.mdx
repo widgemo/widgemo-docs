@@ -2,37 +2,31 @@
 sidebar_position: 3
 ---
 
-import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
-
 # Custom Field Types
 
-A custom field type is a heavier extension than custom `renderAs`.
+A custom field type is a semantic extension.
 
-Use it when the value should behave like a distinct first-class field category rather than a one-off visual formatting choice.
+Use it when a value should behave like a reusable first-class field category rather than a one-off visual formatting choice.
 
-<WidgemoShowcase
-  title="Custom Field Type Reuse Goal"
-  description="Custom field types are ideal when a domain field should behave consistently across many widgets."
-  data={[
-    { brand: 'Northwind', fieldType: 'swatch', kind: 'branding' },
-    { brand: 'Acme', fieldType: 'swatch', kind: 'branding' },
-  ]}
-  config={{
-    zones: {
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'brand', label: 'Brand' },
-            { key: 'fieldType', label: 'Field Type' },
-            { key: 'kind', label: 'Kind', renderAs: 'badge' },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
+## When to Use a Custom Field Type
+
+| Situation | Prefer custom field type? | Why |
+|---|---|---|
+| A domain value should read naturally as `type: '...'` | Yes | Type conveys semantics in config |
+| Multiple widgets should reuse the same field behavior | Yes | One registration supports many configs |
+| Only visual output changes | No | Use custom `renderAs` instead |
+| The layout strategy changes for the whole content area | No | Use a custom mode |
+
+## Registration Contract
+
+`registerWidgemoFieldType` accepts a `FieldTypeRegistryEntry`:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key referenced from `item.fields[].type` |
+| `render` | `(value, config, entity) => ReactNode` | Field renderer |
+| `defaultConfig` | `Partial<FieldConfig>` | Default field config |
+| `validate` | `(value, config) => boolean \| string` | Optional validation hook |
 
 ## Register a custom field type
 
@@ -62,22 +56,26 @@ widgemoRegistry.registerWidgemoFieldType({
 { key: 'brandColor', label: 'Color', type: 'swatch' }
 ```
 
-## When to Choose a Custom Field Type
-
-Use a custom field type when:
-
-- the value is conceptually a reusable domain field, not just a formatting tweak
-- you expect many configs to use the same field behavior
-- you want the field to read naturally through `type`, not `renderAs`
-
 ## Registration Order
 
 Register custom types before any Widgemo component renders. A safe place is module scope in your app entry file.
+
+## Best Practices
+
+- Use namespaced names (`acme.swatch`, `ops.health-band`) to reduce collisions.
+- Keep `defaultConfig` minimal and only set defaults that should apply everywhere.
+- Prefer field types when the extension changes meaning as well as presentation.
+- Use validation when malformed values should be caught early.
 
 ## Collision Behavior
 
 Collision semantics are defined in [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).
 
-Use namespaced names (for example, `acme.swatch`, `acme.json`) to reduce accidental collisions.
+## See Also
+
+- [Custom renderAs](/core/extensions/renderas-customization)
+- [Field Rendering Reference](/core/guides/field-rendering-decisions)
+- [Extension API](/core/reference/extension-api)
+- [Field Config](/core/reference/field-config)
 
 

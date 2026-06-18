@@ -1,0 +1,658 @@
+---
+sidebar_label: Zone Config (Header & Footer)
+---
+
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
+export const teamData = [
+  { name: 'Aurora Chen',  role: 'Product Designer', status: 'active',   score: 92 },
+  { name: 'Mateo Silva',  role: 'Engineer',          status: 'pending',  score: 71 },
+  { name: 'Priya Nair',   role: 'Operations',        status: 'inactive', score: 55 },
+];
+
+# Header & Footer Zone Config
+
+Widgemo has three named zones: `header`, `content`, and `footer` — all under `config.zones`. This page covers the **header and footer zones**, which are optional and share the `ZoneConfig` shape. The content zone is required and uses a separate, richer type — [Content Config](/core/reference/content-config) — because it owns the entire data rendering pipeline: mode, fields, actions, sorting, filtering, pagination, and status.
+
+## Shape
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string \| ReactNode \| (data, id?) => string` | — | Zone title. Pass a function to derive it from live data; receives the full data array and the optional instance `id`. |
+| `subtitle` | `string \| ReactNode \| (data, id?) => string` | — | Zone subtitle. Same function signature as `title`. |
+| `icon` | `string \| IconConfig \| { src, size?, color? }` | — | Icon displayed beside (or above) the title. |
+| `layout` | `ZoneLayout` | — | Positional layout for the zone header area. |
+| `actions` | `ActionConfig[]` | — | Zone-level action buttons. |
+| `actionOverflow` | `{ maxInline?, menuLabel?, menuTooltip?, indicator? }` | — | Action overflow behaviour. See [Action Config](/core/reference/action-config#action-overflow). |
+| `enabled` | `boolean` | `true` | Show or hide the zone entirely. |
+| `theme` | `string` | — | Registered theme name applied to this zone only. |
+| `themeOverrides` | `Partial<ZoneTheme>` | — | Inline theme property overrides. See [Theme API](/core/reference/theme-api). |
+| `style` | `CSSProperties` | — | Inline CSS on the zone element. |
+| `className` | `string` | — | Additional CSS class on the zone element. |
+| `customSections` | `ReactNode[]` | — | Extra React nodes rendered inside the zone chrome. |
+
+---
+
+## Basic header and footer
+
+The minimum useful header: a title, a subtitle, and a zone action.
+
+<WidgemoShowcase
+  description="Header with title, subtitle, and a pinned action. Footer with a subtitle and its own action."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'role',   label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+      footer: {
+        subtitle: 'Last synced just now',
+        actions: [{ id: 'view-all', label: 'View All', icon: 'view', placement: 'pinned' }],
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+zones: {
+  header: {
+    title: 'Team Directory',
+    subtitle: 'All active employees',
+    actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+  },
+  content: { /* … */ },
+  footer: {
+    subtitle: 'Last synced just now',
+    actions: [{ id: 'view-all', label: 'View All', icon: 'view', placement: 'pinned' }],
+  },
+},
+```
+
+---
+
+## Dynamic title and subtitle
+
+`title` and `subtitle` both accept a function `(data) => string`. The function receives the live data array on every render — use it to reflect counts, filters, or any derived summary without external state.
+
+<WidgemoShowcase
+  description="title and subtitle as functions: title counts all rows, subtitle counts active-only."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title:    (data) => `Team (${data.length} members)`,
+        subtitle: (data) => `Active: ${data.filter(d => d.status === 'active').length}`,
+        actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+header: {
+  title:    (data) => `Team (${data.length} members)`,
+  subtitle: (data) => `Active: ${data.filter(d => d.status === 'active').length}`,
+},
+```
+
+Both `title` and `subtitle` accept the same function signature: `(data: Entity[], id?: string) => string`. The `id` argument is the value of the `id` **prop** on `<Widgemo>` (i.e. the HTML element id) — useful when you share a single function reference across multiple instances:
+
+```tsx
+const sharedTitle = (data, id) => `[${id ?? 'widget'}] ${data.length} items`;
+
+widgets.map((w) => (
+  <Widgemo
+    key={w.id}
+    id={w.id}
+    data={w.rows}
+    config={{
+      zones: { header: { title: sharedTitle }, content: { /* … */ } },
+    }}
+  />
+));\n```
+
+---
+
+## Icon
+
+`icon` accepts a registered icon name (string), an `IconConfig` object, or a `{ src, size?, color? }` object for image/URL icons.
+
+<WidgemoShowcase
+  description="Icon using IconConfig shape with name, size, and color."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        icon: { name: 'users', size: 24, color: '#4f46e5' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'role',   label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Registered icon name (string shorthand)
+icon: 'users'
+
+// IconConfig object — name + size + color
+icon: { name: 'users', size: 24, color: '#4f46e5' }
+
+// Image/URL icon
+icon: { src: 'https://example.com/logo.png', size: 28 }
+```
+
+---
+
+## Collapse
+
+Collapse is a **top-level `WidgemoConfig` field** — not a `ZoneConfig` field. It collapses the entire content and footer area; the toggle button always renders inside the header zone.
+
+<WidgemoShowcase
+  description="Widget starts collapsed. The toggle in the header expands and collapses the content and footer."
+  data={teamData}
+  config={{
+    collapse: { initialState: 'collapsed', button: true },
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Click the toggle to expand',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+      footer: {
+        subtitle: 'Last synced just now',
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// collapse sits at the top level of WidgemoConfig — not inside a zone
+const config = {
+  collapse: { initialState: 'collapsed', button: true },
+  zones: {
+    header: { title: 'Team Directory', subtitle: 'Click to expand' },
+    content: { /* … */ },
+    footer: { subtitle: 'Last synced just now' },
+  },
+};
+```
+
+| `initialState` | Effect |
+|---|---|
+| `'expanded'` | Widget starts open. Toggle shown if `button: true`. Default. |
+| `'collapsed'` | Widget starts with content and footer hidden. Toggle shown if `button: true`. |
+| `'fixed'` | Widget cannot be toggled. `button` defaults to `false`. |
+
+The toggle button appears in the **header zone** — a header zone must be present for it to render. The footer is also hidden when collapsed.
+
+---
+
+## `ZoneLayout`
+
+`layout` controls how the zone header area is composed — the relative positions of icon, title, subtitle, and actions.
+
+### `ZoneLayout` options
+
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `orientation` | `'horizontal'` \| `'vertical'` | `'horizontal'` | Stack zone sections side-by-side or top-to-bottom. |
+| `iconPosition` | `'left'` \| `'above'` | `'left'` | Icon appears to the left of the title block, or centred above it. |
+| `actionsPosition` | `'right'` \| `'below'` | `'right'` | Action buttons appear at the trailing edge, or below the title block. |
+| `titlePosition` | `'left'` \| `'center'` \| `'right'` | `'left'` | Horizontal alignment of the title+subtitle block within the zone. |
+| `subtitlePosition` | `'below'` \| `'inline'` | `'below'` | Subtitle stacks under the title, or renders as a separate inline column. |
+
+---
+
+### `titlePosition`
+
+Controls horizontal alignment of the entire title+subtitle block.
+
+<WidgemoShowcase
+  description="titlePosition: 'center' — title and subtitle are centred in the header."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        layout: { titlePosition: 'center' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+<WidgemoShowcase
+  description="titlePosition: 'right' — title and subtitle are right-aligned."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        layout: { titlePosition: 'right' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Centred
+header: { title: 'Team', subtitle: 'All members', layout: { titlePosition: 'center' } }
+
+// Right-aligned
+header: { title: 'Team', subtitle: 'All members', layout: { titlePosition: 'right' } }
+```
+
+---
+
+### `iconPosition`
+
+`'left'` places the icon to the left of the title. `'above'` centres the icon above the title block — useful for card-style headers.
+
+<WidgemoShowcase
+  description="iconPosition: 'above' — icon is centred above the title, combined with titlePosition: 'center'."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        icon: { name: 'users', size: 28, color: '#4f46e5' },
+        layout: { iconPosition: 'above', titlePosition: 'center' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+<WidgemoShowcase
+  description="iconPosition: 'left' (default) — icon sits inline to the left of the title."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        icon: { name: 'users', size: 24, color: '#4f46e5' },
+        layout: { iconPosition: 'left' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Icon above — combine with titlePosition: 'center' for a centred card header
+layout: { iconPosition: 'above', titlePosition: 'center' }
+
+// Icon left (default)
+layout: { iconPosition: 'left' }
+```
+
+---
+
+### `actionsPosition`
+
+`'right'` keeps actions at the trailing edge of the zone header (default). `'below'` moves them to a second row below the title block — useful when there are many actions or in narrow containers.
+
+<WidgemoShowcase
+  description="actionsPosition: 'below' — actions appear on a second row under the title."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        layout: { actionsPosition: 'below' },
+        actions: [
+          { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+          { id: 'filter', label: 'Filter',  icon: 'filter', placement: 'pinned' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+<WidgemoShowcase
+  description="actionsPosition: 'right' (default) — actions stay at the trailing edge of the header row."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        layout: { actionsPosition: 'right' },
+        actions: [
+          { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+          { id: 'filter', label: 'Filter',  icon: 'filter', placement: 'pinned' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Actions below the title
+layout: { actionsPosition: 'below' }
+
+// Actions at trailing edge (default)
+layout: { actionsPosition: 'right' }
+```
+
+---
+
+### `subtitlePosition`
+
+`'below'` stacks the subtitle directly under the title (default). `'inline'` renders the subtitle as a separate column at the trailing edge of the title row — useful for a small contextual tag alongside a title.
+
+<WidgemoShowcase
+  description="subtitlePosition: 'inline' — subtitle appears in its own column beside the title."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Q2 2026',
+        layout: { subtitlePosition: 'inline' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+<WidgemoShowcase
+  description="subtitlePosition: 'below' (default) — subtitle stacks beneath the title."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Q2 2026',
+        layout: { subtitlePosition: 'below' },
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Subtitle inline beside title
+layout: { subtitlePosition: 'inline' }
+
+// Subtitle stacked below title (default)
+layout: { subtitlePosition: 'below' }
+```
+
+---
+
+### `orientation`
+
+`'horizontal'` lays out the zone sections side-by-side (default). `'vertical'` stacks them top-to-bottom — useful for tall or narrow zone layouts.
+
+<WidgemoShowcase
+  description="orientation: 'vertical' — zone sections (icon, title block, actions) stack vertically."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        icon: { name: 'users', size: 28, color: '#4f46e5' },
+        layout: { orientation: 'vertical', titlePosition: 'center' },
+        actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+<WidgemoShowcase
+  description="orientation: 'horizontal' (default) — icon, title, and actions sit on one row."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'All active employees',
+        icon: { name: 'users', size: 24, color: '#4f46e5' },
+        layout: { orientation: 'horizontal' },
+        actions: [{ id: 'export', label: 'Export', icon: 'export', placement: 'pinned' }],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status', renderAs: 'badge' }],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+// Vertical stack
+layout: { orientation: 'vertical', titlePosition: 'center' }
+
+// Horizontal (default)
+layout: { orientation: 'horizontal' }
+```
+
+---
+
+## Combining layout options
+
+`ZoneLayout` options compose — set multiple at once for full control.
+
+<WidgemoShowcase
+  description="Icon above + title centred + subtitle inline + actions below — a centred card-style header."
+  data={teamData}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Q2 2026',
+        icon: { name: 'users', size: 32, color: '#4f46e5' },
+        layout: {
+          iconPosition:     'above',
+          titlePosition:    'center',
+          subtitlePosition: 'inline',
+          actionsPosition:  'below',
+        },
+        actions: [
+          { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+          { id: 'filter', label: 'Filter',  icon: 'filter', placement: 'pinned' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name',   label: 'Name' },
+            { key: 'role',   label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+    },
+  }}
+/>
+
+<div style={{ marginBottom: '1rem' }} />
+
+```tsx
+header: {
+  title: 'Team Directory',
+  subtitle: 'Q2 2026',
+  icon: { name: 'users', size: 32, color: '#4f46e5' },
+  layout: {
+    iconPosition:     'above',
+    titlePosition:    'center',
+    subtitlePosition: 'inline',
+    actionsPosition:  'below',
+  },
+  actions: [
+    { id: 'export', label: 'Export', icon: 'export', placement: 'pinned' },
+    { id: 'filter', label: 'Filter',  icon: 'filter', placement: 'pinned' },
+  ],
+},
+```
+
+---
+
+## `themeOverrides`
+
+`themeOverrides` accepts a partial `ZoneTheme` to customise just this zone's colours, fonts, spacing, or background without affecting other zones or the global theme.
+
+```tsx
+header: {
+  title: 'Team Directory',
+  themeOverrides: {
+    background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+    titleColor: '#ffffff',
+    subtitleColor: 'rgba(255,255,255,0.75)',
+  },
+},
+```
+
+For the full `ZoneTheme` shape and theme registration, see [Theme API](/core/reference/theme-api).
+
+---
+
+## See Also
+
+- [Widgemo Config](/core/reference/widgemo-config) — full `WidgemoConfig` shape, `containerFrame`, `devMode`
+- [Content Config](/core/reference/content-config) — `zones.content` reference (mode, fields, loading, error, pagination)
+- [Action Config](/core/reference/action-config) — `ActionConfig` shape, placement, overflow, and action builders
+- [Theme API](/core/reference/theme-api) — `ZoneTheme` shape and `WidgemoThemeProvider`
+- [All Exports](/core/reference/all-exports) — `ZoneConfig`, `ZoneLayout`, `ZoneTheme` type entries
