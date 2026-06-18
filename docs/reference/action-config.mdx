@@ -22,12 +22,12 @@ interface ActionConfig<T = unknown> {
 }
 ```
 
-## Live Showcases
+## Interactive Configurations
 
 ### Zone Actions
 
 <WidgemoShowcase
-  title="Zone Actions"
+  title="Header and Footer Actions"
   description="Header and footer actions with pinned and menu placements."
   data={[
     { id: 1, name: 'Aurora Chen', role: 'Design Lead', status: 'active' },
@@ -37,7 +37,7 @@ interface ActionConfig<T = unknown> {
     zones: {
       header: {
         title: 'Team Directory',
-        subtitle: 'Zone-level action examples',
+        subtitle: 'Pinned and menu placements in header and footer zones',
         actions: [
           { id: 'add-user', label: 'Add User', icon: 'add', placement: 'pinned', variant: 'primary' },
           { id: 'sync', label: 'Sync', icon: 'refresh', placement: 'pinned', variant: 'secondary' },
@@ -84,7 +84,7 @@ zones: {
 ### Per-Item Actions
 
 <WidgemoShowcase
-  title="Per-Item Actions and Overflow"
+  title="Item Actions with Overflow"
   description="Mixed action placements with overflow behavior and conditional visibility."
   data={[
     { id: 1, name: 'Aurora Chen', status: 'active', priority: 'high' },
@@ -94,7 +94,7 @@ zones: {
   config={{
     zones: {
       header: {
-        title: 'Action Overflow Demo',
+        title: 'Action Overflow',
       },
       content: {
         mode: 'table',
@@ -246,7 +246,7 @@ actions: [
 ]
 ```
 
-### Preset Showcase
+### Preset Configuration
 
 <WidgemoShowcase
   title="Core Action Presets"
