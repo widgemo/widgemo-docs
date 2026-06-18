@@ -123,3 +123,33 @@
   }
 }
 
+.wg-item-section {
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.wg-item-section--contact {
+  background: rgba(45, 212, 191, 0.14);
+}
+
+.wg-item-section--team {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.wg-item-section--metrics {
+  background: rgba(245, 158, 11, 0.12);
+}
+
+[data-theme='dark'] .wg-item-section--contact {
+  background: rgba(94, 234, 212, 0.18);
+}
+
+[data-theme='dark'] .wg-item-section--team {
+  background: rgba(74, 222, 128, 0.18);
+}
+
+[data-theme='dark'] .wg-item-section--metrics {
+  background: rgba(251, 191, 36, 0.18);
+}
+
