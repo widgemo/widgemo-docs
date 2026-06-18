@@ -1,7 +1,7 @@
 ---
 ---
 
-import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+import { coreActions } from '@widgemo/widgemo-core';
 import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
 
 # Action Config
@@ -203,19 +203,54 @@ an attention animation defined by `indicator`.
 
 The animation fires only when the overflow count **increases**, not on initial mount.
 
-## Action builders
+## Reusable action presets
 
-These helpers are thin preset utilities around the built-in `coreActions` map. They do not build arbitrary actions from scratch; they start from a known preset id and merge overrides. If you need a fully custom action with no preset relationship, write a plain `ActionConfig` object literal instead.
+Widgemo ships `coreActions` presets you can spread into your own action objects.
+Define only what is unique (`id`, `label`, `placement`, handlers), and inherit common preset fields (`icon`, default variant, and default visibility).
 
 ```tsx
-import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+import { coreActions } from '@widgemo/widgemo-core';
+
+actions: [
+  { ...coreActions.edit, id: 'edit-user', label: 'Edit User', placement: 'pinned' },
+  { ...coreActions.view, id: 'view-profile', label: 'View Profile', placement: 'onHover' },
+  { ...coreActions.delete, id: 'delete-user', label: 'Delete User', placement: 'menu' },
+]
 ```
 
-### Builder Showcase
+### Host-side shared presets (recommended)
+
+For multiple widgemos, define shared host defaults once, then apply per-widget overrides:
+
+```tsx
+import { coreActions } from '@widgemo/widgemo-core';
+
+const HOST_ACTIONS = {
+  edit: { ...coreActions.edit, placement: 'pinned' as const },
+  view: { ...coreActions.view, placement: 'onHover' as const },
+  remove: { ...coreActions.delete, placement: 'menu' as const, variant: 'danger' as const },
+};
+
+const makeHostAction = (
+  type: keyof typeof HOST_ACTIONS,
+  overrides: Partial<typeof HOST_ACTIONS.edit> = {},
+) => ({
+  ...HOST_ACTIONS[type],
+  ...overrides,
+});
+
+actions: [
+  makeHostAction('edit', { id: 'edit-user', label: 'Edit User' }),
+  makeHostAction('view', { id: 'view-profile', label: 'View Profile' }),
+  makeHostAction('remove', { id: 'delete-user', label: 'Delete User' }),
+]
+```
+
+### Preset Showcase
 
 <WidgemoShowcase
-  title="Core Action Builders"
-  description="Uses the shipped preset-backed helpers exactly as implemented in widgemo-core."
+  title="Core Action Presets"
+  description="Uses coreActions plus host-side spread overrides."
   data={[
     { id: 1, name: 'Aurora Chen', status: 'active', priority: 'high' },
     { id: 2, name: 'Mateo Silva', status: 'inactive', priority: 'medium' },
@@ -225,10 +260,10 @@ import { coreActions, createAction, createActions } from '@widgemo/widgemo-core'
     zones: {
       header: {
         title: 'Preset-backed Actions',
-        subtitle: 'createAction(actionId, overrides) + createActions([{ id, overrides }])',
+        subtitle: 'coreActions spread + local overrides',
         actions: [
-          createAction('add', { id: 'add-user', label: 'Add User', placement: 'pinned', variant: 'primary' }),
-          createAction('refresh', { id: 'sync-users', label: 'Sync', placement: 'pinned', variant: 'secondary' }),
+          { ...coreActions.add, id: 'add-user', label: 'Add User', placement: 'pinned', variant: 'primary' },
+          { ...coreActions.refresh, id: 'sync-users', label: 'Sync', placement: 'pinned', variant: 'secondary' },
           { ...coreActions.export, id: 'export-users', label: 'Export Users' },
         ],
       },
@@ -242,20 +277,18 @@ import { coreActions, createAction, createActions } from '@widgemo/widgemo-core'
           ],
           layout: { type: 'auto' },
         },
-        actions: createActions([
-          { id: 'edit', overrides: { id: 'edit-user', label: 'Edit User', placement: 'pinned', variant: 'secondary' } },
-          { id: 'view', overrides: { id: 'view-profile', label: 'View Profile', placement: 'onHover' } },
+        actions: [
+          { ...coreActions.edit, id: 'edit-user', label: 'Edit User', placement: 'pinned', variant: 'secondary' },
+          { ...coreActions.view, id: 'view-profile', label: 'View Profile', placement: 'onHover' },
           {
-            id: 'delete',
-            overrides: {
-              id: 'delete-user',
-              label: 'Delete User',
-              placement: 'menu',
-              variant: 'danger',
-              visibleIf: (entity) => entity.status === 'inactive',
-            },
+            ...coreActions.delete,
+            id: 'delete-user',
+            label: 'Delete User',
+            placement: 'menu',
+            variant: 'danger',
+            visibleIf: (entity) => entity.status === 'inactive',
           },
-        ]),
+        ],
         actionOverflow: {
           maxInline: { mobile: 1, tablet: 2, desktop: 2 },
           menuLabel: 'More',
@@ -272,53 +305,37 @@ import { coreActions, createAction, createActions } from '@widgemo/widgemo-core'
 ---
 
 ```tsx
-import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+import { coreActions } from '@widgemo/widgemo-core';
 
-const headerActions = [
-  createAction('add', {
-    id: 'add-user',
-    label: 'Add User',
-    placement: 'pinned',
-    variant: 'primary',
-  }),
-  createAction('refresh', {
-    id: 'sync-users',
-    label: 'Sync',
-    placement: 'pinned',
-    variant: 'secondary',
-  }),
-  { ...coreActions.export, id: 'export-users', label: 'Export Users' },
-];
-
-const itemActions = createActions([
-  {
-    id: 'edit',
-    overrides: {
-      id: 'edit-user',
-      label: 'Edit User',
-      placement: 'pinned',
-      variant: 'secondary',
+const config = {
+  zones: {
+    header: {
+      title: 'Team Directory',
+      actions: [
+        { ...coreActions.add, id: 'add-user', label: 'Add User', placement: 'pinned', variant: 'primary' },
+        { ...coreActions.refresh, id: 'sync-users', label: 'Sync', placement: 'pinned', variant: 'secondary' },
+        { ...coreActions.export, id: 'export-users', label: 'Export Users', placement: 'menu' },
+      ],
+    },
+    content: {
+      mode: 'table',
+      item: { fields: [{ key: 'name', label: 'Name' }, { key: 'status', label: 'Status' }], layout: { type: 'auto' } },
+      actions: [
+        { ...coreActions.edit, id: 'edit-user', label: 'Edit User', placement: 'pinned' },
+        { ...coreActions.view, id: 'view-profile', label: 'View Profile', placement: 'onHover' },
+        {
+          ...coreActions.delete,
+          id: 'delete-user',
+          label: 'Delete User',
+          placement: 'menu',
+          variant: 'danger',
+          visibleIf: (entity) => entity.status === 'inactive',
+        },
+      ],
+      actionOverflow: { maxInline: { mobile: 1, tablet: 2, desktop: 2 }, menuLabel: 'More', indicator: 'pulse' },
     },
   },
-  {
-    id: 'view',
-    overrides: {
-      id: 'view-profile',
-      label: 'View Profile',
-      placement: 'onHover',
-    },
-  },
-  {
-    id: 'delete',
-    overrides: {
-      id: 'delete-user',
-      label: 'Delete User',
-      placement: 'menu',
-      variant: 'danger',
-      visibleIf: (entity) => entity.status === 'inactive',
-    },
-  },
-]);
+};
 ```
 
 ### `coreActions`
@@ -336,44 +353,6 @@ actions: [{ ...coreActions.export, label: 'Export Users', placement: 'pinned' }]
 ```
 
 Built-in presets: `add`, `refresh`, `viewToggle`, `export`, `import`, `settings`, `view`, `edit`, `delete`, `filter`, `sort`, `search`.
-
-### `createAction(actionId, overrides?)`
-
-Creates one action from a built-in preset id and merges any overrides onto that preset. It throws if the preset id is unknown.
-
-```tsx
-import { createAction } from '@widgemo/widgemo-core';
-
-const editAction = createAction('edit', {
-  id: 'edit-item',
-  label: 'Edit',
-  placement: 'pinned',
-  variant: 'secondary',
-  onAction: (ctx) => openEditModal(ctx.entity?.id),
-});
-```
-
-### `createActions([{ id, overrides }])`
-
-Creates multiple actions by applying `createAction` to an array of preset ids plus optional overrides.
-
-```tsx
-import { createActions } from '@widgemo/widgemo-core';
-
-const itemActions = createActions([
-  { id: 'view', overrides: { label: 'View', placement: 'onHover' } },
-  { id: 'edit', overrides: { label: 'Edit', placement: 'pinned', variant: 'secondary' } },
-  {
-    id: 'delete',
-    overrides: {
-      label: 'Delete',
-      placement: 'menu',
-      variant: 'danger',
-      visibleIf: (entity) => entity.status === 'inactive',
-    },
-  },
-]);
-```
 
 ## See Also
 
