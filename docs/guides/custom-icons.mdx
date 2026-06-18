@@ -2,37 +2,19 @@
 sidebar_position: 3
 ---
 
-import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
-
 # Custom Icons
 
 Use this page to extend or override icons in the Widgemo icon registry.
 
 If you need the built-in icon catalog, use [Built-in Icons](/core/components/icons/built-in-icons).
 
-<WidgemoShowcase
-	title="Icon Naming in Config"
-	description="Actions reference icon names from the icon registry, which makes custom icon packs swappable without changing business logic."
-	data={[
-		{ action: 'Edit', iconName: 'edit', scope: 'item' },
-		{ action: 'Delete', iconName: 'delete', scope: 'item' },
-	]}
-	config={{
-		zones: {
-			content: {
-				mode: 'table',
-				item: {
-					fields: [
-						{ key: 'action', label: 'Action' },
-						{ key: 'iconName', label: 'Icon Name' },
-						{ key: 'scope', label: 'Scope', renderAs: 'badge' },
-					],
-					layout: { type: 'auto' },
-				},
-			},
-		},
-	}}
-/>
+## When to Use Custom Icons
+
+| Situation | Prefer custom icons? | Why |
+|---|---|---|
+| Your app uses a branded or shared icon set | Yes | Config can reference stable icon names |
+| You want to replace a built-in icon globally | Yes | Re-register the same name |
+| You only need existing built-ins | No | Use the built-in catalog directly |
 
 ## Register a Custom Icon
 
@@ -53,7 +35,17 @@ widgemoRegistry.registerWidgemoIcon({
 });
 ```
 
-The icon component receives `{ size?, className?, color? }`. Returning `null` falls back to the built-in SVG.
+The icon component receives `{ size?, className?, color? }`.
+
+## Registration Contract
+
+`registerWidgemoIcon` accepts an `IconRegistryEntry`:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Icon name used in config |
+| `component` | `ComponentType<{ className?, size?, color? }> \| ((props) => ReactNode)` | Icon renderer |
+| `defaultProps` | `Record<string, unknown>` | Optional default props |
 
 ## Built-in Icon Catalog
 
@@ -72,13 +64,17 @@ widgemoRegistry.registerWidgemoIcon({
 });
 ```
 
+## Fallback and Override Behavior
+
+- Unknown icon names fall back to Widgemo's default icon renderer.
+- Re-registering an existing name replaces the prior registration.
+- If a registered custom icon component returns `null`, that `null` is rendered; Widgemo does not apply a second fallback after a custom registration is resolved.
+
 ## Collision Behavior
 
 Collision semantics are defined in [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions).
 
 Use namespaced names (for example, `acme.edit`) to reduce accidental collisions.
-
-See [Extension API: Registration Collisions](/core/reference/extension-api#registration-collisions) for exact behavior.
 
 ## Using Icons in Config
 
@@ -98,9 +94,10 @@ zones: {
 }
 ```
 
-## Next Steps
+## See Also
 
 - Browse available names: [Built-in Icons](/core/components/icons/built-in-icons)
 - Review extension surface: [Extension API](/core/reference/extension-api)
+- See the registry model: [Extension Architecture](/core/concepts/extension-architecture)
 
 

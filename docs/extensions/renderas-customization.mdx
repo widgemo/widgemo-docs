@@ -2,43 +2,35 @@
 sidebar_position: 2
 ---
 
-import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
-
 # Custom renderAs
 
-A custom `renderAs` renderer is the lightest extension point in Widgemo.
+A custom `renderAs` renderer is the lightest registry extension in Widgemo.
 
-Use it when you want to change how a single value is displayed inside an otherwise normal field.
+Use it when a field should keep its existing schema and behavior, but needs a different visual output.
 
-<WidgemoShowcase
-  title="Custom renderAs Integration Workflow"
-  description="Use the code in this page to register a custom renderer at app boot, then reference it from field config."
-  data={[
-    { feature: 'alerts', renderer: 'uppercase-pill', state: 'ready' },
-    { feature: 'exports', renderer: 'uppercase-pill', state: 'beta' },
-  ]}
-  config={{
-    zones: {
-      content: {
-        mode: 'table',
-        item: {
-          fields: [
-            { key: 'feature', label: 'Feature' },
-            { key: 'renderer', label: 'Renderer Name' },
-            { key: 'state', label: 'State', renderAs: 'badge' },
-          ],
-          layout: { type: 'auto' },
-        },
-      },
-    },
-  }}
-/>
+## When to Use Custom `renderAs`
+
+| Situation | Prefer custom `renderAs`? | Why |
+|---|---|---|
+| Existing field needs a different visual treatment | Yes | Only presentation changes |
+| Multiple fields share the same semantic value type | Sometimes | Use a field type instead if the semantic category matters |
+| Entire content layout needs to change | No | Use a custom mode instead |
+| Built-in renderer already supports the need | No | Stay config-driven when possible |
+
+## Registration Contract
+
+`registerWidgemoRenderAs` accepts a `RenderAsRegistryEntry`:
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Registry key referenced from `item.fields[].renderAs` |
+| `render` | `(value, options, entity) => ReactNode` | Renderer function |
+| `defaultOptions` | `Partial<RenderAsOptions>` | Default options merged before render |
 
 ## 1. Create the renderer
 
 ```tsx
-// src/renderers/JsonRenderer.tsx
-import React from 'react';
+// src/renderers/jsonRenderer.tsx
 import type { RenderAsRegistryEntry } from '@widgemo/widgemo-core';
 
 export const jsonRenderer: RenderAsRegistryEntry = {
@@ -61,6 +53,8 @@ import { jsonRenderer } from './renderers/JsonRenderer';
 widgemoRegistry.registerWidgemoRenderAs(jsonRenderer);
 ```
 
+Register before a Widgemo using that renderer is rendered.
+
 ## 3. Use in any field
 
 ```tsx
@@ -71,13 +65,18 @@ const fields = [
 ];
 ```
 
-## When to Choose Custom renderAs
+## Best Practices
 
-Use custom `renderAs` when:
+- Keep renderer names namespaced when they are application-specific (`acme.json`, `finance.delta-chip`).
+- Prefer `renderAs` over custom field types when the change is purely presentational.
+- Use `defaultOptions` to centralize repeated renderer options.
+- Avoid replacing built-in renderers unless you want a global override.
 
-- the field is still conceptually a normal field
-- you only need a different visual treatment
-- you do not need a brand-new content mode
-- you do not need a new first-class field type contract
+## See Also
+
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [Field Rendering Reference](/core/guides/field-rendering-decisions)
+- [Extension API](/core/reference/extension-api)
+- [Field Config](/core/reference/field-config)
 
 
