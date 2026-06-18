@@ -285,6 +285,71 @@ The gallery below shows the built-in `renderAs` outputs documented on this page.
   }}
 />
 
+---
+
+```tsx
+item: {
+  fields: [
+    { key: 'name', label: 'Name' },
+    {
+      key: 'salary',
+      label: 'Currency',
+      renderAs: 'currency',
+      renderAsOptions: {
+        currency: 'USD',
+        compact: true,
+        colorize: true,
+        negativeFormat: 'parentheses',
+      },
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      renderAs: 'badge',
+      renderAsOptions: {
+        style: 'badge',
+        size: 'sm',
+      },
+    },
+    {
+      key: 'settlementDate',
+      label: 'Date',
+      type: 'date',
+      renderAs: 'date',
+      renderAsOptions: {
+        parseMode: 'iso-date',
+        locale: 'en-US',
+      },
+    },
+    {
+      key: 'processingLatencySec',
+      label: 'Duration',
+      type: 'duration',
+      renderAs: 'duration',
+      renderAsOptions: {
+        unit: 'sec',
+        format: 'clock',
+      },
+    },
+  ],
+  layout: { type: 'auto' },
+}
+```
+
+```tsx
+// Type-first baseline (semantic type only)
+{ key: 'joinedAt', label: 'Joined', type: 'date' }
+
+// renderAs override (visual renderer takes precedence)
+{
+  key: 'joinedAt',
+  label: 'Joined',
+  type: 'date',
+  renderAs: 'badge',
+  renderAsOptions: { style: 'soft' },
+}
+```
+
 All built-in renderAs option objects also accept `className` from `BaseRenderAsOptions`.
 
 ## FieldConfig Interface
@@ -364,9 +429,19 @@ Use the Components renderer pages for per-renderer usage guidance and examples:
 ### Related Guides
 
 - Temporal renderer deep dive: [Temporal Fields Guide](/core/components/fields/temporal-fields)
-- Custom renderer registration and usage: [Custom renderAs](/core/extensions/renderas-customization)
+
 ## Item Layout
 
 `ItemConfig.layout` has moved to [Item Config](/core/reference/item-config) to keep this page focused on field-level schema and renderer contracts.
 
 Use [Field Rendering Decisions](/core/guides/field-rendering-decisions) for `type` vs `renderAs` guidance.
+
+## See Also
+
+- [Content Config](/core/reference/content-config)
+- [Item Config](/core/reference/item-config)
+- [Field Rendering Decisions](/core/guides/field-rendering-decisions)
+- [Field Components Overview](/core/components/fields/overview)
+- [Renderer Components Overview](/core/components/renderers/overview)
+- [Custom Field Types](/core/extensions/custom-field-types)
+- [Custom renderAs](/core/extensions/renderas-customization)
