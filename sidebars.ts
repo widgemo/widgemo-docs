@@ -160,7 +160,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Migration',
+      label: 'Release Notes',
       items: [
         'changelog',
         'release-notes/upgrading/migration-compatibility',

@@ -4,7 +4,7 @@ sidebar_position: 99
 
 # Changelog
 
-All notable changes to widgemo-core.
+All notable changes to widgemo-core will be documented here.
 
 Full changelog:
 
@@ -14,18 +14,17 @@ Full changelog:
 
 ## [Unreleased]
 
-### Added
+No entries yet.
 
-- Docs alignment improvements for the docs.widgemo.com rollout
-- Type-surface cleanup across exported interfaces
-- Temporal field contracts for `date`, `time`, `datetime`, `timestamp`, and `duration`
-- Five built-in temporal `renderAs` renderers: `date`, `time`, `datetime`, `timestamp`, `duration`
-- Temporal normalization helpers exported from core: `parseTemporalValue`, `parseDurationValue`, `isTemporalParseMode`
+When updates are prepared but not released yet, this section will be populated with:
 
-### Fixed
+- Added
+- Changed
+- Fixed
+- Deprecated
+- Removed
 
-- Static filter operator hardening: invalid operator values now throw a descriptive runtime error
-- Temporal rendering now requires explicit storage-format contracts (`parseMode` / `unit`) to avoid ambiguous host-data parsing
+- Security
 
 ---
 
@@ -33,22 +32,12 @@ Full changelog:
 
 Initial public release.
 
-### Core Features
+### Added
 
-- `<Widgemo>` component with full TypeScript support
-- Five display modes: `table`, `grid`, `carousel`, `board` (with swimlanes), and responsive switching
-- Zone-based layout: `zones.header`, `zones.content`, `zones.footer`
-- `WidgemoConfig` with `interactions.onEvent` global event bus
-- Per-item and zone-level `ActionConfig` with `placement: 'pinned' | 'onHover' | 'menu'`
-- `ActionOverflowConfig` with responsive `maxInline` per breakpoint
-- Board mode drag-and-drop with swimlane matrix support
-- `ContentConfig` search, sorting, filtering, grouping, and pagination
-- Nine built-in `renderAs` renderers: `badge`, `currency`, `progress`, `rating`, `link`, `jsonPreview`, `deltaValue`, `sparkTrend`, `scoreMeter`
-- `WidgemoThemeProvider` with `'light' | 'dark' | 'auto' | WidgemoTheme`
-- CSS variable overrides via `--widgemo-*`
-- `widgemoRegistry` extension APIs for renderers, modes, hooks, icons, and field types
-- `devMode` inspector overlay with configurable docs link
-- `InteractionContext` with board drag context (`from` and `to`)
-- Card layout types: `auto`, `flex`, `grid` template areas, `sections`
-- Loading and error states with skeleton indicator and retry support
-- Responsive mode switching with breakpoint-scoped config overrides
+- Widgemo Core initial public release.
+- Stable root package exports.
+- Built-in modes, field renderers, actions, theming, and extension registries.
+
+### Notes
+
+- This is the baseline release for future migration guidance.
