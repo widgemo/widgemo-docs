@@ -1,42 +1,164 @@
 ---
 ---
 
+import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+import { WidgemoShowcase } from '../../src/components/WidgemoShowcase';
+
 # Action Config
 
 Actions can be defined at zone-level (header/footer) and content-level (per-item).
 
-## Zone Actions
+## ActionConfig Interface
 
-```tsx
-actions: [
-  {
-    id:        'add-user',
-    label:     'Add User',
-    icon:      'add',
-    placement: 'pinned',   // 'pinned' | 'onHover' | 'menu'
-    variant:   'primary',  // 'primary' | 'secondary' | 'danger'
-    onAction:  (ctx) => { /* ctx.data, ctx.zone */ },
-  },
-  { id: 'export-csv', label: 'Export', icon: 'download', placement: 'menu' },
-],
+```ts
+interface ActionConfig<T = unknown> {
+  id: string;
+  label: string;
+  icon?: string;
+  variant?: string;
+  placement?: 'pinned' | 'onHover' | 'menu';
+  visibleIf?: (entity: T) => boolean;
+  onAction?: InteractionEventHandler;
+}
 ```
 
-## Per-Item Actions
+## Live Showcases
 
-Place per-item actions on `ContentConfig.actions`:
+### Zone Actions
+
+<WidgemoShowcase
+  title="Zone Actions"
+  description="Header and footer actions with pinned and menu placements."
+  data={[
+    { id: 1, name: 'Aurora Chen', role: 'Design Lead', status: 'active' },
+    { id: 2, name: 'Mateo Silva', role: 'Platform Engineer', status: 'pending' },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Team Directory',
+        subtitle: 'Zone-level action examples',
+        actions: [
+          { id: 'add-user', label: 'Add User', icon: 'add', placement: 'pinned', variant: 'primary' },
+          { id: 'sync', label: 'Sync', icon: 'refresh', placement: 'pinned', variant: 'secondary' },
+          { id: 'export-csv', label: 'Export', icon: 'download', placement: 'menu' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'role', label: 'Role' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+      },
+      footer: {
+        actions: [
+          { id: 'settings', label: 'Settings', icon: 'settings', placement: 'menu' },
+          { id: 'help', label: 'Help', icon: 'info', placement: 'menu' },
+        ],
+      },
+    },
+  }}
+/>
+
+---
+
+```tsx
+zones: {
+  header: {
+    actions: [
+      { id: 'add-user', label: 'Add User', icon: 'add', placement: 'pinned', variant: 'primary' },
+      { id: 'export-csv', label: 'Export', icon: 'download', placement: 'menu' },
+    ],
+  },
+  footer: {
+    actions: [{ id: 'settings', label: 'Settings', icon: 'settings', placement: 'menu' }],
+  },
+}
+```
+
+### Per-Item Actions
+
+<WidgemoShowcase
+  title="Per-Item Actions and Overflow"
+  description="Mixed action placements with overflow behavior and conditional visibility."
+  data={[
+    { id: 1, name: 'Aurora Chen', status: 'active', priority: 'high' },
+    { id: 2, name: 'Mateo Silva', status: 'inactive', priority: 'medium' },
+    { id: 3, name: 'Priya Nair', status: 'pending', priority: 'low' },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Action Overflow Demo',
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'priority', label: 'Priority', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+        actions: [
+          { id: 'view', label: 'View', icon: 'view', placement: 'pinned', variant: 'secondary' },
+          { id: 'edit', label: 'Edit', icon: 'edit', placement: 'onHover', variant: 'secondary' },
+          { id: 'share', label: 'Share', icon: 'share', placement: 'menu' },
+          { id: 'duplicate', label: 'Duplicate', icon: 'copy', placement: 'menu' },
+          {
+            id: 'delete',
+            label: 'Delete',
+            icon: 'delete',
+            placement: 'menu',
+            variant: 'danger',
+            visibleIf: (entity) => entity.status === 'inactive',
+          },
+        ],
+        actionOverflow: {
+          maxInline: { mobile: 1, tablet: 2, desktop: 2 },
+          menuLabel: 'More',
+          menuTooltip: 'More actions',
+          indicator: 'pulse',
+        },
+      },
+    },
+  }}
+/>
+
+---
 
 ```tsx
 content: {
   mode: 'table',
   actions: [
-    { id: 'edit',   label: 'Edit',   icon: 'edit',   placement: 'pinned', variant: 'secondary' },
-    { id: 'view',   label: 'View',   icon: 'view',   placement: 'onHover' },
-    { id: 'delete', label: 'Delete', icon: 'delete', placement: 'menu',   variant: 'danger',
-      visibleIf: (entity) => entity.status === 'inactive' },
+    { id: 'edit', label: 'Edit', icon: 'edit', placement: 'pinned', variant: 'secondary' },
+    { id: 'view', label: 'View', icon: 'view', placement: 'onHover' },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: 'delete',
+      placement: 'menu',
+      variant: 'danger',
+      visibleIf: (entity) => entity.status === 'inactive',
+    },
   ],
-  item: { /* … */ },
-},
+  actionOverflow: {
+    maxInline: { mobile: 1, tablet: 2, desktop: 3 },
+    menuLabel: 'More',
+    menuTooltip: 'More actions',
+    indicator: 'pulse',
+  },
+  item: { fields: [{ key: 'name' }, { key: 'status' }], layout: { type: 'auto' } },
+}
 ```
+
+## Action Context Notes
 
 `ctx.entity` is set for item actions; `ctx.data` and `ctx.zone` are set for zone actions.
 
@@ -47,10 +169,9 @@ content: {
 | `id` | `string` | Stable action identifier (used in `ctx.interactionId`) |
 | `label` | `string` | Button label |
 | `icon` | `string` | Icon name (built-in or registered) |
+| `variant` | `string` | Visual variant. Common values in built-in examples include `primary`, `secondary`, `danger`, and `ghost`. |
 | `placement` | `'pinned' \| 'onHover' \| 'menu'` | Where the action appears |
-| `variant` | `'primary' \| 'secondary' \| 'danger'` | Visual variant |
 | `visibleIf` | `(entity) => boolean` | Conditional visibility per item |
-| `disabled` | `boolean \| (entity) => boolean` | Disable the action |
 | `onAction` | `(ctx) => void` | Local override (takes precedence over `interactions.onEvent`) |
 
 ## Action Overflow
@@ -84,10 +205,120 @@ The animation fires only when the overflow count **increases**, not on initial m
 
 ## Action builders
 
-Three utilities help build typed `ActionConfig` objects without manual object literals.
+These helpers are thin preset utilities around the built-in `coreActions` map. They do not build arbitrary actions from scratch; they start from a known preset id and merge overrides. If you need a fully custom action with no preset relationship, write a plain `ActionConfig` object literal instead.
 
 ```tsx
 import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+```
+
+### Builder Showcase
+
+<WidgemoShowcase
+  title="Core Action Builders"
+  description="Uses the shipped preset-backed helpers exactly as implemented in widgemo-core."
+  data={[
+    { id: 1, name: 'Aurora Chen', status: 'active', priority: 'high' },
+    { id: 2, name: 'Mateo Silva', status: 'inactive', priority: 'medium' },
+    { id: 3, name: 'Priya Nair', status: 'pending', priority: 'low' },
+  ]}
+  config={{
+    zones: {
+      header: {
+        title: 'Preset-backed Actions',
+        subtitle: 'createAction(actionId, overrides) + createActions([{ id, overrides }])',
+        actions: [
+          createAction('add', { id: 'add-user', label: 'Add User', placement: 'pinned', variant: 'primary' }),
+          createAction('refresh', { id: 'sync-users', label: 'Sync', placement: 'pinned', variant: 'secondary' }),
+          { ...coreActions.export, id: 'export-users', label: 'Export Users' },
+        ],
+      },
+      content: {
+        mode: 'table',
+        item: {
+          fields: [
+            { key: 'name', label: 'Name' },
+            { key: 'status', label: 'Status', renderAs: 'badge' },
+            { key: 'priority', label: 'Priority', renderAs: 'badge' },
+          ],
+          layout: { type: 'auto' },
+        },
+        actions: createActions([
+          { id: 'edit', overrides: { id: 'edit-user', label: 'Edit User', placement: 'pinned', variant: 'secondary' } },
+          { id: 'view', overrides: { id: 'view-profile', label: 'View Profile', placement: 'onHover' } },
+          {
+            id: 'delete',
+            overrides: {
+              id: 'delete-user',
+              label: 'Delete User',
+              placement: 'menu',
+              variant: 'danger',
+              visibleIf: (entity) => entity.status === 'inactive',
+            },
+          },
+        ]),
+        actionOverflow: {
+          maxInline: { mobile: 1, tablet: 2, desktop: 2 },
+          menuLabel: 'More',
+          indicator: 'pulse',
+        },
+      },
+    },
+    interactions: {
+      onEvent: () => {},
+    },
+  }}
+/>
+
+---
+
+```tsx
+import { coreActions, createAction, createActions } from '@widgemo/widgemo-core';
+
+const headerActions = [
+  createAction('add', {
+    id: 'add-user',
+    label: 'Add User',
+    placement: 'pinned',
+    variant: 'primary',
+  }),
+  createAction('refresh', {
+    id: 'sync-users',
+    label: 'Sync',
+    placement: 'pinned',
+    variant: 'secondary',
+  }),
+  { ...coreActions.export, id: 'export-users', label: 'Export Users' },
+];
+
+const itemActions = createActions([
+  {
+    id: 'edit',
+    overrides: {
+      id: 'edit-user',
+      label: 'Edit User',
+      placement: 'pinned',
+      variant: 'secondary',
+    },
+  },
+  {
+    id: 'view',
+    overrides: {
+      id: 'view-profile',
+      label: 'View Profile',
+      placement: 'onHover',
+    },
+  },
+  {
+    id: 'delete',
+    overrides: {
+      id: 'delete-user',
+      label: 'Delete User',
+      placement: 'menu',
+      variant: 'danger',
+      visibleIf: (entity) => entity.status === 'inactive',
+    },
+  },
+]);
 ```
 
 ### `coreActions`
@@ -98,49 +329,57 @@ Built-in action presets for common operations. Use them directly as `ActionConfi
 import { coreActions } from '@widgemo/widgemo-core';
 
 // Use a preset directly
-actions: [coreActions.copy, coreActions.export]
+actions: [coreActions.view, coreActions.export]
 
 // Override a field on a preset
-actions: [{ ...coreActions.copy, label: 'Copy Row', placement: 'pinned' }]
+actions: [{ ...coreActions.export, label: 'Export Users', placement: 'pinned' }]
 ```
 
-Built-in presets: `copy`, `export`, `refresh`, `settings`, `share`, `delete`, `edit`, `view`.
+Built-in presets: `add`, `refresh`, `viewToggle`, `export`, `import`, `settings`, `view`, `edit`, `delete`, `filter`, `sort`, `search`.
 
-### `createAction(config)`
+### `createAction(actionId, overrides?)`
 
-Typed builder for a single `ActionConfig`. Equivalent to writing the object literal but provides IDE autocomplete and type inference for all fields.
+Creates one action from a built-in preset id and merges any overrides onto that preset. It throws if the preset id is unknown.
 
 ```tsx
 import { createAction } from '@widgemo/widgemo-core';
 
-const editAction = createAction({
-  id:        'edit-item',
-  label:     'Edit',
-  icon:      'edit',
+const editAction = createAction('edit', {
+  id: 'edit-item',
+  label: 'Edit',
   placement: 'pinned',
-  variant:   'secondary',
-  onAction:  (ctx) => openEditModal(ctx.entity?.id),
+  variant: 'secondary',
+  onAction: (ctx) => openEditModal(ctx.entity?.id),
 });
 ```
 
-### `createActions([...])`
+### `createActions([{ id, overrides }])`
 
-Typed builder for an array of `ActionConfig` objects. Same as `createAction` but for multiple entries at once.
+Creates multiple actions by applying `createAction` to an array of preset ids plus optional overrides.
 
 ```tsx
 import { createActions } from '@widgemo/widgemo-core';
 
 const itemActions = createActions([
-  { id: 'view',   label: 'View',   icon: 'view',   placement: 'onHover' },
-  { id: 'edit',   label: 'Edit',   icon: 'edit',   placement: 'pinned',  variant: 'secondary' },
-  { id: 'delete', label: 'Delete', icon: 'delete', placement: 'menu',    variant: 'danger',
-    visibleIf: (entity) => entity.status === 'inactive' },
+  { id: 'view', overrides: { label: 'View', placement: 'onHover' } },
+  { id: 'edit', overrides: { label: 'Edit', placement: 'pinned', variant: 'secondary' } },
+  {
+    id: 'delete',
+    overrides: {
+      label: 'Delete',
+      placement: 'menu',
+      variant: 'danger',
+      visibleIf: (entity) => entity.status === 'inactive',
+    },
+  },
 ]);
 ```
 
 ## See Also
 
 - [Widgemo Config](/core/reference/widgemo-config) — zone header/footer where `actions` arrays are placed
+- [Zone Config](/core/reference/zone-config) — zone-level `actions` and `actionOverflow`
 - [Content Config](/core/reference/content-config) — `ContentConfig.actions` for per-item actions
 - [Extension API](/core/reference/extension-api) — `InteractionContext` shape received by `onAction`
+- [Item Config](/core/reference/item-config) — item structure used alongside per-item actions
 - [All Exports](/core/reference/all-exports) — complete named export index
