@@ -1,41 +1,45 @@
-# Website
+# Widgemo Docs
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Documentation site for the Widgemo product family, with primary coverage of `@widgemo/widgemo-core`.
 
-## Installation
+Live site: https://docs.widgemo.com
 
-```bash
-yarn
-```
+## Requirements
+
+- Node.js 20+
+- npm 9+
 
 ## Local Development
 
-```bash
-yarn start
-```
+1. Install dependencies:
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+	```bash
+	npm install
+	```
+
+2. Start the local docs server (port 3004):
+
+	```bash
+	npm run start
+	```
 
 ## Build
 
 ```bash
-yarn build
+npm run build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+The static site output is generated in `build/`.
 
-## Deployment
+## Useful Scripts
 
-Using SSH:
+- `npm run start` - run local docs server
+- `npm run build` - create production static output
+- `npm run serve` - serve built static output locally
+- `npm run typecheck` - run TypeScript checks
 
-```bash
-USE_SSH=true yarn deploy
-```
+## Repository Notes
 
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+- Built with Docusaurus 3
+- Local search uses `@cmfcmf/docusaurus-search-local`
+- The docs consume local `@widgemo/widgemo-core` via `file:../widgemo-core` in this workspace
