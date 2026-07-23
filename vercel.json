@@ -3,5 +3,5 @@
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "framework": "docusaurus2"
+  "framework": "docusaurus-2"
 }
